@@ -25,7 +25,7 @@ class TestRef extends \PHPUnit_Framework_TestCase
         );
 
         $schema = new Schema($schemaData);
-        print_r($schema);
+        $this->assertSame(123, $schema->import(array('one' => 123))->one);
     }
 
 }

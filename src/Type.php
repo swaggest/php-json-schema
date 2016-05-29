@@ -26,6 +26,10 @@ class Type extends AbstractConstraint implements Transformer, Constraint
 
     private function importObject($data)
     {
+        if (!is_array($data)) {
+            throw new \Exception('Array expected');
+        }
+
         $result = new \stdClass();
         if ($properties = Properties::getFromSchema($this->parentSchema)) {
             foreach ($properties->properties as $name => $property) {
