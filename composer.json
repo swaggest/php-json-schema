@@ -1,0 +1,39 @@
+{
+  "name": "yaoi/schema",
+  "description": "PHP Schema",
+  "type": "library",
+  "require": {
+    "php": ">=5.3"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^4.8.23",
+    "phpunit/php-code-coverage": "^2.2.4",
+    "ext-xdebug": ">=2.2.1"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Viacheslav Poturaev",
+      "email": "vearutop@gmail.com"
+    }
+  ],
+  "support": {
+    "email": "vearutop@gmail.com"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "Yaoi\\Schema\\": "src/",
+      "Yaoi\\Schema\\Tests\\": "tests/src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Yaoi\\Schema\\Tests\\": "tests/src/"
+    }
+  },
+  "scripts": {
+    "test": "php -dxdebug.coverage_enable=1 ./vendor/bin/phpunit --coverage-text"
+  }
+}
