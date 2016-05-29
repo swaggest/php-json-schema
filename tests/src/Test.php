@@ -3,6 +3,7 @@
 namespace Yaoi\Schema\Tests;
 
 
+use Yaoi\Schema\Properties;
 use Yaoi\Schema\Schema;
 
 class Test extends \PHPUnit_Framework_TestCase
@@ -15,9 +16,9 @@ class Test extends \PHPUnit_Framework_TestCase
         //print_r($data);
 
         $schema = new Schema($data);
+        //print_r($schema->constraints[Properties::className()]->properties['definitions']);
 
         $jsonSchema = $schema->import($data);
-
         print_r($jsonSchema);
     }
 

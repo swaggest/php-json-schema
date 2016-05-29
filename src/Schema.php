@@ -9,6 +9,7 @@ class Schema extends Base implements Transformer, Constraint
      * @var Constraint[]
      */
     public $constraints = array();
+    private $rootSchema;
     private $parentSchema;
 
     private $schemaData;
@@ -21,24 +22,26 @@ class Schema extends Base implements Transformer, Constraint
         return $this->schemaData;
     }
 
-    public function __construct($schemaValue, Schema $rootSchema = null)
+    public function __construct($schemaValue, Schema $rootSchema = null, Schema $parentSchema = null)
     {
         $this->schemaData = $schemaValue;
-        $this->parentSchema = $rootSchema;
+        $this->rootSchema = $rootSchema ? $rootSchema : $this;
+        $this->parentSchema = $parentSchema ? $parentSchema : null;
+
         foreach ($schemaValue as $constraintName => $constraintData) {
             $constraint = null;
             switch ($constraintName) {
-                case Type::SCHEMA_NAME:
-                    $constraint = new Type($constraintData, $this);
+                case Type::TYPE:
+                    $constraint = new Type($constraintData, $this->rootSchema, $this);
                     break;
-                case Properties::SCHEMA_NAME:
-                    $constraint = new Properties($constraintData, $this);
+                case Properties::PROPERTIES:
+                    $constraint = new Properties($constraintData, $this->rootSchema, $this);
                     break;
-                case AdditionalProperties::SCHEMA_NAME:
-                    $constraint = new AdditionalProperties($constraintData, $this);
+                case AdditionalProperties::ADDITIONAL_PROPERTIES:
+                    $constraint = new AdditionalProperties($constraintData, $this->rootSchema, $this);
                     break;
-                case Ref::SCHEMA_NAME:
-                    $constraint = new Ref($constraintData, $this);
+                case Ref::REF:
+                    $constraint = new Ref($constraintData, $this->rootSchema, $this);
                     break;
             }
             if (null !== $constraint) {

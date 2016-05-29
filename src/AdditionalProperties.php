@@ -5,27 +5,25 @@ namespace Yaoi\Schema;
 
 class AdditionalProperties extends AbstractConstraint implements Constraint
 {
-    const SCHEMA_NAME = 'additionalProperties';
+    const ADDITIONAL_PROPERTIES = 'additionalProperties';
 
     /**
      * @var Schema
      */
-    public $parentSchema;
+    private $rootSchema;
+
+    /** @var  Schema */
+    private $parentSchema;
 
     /**
      * @var Schema
      */
     public $propertiesSchema;
 
-    /**
-     * AdditionalProperties constructor.
-     * @param $schemaValue
-     * @param Schema|null $rootSchema
-     */
-    public function __construct($schemaValue, Schema $rootSchema = null)
+    public function __construct($schemaValue, Schema $rootSchema = null, Schema $parentSchema = null)
     {
-        $this->parentSchema = $rootSchema;
-        $this->propertiesSchema = new Schema($schemaValue, $rootSchema);
+        $this->rootSchema = $rootSchema;
+        $this->propertiesSchema = new Schema($schemaValue, $rootSchema, $parentSchema);
     }
 
 }
