@@ -18,7 +18,6 @@ Therefore one `Constraint` can be an optional flag for another.
 `Transformer` is a special `Constraint` which imports/validates 
 `RawData` to `Structure`.
 
-
 ## Primitive example
 
 ```php
