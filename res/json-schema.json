@@ -137,6 +137,8 @@
                 }
             ]
         },
+        "format": { "type": "string" },
+        "$ref": {"type": "string"},
         "allOf": { "$ref": "#/definitions/schemaArray" },
         "anyOf": { "$ref": "#/definitions/schemaArray" },
         "oneOf": { "$ref": "#/definitions/schemaArray" },
