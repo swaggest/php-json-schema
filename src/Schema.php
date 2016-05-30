@@ -24,6 +24,10 @@ class Schema extends Base implements Transformer, Constraint
 
     public function __construct($schemaValue, Schema $rootSchema = null, Schema $parentSchema = null)
     {
+        if ($schemaValue instanceof Constraint) {
+            $this->constraints[get_class($schemaValue)] = $schemaValue;
+        }
+
         $this->schemaData = $schemaValue;
         $this->rootSchema = $rootSchema ? $rootSchema : $this;
         $this->parentSchema = $parentSchema ? $parentSchema : null;

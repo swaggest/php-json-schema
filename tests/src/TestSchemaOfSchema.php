@@ -2,7 +2,6 @@
 
 namespace Yaoi\Schema\Tests;
 
-
 use Yaoi\Schema\Schema;
 
 class TestSchemaOfSchema extends \PHPUnit_Framework_TestCase
