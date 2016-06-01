@@ -3,7 +3,7 @@
 namespace Yaoi\Schema;
 
 
-interface TypeConstraint
+interface TypeConstraint extends Constraint
 {
 
 }

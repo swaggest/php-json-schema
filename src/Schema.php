@@ -36,7 +36,7 @@ class Schema extends Base implements Transformer, Constraint
             $constraint = null;
             switch ($constraintName) {
                 case Type::TYPE:
-                    $constraint = new Type($constraintData, $this->rootSchema, $this);
+                    $constraint = Type::factory($constraintData, $this->rootSchema, $this);
                     break;
                 case Properties::PROPERTIES:
                     $constraint = new Properties($constraintData, $this->rootSchema, $this);
@@ -60,6 +60,26 @@ class Schema extends Base implements Transformer, Constraint
         foreach ($this->constraints as $constraint) {
             if ($constraint instanceof Transformer) {
                 $data = $constraint->import($data);
+            }
+            elseif ($constraint instanceof Validator) {
+                if (!$constraint->isValid($data)) {
+                    throw new Exception('Validation failed'); // TODO add trace data here
+                }
+            }
+        }
+        return $data;
+    }
+
+    public function export($data)
+    {
+        foreach ($this->constraints as $constraint) {
+            if ($constraint instanceof Transformer) {
+                $data = $constraint->export($data);
+            }
+            elseif ($constraint instanceof Validator) {
+                if (!$constraint->isValid($data)) {
+                    throw new Exception('Validation failed'); // TODO add trace data here
+                }
             }
         }
         return $data;

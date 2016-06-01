@@ -54,5 +54,10 @@ class Ref extends AbstractConstraint implements Transformer, Constraint
         return $this->constraintSchema->import($data);
     }
 
+    public function export($data)
+    {
+        return $this->constraintSchema->export($data);
+    }
+
 
 }
