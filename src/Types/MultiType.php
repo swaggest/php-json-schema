@@ -4,7 +4,7 @@ namespace Yaoi\Schema\Types;
 
 use Yaoi\Schema\Transformer;
 
-// TODO
+// TODO build automatically
 class MultiType extends AbstractType implements Transformer
 {
     private $typeConstraints = array();
