@@ -14,6 +14,10 @@ class ClassStructureTest extends \PHPUnit_Framework_TestCase
         $object = $schema->import(array(
             'propOne' => '1',
             'propTwo' => 2,
+            'recursion' => array(
+                'propOne' => '11',
+                'propTwo' => 22,
+            )
         ));
         print_r($object);
     }

@@ -3,6 +3,7 @@
 namespace Yaoi\Schema\Tests\Helper;
 
 
+use Yaoi\Schema\Schema;
 use Yaoi\Schema\Structure\ClassProperties;
 use Yaoi\Schema\Structure\ClassStructure;
 use Yaoi\Schema\Types\IntegerType;
@@ -19,10 +20,10 @@ class SampleStructure extends ClassStructure
     /**
      * @param ClassProperties|static $properties
      */
-    public static function setUpProperties($properties)
+    public static function setUpProperties($properties, Schema $schema)
     {
         $properties->propOne = StringType::create();
         $properties->propTwo = IntegerType::create();
-        //$properties->recursion = SampleStructure::makeSchema();
+        $properties->recursion = $schema;
     }
 }
