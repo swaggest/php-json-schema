@@ -4,6 +4,11 @@ namespace Yaoi\Schema\Structure;
 
 use Yaoi\Schema\Schema;
 
+/**
+ * Class ClassProperties
+ * @package Yaoi\Schema\Structure
+ * @deprecated 
+ */
 class ClassProperties
 {
 

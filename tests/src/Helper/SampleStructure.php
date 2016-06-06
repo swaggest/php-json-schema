@@ -11,6 +11,7 @@ use Yaoi\Schema\Types\StringType;
 /**
  * @property $propOne
  * @property $propTwo
+ * @property $recursion
  */
 class SampleStructure extends ClassStructure
 {
@@ -22,5 +23,6 @@ class SampleStructure extends ClassStructure
     {
         $properties->propOne = StringType::create();
         $properties->propTwo = IntegerType::create();
+        //$properties->recursion = SampleStructure::makeSchema();
     }
 }

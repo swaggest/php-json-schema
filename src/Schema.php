@@ -5,19 +5,15 @@ namespace Yaoi\Schema;
 
 use Yaoi\Schema\Logic\AllOf;
 
+/**
+ * @method static Schema create($schemaValue = null, Schema $parentSchema = null)
+ */
 class Schema extends Base implements Transformer
 {
     /**
      * @var Constraint[]
      */
     public $constraints = array();
-
-    /**
-     * @var null|Schema
-     * @deprecated
-     * @todo use recursive parent
-     */
-    private $rootSchema;
 
     /**
      * @var null|Schema
@@ -42,6 +38,11 @@ class Schema extends Base implements Transformer
     {
         return $this->parentSchema;
     }
+    
+    public function setParentSchema(Schema $parentSchema)
+    {
+        $this->parentSchema = $parentSchema;
+    }
 
 
     /**
@@ -65,11 +66,11 @@ class Schema extends Base implements Transformer
         }
 
         if ($schemaValue instanceof Constraint) {
-            $this->constraints[get_class($schemaValue)] = $schemaValue;
+            $this->setConstraint($schemaValue);
+            return;
         }
 
         $this->schemaData = $schemaValue;
-        //$this->rootSchema = $rootSchema ? $rootSchema : $this;
         $this->parentSchema = $parentSchema ? $parentSchema : null;
 
         foreach ($schemaValue as $constraintName => $constraintData) {
@@ -92,9 +93,16 @@ class Schema extends Base implements Transformer
                     break;
             }
             if (null !== $constraint) {
-                $this->constraints[get_class($constraint)] = $constraint;
+                $this->setConstraint($constraint);
             }
         }
+    }
+
+    public function setConstraint(Constraint $constraint)
+    {
+        $this->constraints[get_class($constraint)] = $constraint;
+        $constraint->setOwnerSchema($this);
+        return $this;
     }
 
 

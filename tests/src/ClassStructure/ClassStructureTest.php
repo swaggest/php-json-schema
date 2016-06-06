@@ -9,9 +9,13 @@ class ClassStructureTest extends \PHPUnit_Framework_TestCase
 {
     public function testSample()
     {
-        return;
         $schema = SampleStructure::makeSchema();
-        $object = $schema->import();
+        print_r($schema);
+        $object = $schema->import(array(
+            'propOne' => '1',
+            'propTwo' => 2,
+        ));
+        print_r($object);
     }
     
     
