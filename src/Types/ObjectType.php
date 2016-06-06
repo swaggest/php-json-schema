@@ -8,6 +8,8 @@ use Yaoi\Schema\Transformer;
 
 class ObjectType extends AbstractType implements Transformer
 {
+    const TYPE_OBJECT = 'object';
+
     public function import($data)
     {
         if (!is_array($data)) {
@@ -15,7 +17,7 @@ class ObjectType extends AbstractType implements Transformer
         }
 
         $result = new \stdClass();
-        if ($properties = Properties::getFromSchema($this->parentSchema)) {
+        if ($properties = Properties::getFromSchema($this->ownerSchema)) {
             foreach ($properties->properties as $name => $property) {
                 if (isset($data[$name])) {
                     $result->$name = $property->import($data[$name]);
@@ -24,7 +26,7 @@ class ObjectType extends AbstractType implements Transformer
             }
         }
 
-        if ($additionalProperties = AdditionalProperties::getFromSchema($this->parentSchema)) {
+        if ($additionalProperties = AdditionalProperties::getFromSchema($this->ownerSchema)) {
             foreach ($data as $name => $value) {
                 $result->$name = $additionalProperties->propertiesSchema->import($value);
                 unset($data[$name]);
@@ -42,7 +44,7 @@ class ObjectType extends AbstractType implements Transformer
     {
         $result = array();
         $data = (array)$data;
-        if ($properties = Properties::getFromSchema($this->parentSchema)) {
+        if ($properties = Properties::getFromSchema($this->ownerSchema)) {
             foreach ($properties->properties as $name => $property) {
                 if (isset($data[$name])) {
                     $result[$name] = $property->export($data[$name]);
@@ -51,7 +53,7 @@ class ObjectType extends AbstractType implements Transformer
             }
         }
 
-        if ($additionalProperties = AdditionalProperties::getFromSchema($this->parentSchema)) {
+        if ($additionalProperties = AdditionalProperties::getFromSchema($this->ownerSchema)) {
             foreach ($data as $name => $value) {
                 $result[$name] = $additionalProperties->propertiesSchema->export($value);
                 unset($data[$name]);

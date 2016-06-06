@@ -5,7 +5,7 @@ namespace Yaoi\Schema\Tests;
 
 use Yaoi\Schema\Schema;
 
-class TestAdditionalProperties extends \PHPUnit_Framework_TestCase
+class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testBasic()

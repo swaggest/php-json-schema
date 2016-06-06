@@ -4,6 +4,15 @@
 
 `Schema` is a main unit of structured data. 
 It holds a set of `Constraint` (can be empty).
+Empty `Schema` can be created.
+`Schema` MAY have root `Schema`.
+`Schema` MAY have parent `Schema`.
+
+`Schema` can be built from json decoded structure.
+Parent and root need to be propagated to all children `(?)`.
+
+(fuck root, only having parent no propagation)
+
 
 ## `Constraint`
 

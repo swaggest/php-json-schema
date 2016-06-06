@@ -5,33 +5,24 @@ namespace Yaoi\Schema;
 
 class Ref extends AbstractConstraint implements Transformer, Constraint
 {
-    const REF = '$ref';
+    const KEY = '$ref';
 
     public $ref;
 
     /** @var Schema */
-    public $rootSchema;
-
-    /** @var Schema */
-    private $parentSchema;
-
-    /** @var Schema */
     public $constraintSchema;
     
-    public function __construct($schemaValue, Schema $rootSchema = null, Schema $parentSchema = null)
+    public function __construct($schemaValue, Schema $ownerSchema = null)
     {
         $this->ref = $schemaValue;
-        $this->rootSchema = $rootSchema;
-        $this->parentSchema = $parentSchema;
-
         if ($this->ref === '#') {
-            $this->constraintSchema = $rootSchema;
+            $this->constraintSchema = $ownerSchema->getRootSchema();
             return;
         }
 
         if ($this->ref[0] === '#') {
             $path = explode('/', trim($this->ref, '#/'));
-            $schemaData = $rootSchema->getSchemaData();
+            $schemaData = $ownerSchema->getRootSchema()->getSchemaData();
             $branch = &$schemaData;
             while ($path) {
                 $folder = array_shift($path);
@@ -42,7 +33,7 @@ class Ref extends AbstractConstraint implements Transformer, Constraint
                     throw new \Exception('Could not resolve ' . $this->ref . ', ' . $folder);
                 }
             }
-            $this->constraintSchema = new Schema($branch, $this->rootSchema);
+            $this->constraintSchema = new Schema($branch, $ownerSchema);
             return;
         }
 

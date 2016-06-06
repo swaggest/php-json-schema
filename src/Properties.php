@@ -5,21 +5,24 @@ namespace Yaoi\Schema;
 
 class Properties extends AbstractConstraint implements Constraint
 {
-    const PROPERTIES = 'properties';
-    
+    const KEY = 'properties';
+
     /**
      * @var Schema[]
      */
     public $properties;
-    private $rootSchema;
-    private $parentSchema;
 
-    public function __construct($data, Schema $rootSchema = null, Schema $parentSchema = null)
+    public function __construct($properties, Schema $ownerSchema)
     {
-        $this->rootSchema = $rootSchema;
-        $this->parentSchema = $parentSchema;
-        foreach ($data as $name => $schemaData) {
-            $this->properties[$name] = new Schema($schemaData, $rootSchema, $parentSchema);
+        foreach ($properties as $name => $schemaData) {
+            $this->properties[$name] = new Schema($schemaData, $ownerSchema);
         }
+    }
+
+    public function getProperty($name)
+    {
+        return isset($this->properties[$name])
+            ? $this->properties[$name]
+            : null;
     }
 }

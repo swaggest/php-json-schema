@@ -3,16 +3,46 @@
 namespace Yaoi\Schema;
 
 
-class Schema extends Base implements Transformer, Constraint
+use Yaoi\Schema\Logic\AllOf;
+
+class Schema extends Base implements Transformer
 {
     /**
      * @var Constraint[]
      */
     public $constraints = array();
+
+    /**
+     * @var null|Schema
+     * @deprecated
+     * @todo use recursive parent
+     */
     private $rootSchema;
+
+    /**
+     * @var null|Schema
+     */
     private $parentSchema;
 
     private $schemaData;
+
+    /**
+     * @return null|Schema
+     */
+    public function getRootSchema()
+    {
+        $rootSchema = $this;
+        while ($rootSchema->parentSchema && $rootSchema->parentSchema !== $rootSchema) {
+            $rootSchema = $rootSchema->parentSchema;
+        }
+        return $rootSchema;
+    }
+
+    public function getParentSchema()
+    {
+        return $this->parentSchema;
+    }
+
 
     /**
      * @return array
@@ -22,30 +52,43 @@ class Schema extends Base implements Transformer, Constraint
         return $this->schemaData;
     }
 
-    public function __construct($schemaValue, Schema $rootSchema = null, Schema $parentSchema = null)
+    /**
+     * Schema constructor.
+     * @param array|Constraint $schemaValue
+     * @param Schema|null $parentSchema
+     * @throws Exception
+     */
+    public function __construct($schemaValue = null, Schema $parentSchema = null)
     {
+        if (null === $schemaValue) {
+            return;
+        }
+
         if ($schemaValue instanceof Constraint) {
             $this->constraints[get_class($schemaValue)] = $schemaValue;
         }
 
         $this->schemaData = $schemaValue;
-        $this->rootSchema = $rootSchema ? $rootSchema : $this;
+        //$this->rootSchema = $rootSchema ? $rootSchema : $this;
         $this->parentSchema = $parentSchema ? $parentSchema : null;
 
         foreach ($schemaValue as $constraintName => $constraintData) {
             $constraint = null;
             switch ($constraintName) {
-                case Type::TYPE:
-                    $constraint = Type::factory($constraintData, $this->rootSchema, $this);
+                case Type::KEY:
+                    $constraint = Type::factory($constraintData, $this);
                     break;
-                case Properties::PROPERTIES:
-                    $constraint = new Properties($constraintData, $this->rootSchema, $this);
+                case Properties::KEY:
+                    $constraint = new Properties($constraintData, $this);
                     break;
-                case AdditionalProperties::ADDITIONAL_PROPERTIES:
-                    $constraint = new AdditionalProperties($constraintData, $this->rootSchema, $this);
+                case AdditionalProperties::KEY:
+                    $constraint = new AdditionalProperties($constraintData, $this);
                     break;
-                case Ref::REF:
-                    $constraint = new Ref($constraintData, $this->rootSchema, $this);
+                case Ref::KEY:
+                    $constraint = new Ref($constraintData, $this);
+                    break;
+                case AllOf::KEY:
+                    $constraint = new AllOf($constraintData, $this);
                     break;
             }
             if (null !== $constraint) {

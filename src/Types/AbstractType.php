@@ -4,21 +4,19 @@ namespace Yaoi\Schema\Types;
 
 use Yaoi\Schema\AbstractConstraint;
 use Yaoi\Schema\Schema;
+use Yaoi\Schema\Type;
 use Yaoi\Schema\TypeConstraint;
 
 class AbstractType extends AbstractConstraint implements TypeConstraint
 {
-    public $type;
-    /** @var Schema */
-    public $rootSchema;
-    /** @var Schema */
-    protected $parentSchema;
-
-    public function __construct($schemaValue, Schema $rootSchema = null, Schema $parentSchema = null)
+    public function __construct(Schema $ownerSchema = null)
     {
-        $this->type = $schemaValue;
-        $this->rootSchema = $rootSchema;
-        $this->parentSchema = $parentSchema;
+        $this->ownerSchema = $ownerSchema;
+    }
+
+    public static function makeSchema()
+    {
+        return new Schema(array(Type::KEY => StringType::TYPE_STRING));
     }
 
 

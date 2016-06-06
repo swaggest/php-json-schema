@@ -7,6 +7,8 @@ use Yaoi\Schema\Transformer;
 
 class ArrayType extends AbstractType implements Transformer
 {
+    const TYPE_ARRAY = 'array';
+
     public function import($data)
     {
         if (!is_array($data)) {
