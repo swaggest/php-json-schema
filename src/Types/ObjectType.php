@@ -3,6 +3,7 @@
 namespace Yaoi\Schema\Types;
 
 use Yaoi\Schema\AdditionalProperties;
+use Yaoi\Schema\Exception;
 use Yaoi\Schema\Properties;
 use Yaoi\Schema\Transformer;
 
@@ -20,7 +21,13 @@ class ObjectType extends AbstractType implements Transformer
         if ($properties = Properties::getFromSchema($this->ownerSchema)) {
             foreach ($properties->properties as $name => $property) {
                 if (isset($data[$name])) {
-                    $result->$name = $property->import($data[$name]);
+                    try {
+                        $result->$name = $property->import($data[$name]);
+                    }
+                    catch (Exception $exception) {
+                        $exception->pushStructureTrace($name);
+                        throw $exception;
+                    }
                     unset($data[$name]);
                 }
             }

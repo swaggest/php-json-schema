@@ -3,12 +3,13 @@
 namespace Yaoi\Schema\Tests\Schema;
 
 
+use Yaoi\Schema\Exception;
 use Yaoi\Schema\Properties;
 use Yaoi\Schema\Schema;
 
 class ParentTest extends \PHPUnit_Framework_TestCase
 {
-    public function testParent()
+    private function deepSchema()
     {
         $schemaValue = array(
             'type' => 'object',
@@ -29,6 +30,12 @@ class ParentTest extends \PHPUnit_Framework_TestCase
             ),
         );
         $schema = new Schema($schemaValue);
+        return $schema;
+    }
+
+    public function testParent()
+    {
+        $schema = $this->deepSchema();
 
         $level1Schema = Properties::getFromSchema($schema)->getProperty('level1');
         $level2Schema = Properties::getFromSchema($level1Schema)->getProperty('level2');
@@ -49,4 +56,36 @@ class ParentTest extends \PHPUnit_Framework_TestCase
         
     }
 
+
+    public function testInvalidImport()
+    {
+        $schema = $this->deepSchema();
+        $this->setExpectedException(get_class(new Exception()), 'Validation failed', Exception::INVALID_VALUE);
+        try {
+            $object = $schema->import(array(
+                'level1'=> array(
+                    'level2' =>array(
+                        'level3' => 'abc' // integer required
+                    ),
+                ),
+            ));
+        }
+        catch (Exception $exception) {
+            $this->assertSame(array('level1', 'level2', 'level3'), $exception->getStructureTrace());
+            throw $exception;
+        }
+        //$this->assertSame('abc', $object->level1->level2->level3);
+    }
+
+    public function testImport()
+    {
+        $object = $this->deepSchema()->import(array(
+            'level1'=> array(
+                'level2' =>array(
+                    'level3' => 123 // integer required
+                ),
+            ),
+        ));
+        $this->assertSame(123, $object->level1->level2->level3);
+    }
 }

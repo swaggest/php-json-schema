@@ -114,7 +114,7 @@ class Schema extends Base implements Transformer
             }
             elseif ($constraint instanceof Validator) {
                 if (!$constraint->isValid($data)) {
-                    throw new Exception('Validation failed'); // TODO add trace data here
+                    throw new Exception('Validation failed', Exception::INVALID_VALUE);
                 }
             }
         }
@@ -129,7 +129,7 @@ class Schema extends Base implements Transformer
             }
             elseif ($constraint instanceof Validator) {
                 if (!$constraint->isValid($data)) {
-                    throw new Exception('Validation failed'); // TODO add trace data here
+                    throw new Exception('Validation failed', Exception::INVALID_VALUE);
                 }
             }
         }
