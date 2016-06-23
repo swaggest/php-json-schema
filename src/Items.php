@@ -3,14 +3,14 @@
 namespace Yaoi\Schema;
 
 
-class AdditionalProperties extends AbstractConstraint implements Constraint
+class Items extends AbstractConstraint implements Constraint
 {
-    const KEY = 'additionalProperties';
+    const KEY = 'items';
 
     /**
      * @var Schema
      */
-    public $propertiesSchema;
+    public $itemsSchema;
 
     public $isAllowed = true;
 
@@ -19,10 +19,11 @@ class AdditionalProperties extends AbstractConstraint implements Constraint
         if (false === $schemaValue) {
             $this->isAllowed = false;
         } elseif (true === $schemaValue) {
-            $this->propertiesSchema = new Schema(array(), $ownerSchema);
+            $this->itemsSchema = new Schema(array(), $ownerSchema);
         } else {
-            $this->propertiesSchema = new Schema($schemaValue, $ownerSchema);
+            $this->itemsSchema = new Schema($schemaValue, $ownerSchema);
         }
     }
+
 
 }

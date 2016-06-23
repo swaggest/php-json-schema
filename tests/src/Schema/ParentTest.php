@@ -60,7 +60,8 @@ class ParentTest extends \PHPUnit_Framework_TestCase
     public function testInvalidImport()
     {
         $schema = $this->deepSchema();
-        $this->setExpectedException(get_class(new Exception()), 'Validation failed', Exception::INVALID_VALUE);
+        $this->setExpectedException(get_class(new Exception()), 'Validation failed (level1->level2->level3)',
+            Exception::INVALID_VALUE);
         try {
             $object = $schema->import(array(
                 'level1'=> array(

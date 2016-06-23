@@ -55,3 +55,9 @@ $structure = new Schema(array(
 $structure->import(123); // Exception
 $structure->import('http://sfsdf.sdfsd/'); // OK
 ```
+
+
+## Solid detection
+
+Use `\stdClass` instead of `array` for `JSON` objects, 
+cast to `array` on iteration

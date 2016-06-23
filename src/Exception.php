@@ -18,8 +18,8 @@ class Exception extends \Exception
 
     public function pushStructureTrace($prefix)
     {
-        $this->message = $this->originalMessage . ' (' . implode('->', $this->structureTrace) . ')';
         array_unshift($this->structureTrace, $prefix);
+        $this->message = $this->originalMessage . ' (' . implode('->', $this->structureTrace) . ')';
     }
 
     public function getStructureTrace()

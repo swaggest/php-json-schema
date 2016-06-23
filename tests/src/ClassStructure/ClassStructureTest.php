@@ -32,8 +32,8 @@ class ClassStructureTest extends \PHPUnit_Framework_TestCase
     public function testSampleInvalid()
     {
         $schema = SampleStructure::makeSchema();
-        $this->setExpectedException(get_class(new Exception()), 'Validation failed');
-        $object = $schema->import(array(
+        $this->setExpectedException(get_class(new Exception()), 'Validation failed (recursion->propOne)');
+        $schema->import(array(
             'propOne' => '1',
             'propTwo' => 2,
             'recursion' => array(
