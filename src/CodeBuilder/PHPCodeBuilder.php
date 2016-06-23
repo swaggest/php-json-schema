@@ -4,7 +4,7 @@ namespace Yaoi\Schema\CodeBuilder;
 
 use Yaoi\Schema\CodeBuilder\Templates\ClassStructurePhp;
 use Yaoi\Schema\Exception;
-use Yaoi\Schema\Properties;
+use Yaoi\Schema\ObjectFlavour\Properties;
 use Yaoi\Schema\Ref;
 use Yaoi\Schema\Schema;
 use Yaoi\Schema\Types\ArrayType;

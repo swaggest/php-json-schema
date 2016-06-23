@@ -21,17 +21,17 @@ class Type
         }
         
         switch ($schemaValue) {
-            case ObjectType::TYPE_OBJECT:
+            case ObjectType::TYPE:
                 return new ObjectType($parentSchema);
-            case StringType::TYPE_STRING:
+            case StringType::TYPE:
                 return new StringType($parentSchema);
-            case IntegerType::TYPE_INTEGER:
+            case IntegerType::TYPE:
                 return new IntegerType($parentSchema);
-            case NumberType::TYPE_NUMBER:
+            case NumberType::TYPE:
                 return new NumberType($parentSchema);
-            case BooleanType::TYPE_BOOLEAN:
+            case BooleanType::TYPE:
                 return new BooleanType($parentSchema);
-            case ArrayType::TYPE_ARRAY:
+            case ArrayType::TYPE:
                 return new ArrayType($parentSchema);
             default:
                 throw new Exception('Unknown type ' . $schemaValue);

@@ -6,7 +6,7 @@ use Yaoi\Schema\Validator;
 
 class StringType extends AbstractType implements Validator, TypeConstraint
 {
-    const TYPE_STRING = 'string';
+    const TYPE = 'string';
 
     public function isValid($data)
     {

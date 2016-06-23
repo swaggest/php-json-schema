@@ -3,7 +3,10 @@
 namespace Yaoi\Schema;
 
 
+use Yaoi\Schema\ArrayFlavour\Items;
 use Yaoi\Schema\Logic\AllOf;
+use Yaoi\Schema\ObjectFlavour\AdditionalProperties;
+use Yaoi\Schema\ObjectFlavour\Properties;
 
 /**
  * @method static Schema create($schemaValue = null, Schema $parentSchema = null)
@@ -84,6 +87,9 @@ class Schema extends Base implements Transformer
                     break;
                 case AdditionalProperties::KEY:
                     $constraint = new AdditionalProperties($constraintData, $this);
+                    break;
+                case Items::KEY:
+                    $constraint = new Items($constraintData, $this);
                     break;
                 case Ref::KEY:
                     $constraint = new Ref($constraintData, $this);

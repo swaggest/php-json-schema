@@ -3,7 +3,7 @@
 namespace Yaoi\Schema\Structure;
 
 use Yaoi\Schema\Base;
-use Yaoi\Schema\Properties;
+use Yaoi\Schema\ObjectFlavour\Properties;
 use Yaoi\Schema\Schema;
 use Yaoi\Schema\Types\ObjectType;
 

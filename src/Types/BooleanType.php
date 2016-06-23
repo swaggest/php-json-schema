@@ -6,7 +6,7 @@ use Yaoi\Schema\Validator;
 
 class BooleanType extends AbstractType implements Validator
 {
-    const TYPE_BOOLEAN = 'boolean';
+    const TYPE = 'boolean';
 
     public function isValid($data)
     {

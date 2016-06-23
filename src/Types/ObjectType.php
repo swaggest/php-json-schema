@@ -2,14 +2,14 @@
 
 namespace Yaoi\Schema\Types;
 
-use Yaoi\Schema\AdditionalProperties;
+use Yaoi\Schema\ObjectFlavour\AdditionalProperties;
 use Yaoi\Schema\Exception;
-use Yaoi\Schema\Properties;
+use Yaoi\Schema\ObjectFlavour\Properties;
 use Yaoi\Schema\Transformer;
 
 class ObjectType extends AbstractType implements Transformer
 {
-    const TYPE_OBJECT = 'object';
+    const TYPE = 'object';
 
     public function import($data)
     {

@@ -1,9 +1,12 @@
 <?php
 
-namespace Yaoi\Schema;
+namespace Yaoi\Schema\ArrayFlavour;
 
 
-class Items extends AbstractConstraint implements Constraint
+use Yaoi\Schema\AbstractConstraint;
+use Yaoi\Schema\Schema;
+
+class Items extends AbstractConstraint
 {
     const KEY = 'items';
 

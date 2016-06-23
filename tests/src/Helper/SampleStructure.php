@@ -15,7 +15,7 @@ use Yaoi\Schema\Types\StringType;
 class SampleStructure extends ClassStructure
 {
     /**
-     * @param \Yaoi\Schema\Properties|static $properties
+     * @param \Yaoi\Schema\ObjectFlavour\Properties|static $properties
      * @param Schema $schema
      */
     public static function setUpProperties($properties, Schema $schema)

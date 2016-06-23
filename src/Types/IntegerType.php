@@ -6,7 +6,7 @@ use Yaoi\Schema\Validator;
 
 class IntegerType extends AbstractType implements Validator
 {
-    const TYPE_INTEGER = 'integer';
+    const TYPE = 'integer';
 
     public function isValid($data)
     {

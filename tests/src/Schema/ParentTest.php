@@ -4,7 +4,7 @@ namespace Yaoi\Schema\Tests\Schema;
 
 
 use Yaoi\Schema\Exception;
-use Yaoi\Schema\Properties;
+use Yaoi\Schema\ObjectFlavour\Properties;
 use Yaoi\Schema\Schema;
 
 class ParentTest extends \PHPUnit_Framework_TestCase

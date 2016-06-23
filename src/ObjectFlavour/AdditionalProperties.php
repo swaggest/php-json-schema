@@ -1,7 +1,11 @@
 <?php
 
-namespace Yaoi\Schema;
+namespace Yaoi\Schema\ObjectFlavour;
 
+
+use Yaoi\Schema\AbstractConstraint;
+use Yaoi\Schema\Constraint;
+use Yaoi\Schema\Schema;
 
 class AdditionalProperties extends AbstractConstraint implements Constraint
 {
