@@ -33,9 +33,6 @@ class ParentTest extends \PHPUnit_Framework_TestCase
         return $schema;
     }
 
-
-
-
     private function assertSchema(Schema $schema)
     {
         $level1Schema = Properties::getFromSchema($schema)->getProperty('level1');
