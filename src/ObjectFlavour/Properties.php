@@ -36,6 +36,11 @@ class Properties extends AbstractConstraint implements Constraint
     }
 
 
+    public function setProperty($name, $value)
+    {
+        return $this->__set($name, $value);
+    }
+
     public function __set($name, $value)
     {
         if ($value instanceof Constraint) {
@@ -45,6 +50,7 @@ class Properties extends AbstractConstraint implements Constraint
         }
 
         $this->properties[$name] = $value;
+        return $this;
     }
 
     public function __get($name)

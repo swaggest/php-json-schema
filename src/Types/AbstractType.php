@@ -18,7 +18,7 @@ class AbstractType extends AbstractConstraint implements TypeConstraint
     }
 
     /**
-     * @param Constraint $constraint
+     * @param Constraint ...$constraint
      * @return Schema
      */
     public static function makeSchema($constraint = null)

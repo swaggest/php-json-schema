@@ -2,7 +2,6 @@
 
 namespace Yaoi\Schema\ArrayFlavour;
 
-
 use Yaoi\Schema\AbstractConstraint;
 use Yaoi\Schema\Schema;
 

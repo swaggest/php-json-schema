@@ -6,6 +6,8 @@ namespace Yaoi\Schema\Tests\Schema;
 use Yaoi\Schema\Exception;
 use Yaoi\Schema\ObjectFlavour\Properties;
 use Yaoi\Schema\Schema;
+use Yaoi\Schema\Types\IntegerType;
+use Yaoi\Schema\Types\ObjectType;
 
 class ParentTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,10 +35,33 @@ class ParentTest extends \PHPUnit_Framework_TestCase
         return $schema;
     }
 
-    public function testParent()
-    {
-        $schema = $this->deepSchema();
 
+    private function deepSchemaSymbolic()
+    {
+        $schema = ObjectType::makeSchema(
+            Properties::create()
+                ->setProperty(
+                    'level1',
+                    ObjectType::makeSchema(
+                        Properties::create()
+                            ->setProperty(
+                                'level2',
+                                ObjectType::makeSchema(
+                                    Properties::create()
+                                        ->setProperty(
+                                            'level3',
+                                            IntegerType::makeSchema()
+                                        )
+                                )
+                            )
+                    )
+                )
+        );
+        return $schema;
+    }
+
+    private function assertSchema(Schema $schema)
+    {
         $level1Schema = Properties::getFromSchema($schema)->getProperty('level1');
         $level2Schema = Properties::getFromSchema($level1Schema)->getProperty('level2');
         $level3Schema = Properties::getFromSchema($level2Schema)->getProperty('level3');
@@ -48,6 +73,12 @@ class ParentTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($schema, $level1Schema->getParentSchema());
         $this->assertSame($level1Schema, $level2Schema->getParentSchema());
         $this->assertSame($level2Schema, $level3Schema->getParentSchema());
+    }
+
+    public function testParent()
+    {
+        $this->assertSchema($this->deepSchema());
+        $this->assertSchema($this->deepSchemaSymbolic());
     }
 
 
@@ -78,6 +109,27 @@ class ParentTest extends \PHPUnit_Framework_TestCase
         //$this->assertSame('abc', $object->level1->level2->level3);
     }
 
+    public function testInvalidImportSymbolic()
+    {
+        $schema = $this->deepSchemaSymbolic();
+        $this->setExpectedException(get_class(new Exception()), 'Validation failed (level1->level2->level3)',
+            Exception::INVALID_VALUE);
+        try {
+            $object = $schema->import(array(
+                'level1' => array(
+                    'level2' => array(
+                        'level3' => 'abc' // integer required
+                    ),
+                ),
+            ));
+        } catch (Exception $exception) {
+            $this->assertSame(array('level1', 'level2', 'level3'), $exception->getStructureTrace());
+            throw $exception;
+        }
+        //$this->assertSame('abc', $object->level1->level2->level3);
+    }
+
+
     public function testImport()
     {
         $object = $this->deepSchema()->import(array(
@@ -89,4 +141,17 @@ class ParentTest extends \PHPUnit_Framework_TestCase
         ));
         $this->assertSame(123, $object->level1->level2->level3);
     }
+
+    public function testImportSymbolic()
+    {
+        $object = $this->deepSchemaSymbolic()->import(array(
+            'level1' => array(
+                'level2' => array(
+                    'level3' => 123 // integer required
+                ),
+            ),
+        ));
+        $this->assertSame(123, $object->level1->level2->level3);
+    }
+
 }
