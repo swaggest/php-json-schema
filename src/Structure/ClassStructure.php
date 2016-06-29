@@ -21,4 +21,25 @@ abstract class ClassStructure extends Base implements ClassStructureContract
         $schema->setConstraint($properties);
         return $schema;
     }
+
+    /**
+     * @param $data
+     * @return static
+     * @throws \Yaoi\Schema\Exception
+     */
+    public static function import($data)
+    {
+        static $schemas = array();
+        return static::makeSchema()->import($data);
+    }
+
+    /**
+     * @param $data
+     * @return mixed
+     * @throws \Yaoi\Schema\Exception
+     */
+    public static function export($data)
+    {
+        return static::makeSchema()->export($data);
+    }
 }

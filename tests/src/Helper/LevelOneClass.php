@@ -7,9 +7,6 @@ use Yaoi\Schema\ObjectFlavour\Properties;
 use Yaoi\Schema\Schema;
 use Yaoi\Schema\Structure\ClassStructure;
 
-/**
- * @method import
- */
 class LevelOneClass extends ClassStructure
 {
     /**

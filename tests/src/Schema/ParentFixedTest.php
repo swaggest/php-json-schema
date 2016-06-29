@@ -16,16 +16,18 @@ class ParentFixedTest extends ParentTest
         return $schema;
     }
 
-    public function testImport()
+    public function testImportClass()
     {
-        $object = $this->deepSchema()->import(array(
+        $data = array(
             'level1' => array(
                 'level2' => array(
                     'level3' => 123 // integer required
                 ),
             ),
-        ));
+        );
+        $object = LevelOneClass::import($data);
         $this->assertSame(123, $object->level1->level2->level3);
+        $this->assertSame($data, LevelOneClass::export($object));
     }
 
 
