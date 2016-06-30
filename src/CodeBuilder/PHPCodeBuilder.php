@@ -18,9 +18,19 @@ class PHPCodeBuilder
 {
     public $namespace;
     public $rootClassName;
+    
 
     public function getSchemaInstantiationCode(Schema $schema)
     {
+        foreach ($schema->getConstraints() as $constraintClass => $constraint) {
+            
+        }
+        
+        switch (true) {
+            case StringType::getFromSchema($schema):
+                return StringType::className() . '::makeSchema(' . ');';
+        }
+
         if (ObjectType::getFromSchema($schema)) {
             if (Properties::getFromSchema($schema)) {
                 return $this->getClassName($schema) . '::create()';
@@ -36,10 +46,10 @@ class PHPCodeBuilder
 
     }
 
-    public function getPhpDoc(Schema $schema)
+    public function getPhpDocType(Schema $schema)
     {
         if ($ref = Ref::getFromSchema($schema)) {
-            return $this->getPhpDoc($ref->constraintSchema);
+            return $this->getPhpDocType($ref->constraintSchema);
         }
 
         switch (true) {
@@ -53,6 +63,9 @@ class PHPCodeBuilder
                 return 'bool';
             case ArrayType::getFromSchema($schema):
                 return 'array'; // @todo resolve item
+            case ObjectType::getFromSchema($schema):
+                $this->resolveObject($schema);
+                return 'object';
         }
 
         //throw new Exception("Please im");
@@ -61,7 +74,20 @@ class PHPCodeBuilder
 
     public $classes = array();
 
-    public function makeClass(Schema $schema, $className) {
+    public function resolveObject(Schema $schema)
+    {
+        if (Properties::getFromSchema($schema)) {
+
+
+        }
+        $path = $schema->getPath();
+        //print_r($path);
+        //print_r($schema->getSchemaData());
+        return;
+    }
+
+    public function makeClass(Schema $schema, $className)
+    {
         if ($objectType = ObjectType::getFromSchema($schema)) {
             if ($properties = Properties::getFromSchema($schema)) {
                 $this->classes[$this->rootClassName] = ClassStructurePhp::create($schema, $this, $className, $this->namespace)->toString();
@@ -69,7 +95,8 @@ class PHPCodeBuilder
         }
     }
 
-    public function getClassName(Schema $schema) {
+    public function getClassName(Schema $schema)
+    {
         $className = $this->rootClassName;
         if (!isset($this->classes[$className])) {
             $this->makeClass($schema, $className);
@@ -126,6 +153,13 @@ class PHPCodeBuilder
         $className = '\\' . implode('\\', $pathItems);
 
         return $className;
+    }
+
+
+    public function storeToDisk($srcPath)
+    {
+        print_r($this->classes);
+        
     }
 
 

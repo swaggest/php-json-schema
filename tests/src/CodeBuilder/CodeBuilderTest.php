@@ -1,7 +1,6 @@
 <?php
 
-namespace Yaoi\Schema\Tests;
-
+namespace Yaoi\Schema\Tests\CodeBuilder;
 
 use Yaoi\Schema\CodeBuilder\PHPCodeBuilder;
 use Yaoi\Schema\Schema;
@@ -10,7 +9,8 @@ class CodeBuilderTest extends \PHPUnit_Framework_TestCase
 {
     public function testJsonSchema()
     {
-        $data = file_get_contents(__DIR__ . '/../../res/json-schema.json');
+        return;
+        $data = file_get_contents(__DIR__ . '/../../../res/json-schema.json');
         $data = json_decode($data, true);
         //print_r($data);
 
@@ -18,9 +18,9 @@ class CodeBuilderTest extends \PHPUnit_Framework_TestCase
         $codeBuilder = new PHPCodeBuilder();
         $codeBuilder->namespace = '\Yaoi\Schema\Tests\Helper\JsonSchema';
         $codeBuilder->rootClassName = 'JsonSchema';
-        //echo $codeBuilder->getSchemaInstantiationCode($schema);
 
-        //print_r($codeBuilder);
+        //$instantiationCode =  $codeBuilder->getSchemaInstantiationCode($schema);
+        //$this->assertSame('JsonSchema::create()', $instantiationCode);
+        //$codeBuilder->storeToDisk(__DIR__ . '/../Helper/');
     }
-
 }

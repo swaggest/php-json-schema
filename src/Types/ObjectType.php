@@ -5,6 +5,7 @@ namespace Yaoi\Schema\Types;
 use Yaoi\Schema\ObjectFlavour\AdditionalProperties;
 use Yaoi\Schema\Exception;
 use Yaoi\Schema\ObjectFlavour\Properties;
+use Yaoi\Schema\Schema;
 use Yaoi\Schema\Transformer;
 
 class ObjectType extends AbstractType implements Transformer
@@ -25,7 +26,7 @@ class ObjectType extends AbstractType implements Transformer
                         $result->$name = $property->import($data[$name]);
                     }
                     catch (Exception $exception) {
-                        $exception->pushStructureTrace($name);
+                        $exception->pushStructureTrace('Properties:' . $name);
                         throw $exception;
                     }
                     unset($data[$name]);
@@ -35,7 +36,13 @@ class ObjectType extends AbstractType implements Transformer
 
         if ($additionalProperties = AdditionalProperties::getFromSchema($this->ownerSchema)) {
             foreach ($data as $name => $value) {
-                $result->$name = $additionalProperties->propertiesSchema->import($value);
+                try {
+                    $result->$name = $additionalProperties->propertiesSchema->import($value);
+                }
+                catch (Exception $exception) {
+                    $exception->pushStructureTrace('AdditionalProperties:' . $name);
+                    throw $exception;
+                }
                 unset($data[$name]);
             }
         }

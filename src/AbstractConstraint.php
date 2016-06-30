@@ -5,6 +5,8 @@ namespace Yaoi\Schema;
 
 abstract class AbstractConstraint extends Base implements Constraint
 {
+    const KEY = '';
+
     /** @var Schema */
     protected $ownerSchema;
 

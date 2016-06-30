@@ -2,13 +2,13 @@
 
 namespace Yaoi\Schema\ObjectFlavour;
 
-
 use Yaoi\Schema\AbstractConstraint;
 use Yaoi\Schema\Constraint;
 use Yaoi\Schema\Exception;
 use Yaoi\Schema\Schema;
+use Yaoi\Schema\Schematic;
 
-class Properties extends AbstractConstraint implements Constraint
+class Properties extends AbstractConstraint implements Schematic
 {
     const KEY = 'properties';
 
@@ -29,8 +29,8 @@ class Properties extends AbstractConstraint implements Constraint
     public function setOwnerSchema(Schema $ownerSchema)
     {
         $this->ownerSchema = $ownerSchema;
-        foreach ($this->properties as $schema) {
-            $schema->setParentSchema($ownerSchema);
+        foreach ($this->properties as $name => $schema) {
+            $schema->setParentSchema($ownerSchema, $name);
         }
         return $this;
     }

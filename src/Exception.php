@@ -26,4 +26,11 @@ class Exception extends \Exception
     {
         return $this->structureTrace;
     }
+
+    public $constraint;
+    public function setConstraint(Constraint $constraint)
+    {
+        $this->constraint = $constraint;
+        return $this;
+    }
 }

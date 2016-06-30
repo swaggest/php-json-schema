@@ -2,6 +2,7 @@
 
 namespace Yaoi\Schema\Tests;
 
+use Yaoi\Schema\ObjectFlavour\Properties;
 use Yaoi\Schema\Schema;
 
 class ReImportTest extends \PHPUnit_Framework_TestCase
@@ -26,6 +27,7 @@ class ReImportTest extends \PHPUnit_Framework_TestCase
         //print_r($data);
 
         $schema = new Schema($data);
+        //print_r(Properties::getFromSchema($schema)->enum);
         $jsonSchema = $schema->import($data);
         //print_r($jsonSchema);
 

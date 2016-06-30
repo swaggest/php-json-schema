@@ -11,7 +11,7 @@ class Ref extends AbstractConstraint implements Transformer, Constraint
 
     /** @var Schema */
     public $constraintSchema;
-    
+
     public function __construct($schemaValue, Schema $ownerSchema = null)
     {
         $this->ref = $schemaValue;
@@ -28,8 +28,7 @@ class Ref extends AbstractConstraint implements Transformer, Constraint
                 $folder = array_shift($path);
                 if (isset($branch[$folder])) {
                     $branch = &$branch[$folder];
-                }
-                else {
+                } else {
                     throw new \Exception('Could not resolve ' . $this->ref . ', ' . $folder);
                 }
             }
@@ -42,12 +41,22 @@ class Ref extends AbstractConstraint implements Transformer, Constraint
 
     public function import($data)
     {
-        return $this->constraintSchema->import($data);
+        try {
+            return $this->constraintSchema->import($data);
+        } catch (Exception $exception) {
+            $exception->pushStructureTrace('Ref:' . $this->ref);
+            throw $exception;
+        }
     }
 
     public function export($data)
     {
-        return $this->constraintSchema->export($data);
+        try {
+            return $this->constraintSchema->export($data);
+        } catch (Exception $exception) {
+            $exception->pushStructureTrace('Ref:' . $this->ref);
+            throw $exception;
+        }
     }
 
 

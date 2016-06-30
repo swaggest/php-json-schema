@@ -36,7 +36,7 @@ class ClassStructurePhp extends Base
 
         if ($properties = Properties::getFromSchema($this->schema)) {
             foreach ($properties->properties as $name => $property) {
-                $phpDocType = $this->codeBuilder->getPhpDoc($property);
+                $phpDocType = $this->codeBuilder->getPhpDocType($property);
                 $result .= <<<PHPDOC
  * @property $phpDocType $$name
 
@@ -45,21 +45,18 @@ PHPDOC;
         }
 
         return $result;
-
     }
 
     public function toString()
     {
         $result = '';
         $phpDocHead = $this->getPhpDocHead();
-        
 
         $result .= /** @lang PHP */<<<PHP
 namespace $this->namespace;
 
 /**
-$phpDocHead
- */
+$phpDocHead */
 class $this->className
 {
     
@@ -68,7 +65,5 @@ class $this->className
 
 PHP;
         return $result;
-
-
     }
 }

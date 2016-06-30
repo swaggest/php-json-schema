@@ -4,6 +4,7 @@ namespace Yaoi\Schema;
 
 
 use Yaoi\Schema\ArrayFlavour\Items;
+use Yaoi\Schema\ArrayFlavour\MinItems;
 use Yaoi\Schema\Logic\AllOf;
 use Yaoi\Schema\ObjectFlavour\AdditionalProperties;
 use Yaoi\Schema\ObjectFlavour\Properties;
@@ -22,6 +23,8 @@ class Schema extends Base implements Transformer
      * @var null|Schema
      */
     private $parentSchema;
+
+    private $parentName;
 
     private $schemaData;
 
@@ -42,11 +45,21 @@ class Schema extends Base implements Transformer
         return $this->parentSchema;
     }
     
-    public function setParentSchema(Schema $parentSchema)
+    public function setParentSchema(Schema $parentSchema, $parentName)
     {
         $this->parentSchema = $parentSchema;
+        $this->parentName = $parentName;
     }
 
+    public function getPath()
+    {
+        $path = array($this->parentName);
+        $parent = &$this;
+        while ($parent = &$parent->parentSchema) {
+            $path[] = $parent->parentName;
+        }
+        return $path;
+    }
 
     /**
      * @return array
@@ -97,6 +110,9 @@ class Schema extends Base implements Transformer
                 case AllOf::KEY:
                     $constraint = new AllOf($constraintData, $this);
                     break;
+                case MinItems::KEY:
+                    $constraint = new MinItems($constraintData);
+                    break;
             }
             if (null !== $constraint) {
                 $this->setConstraint($constraint);
@@ -111,12 +127,19 @@ class Schema extends Base implements Transformer
         return $this;
     }
 
-
+    static public $debug = false;
+    
     public function import($data)
     {
+        if (self::$debug) {
+            print_r($data);
+        }
         foreach ($this->constraints as $constraint) {
             if ($constraint instanceof Transformer) {
                 $data = $constraint->import($data);
+                if (self::$debug) {
+                    var_dump(get_class($constraint), $data);
+                }
             }
             elseif ($constraint instanceof Validator) {
                 if (!$constraint->isValid($data)) {
@@ -153,5 +176,10 @@ class Schema extends Base implements Transformer
             return $this->constraints[$className];
         }
         return null;
+    }
+
+    public function getConstraints()
+    {
+        return $this->constraints;
     }
 }

@@ -4,8 +4,9 @@ namespace Yaoi\Schema\ArrayFlavour;
 
 use Yaoi\Schema\AbstractConstraint;
 use Yaoi\Schema\Schema;
+use Yaoi\Schema\Schematic;
 
-class Items extends AbstractConstraint
+class Items extends AbstractConstraint implements Schematic
 {
     const KEY = 'items';
 
@@ -25,6 +26,13 @@ class Items extends AbstractConstraint
         } else {
             $this->itemsSchema = new Schema($schemaValue, $ownerSchema);
         }
+    }
+
+    public function setOwnerSchema(Schema $ownerSchema)
+    {
+        $this->ownerSchema = $ownerSchema;
+        $this->itemsSchema->setParentSchema($ownerSchema, 'Items');
+        return $this;
     }
 
 
