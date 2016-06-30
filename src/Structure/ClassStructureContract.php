@@ -12,4 +12,5 @@ interface ClassStructureContract
      * @param Schema $ownerSchema
      */
     public static function setUpProperties($properties, Schema $ownerSchema);
+    public static function getAdditionalProperties(Schema $ownerSchema);
 }

@@ -42,4 +42,11 @@ abstract class ClassStructure extends Base implements ClassStructureContract
     {
         return static::makeSchema()->export($data);
     }
+
+    public static function getAdditionalProperties(Schema $ownerSchema)
+    {
+        return null;
+    }
+
+
 }
