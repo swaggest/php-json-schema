@@ -8,11 +8,16 @@ use Yaoi\Schema\Schema;
 use Yaoi\Schema\Type;
 use Yaoi\Schema\TypeConstraint;
 
-class AbstractType extends AbstractConstraint implements TypeConstraint
+abstract class AbstractType implements TypeConstraint
 {
     const TYPE = null;
 
-    public function __construct(Schema $ownerSchema = null)
+    /**
+     * @var Schema
+     */
+    protected $ownerSchema;
+
+    public function __construct(Schema $ownerSchema)
     {
         $this->ownerSchema = $ownerSchema;
     }
@@ -23,7 +28,7 @@ class AbstractType extends AbstractConstraint implements TypeConstraint
      */
     public static function makeSchema($constraint = null)
     {
-        $schema = new Schema(array(Type::KEY => static::TYPE));
+        $schema = new Schema(array(Type::getSchemaKey() => static::TYPE));
         if ($constraint) {
             $constraints = func_get_args();
             foreach ($constraints as $constraintItem) {

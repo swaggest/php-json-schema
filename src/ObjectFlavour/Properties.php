@@ -10,7 +10,10 @@ use Yaoi\Schema\Schematic;
 
 class Properties extends AbstractConstraint implements Schematic
 {
-    const KEY = 'properties';
+    public static function getSchemaKey()
+    {
+        return 'properties';
+    }
 
     /**
      * @var Schema[]

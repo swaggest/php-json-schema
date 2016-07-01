@@ -10,7 +10,7 @@ class StringTest extends \PHPUnit_Framework_TestCase
 {
     public function testString()
     {
-        $schema = new StringType();
+        $schema = StringType::makeSchema();
 
         $this->assertFalse($schema->isValid(123));
         $this->assertTrue($schema->isValid('aaa'));

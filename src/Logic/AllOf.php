@@ -10,7 +10,10 @@ use Yaoi\Schema\Transformer;
 
 class AllOf extends AbstractConstraint implements Transformer, Constraint
 {
-    const KEY = 'allOf';
+    public static function getSchemaKey()
+    {
+        return 'allOf';
+    }
 
     /** @var Schema[] */
     private $composition;

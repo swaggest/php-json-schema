@@ -9,7 +9,10 @@ use Yaoi\Schema\Schematic;
 
 class AdditionalProperties extends AbstractConstraint implements Schematic
 {
-    const KEY = 'additionalProperties';
+    public static function getSchemaKey()
+    {
+        return 'additionalProperties';
+    }
 
     /**
      * @var Schema

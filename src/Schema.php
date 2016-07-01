@@ -92,25 +92,25 @@ class Schema extends Base implements Transformer
         foreach ($schemaValue as $constraintName => $constraintData) {
             $constraint = null;
             switch ($constraintName) {
-                case Type::KEY:
-                    $constraint = Type::factory($constraintData, $this);
+                case Type::getSchemaKey():
+                    $constraint = new Type($constraintData, $this);
                     break;
-                case Properties::KEY:
+                case Properties::getSchemaKey():
                     $constraint = new Properties($constraintData, $this);
                     break;
-                case AdditionalProperties::KEY:
+                case AdditionalProperties::getSchemaKey():
                     $constraint = new AdditionalProperties($constraintData, $this);
                     break;
-                case Items::KEY:
+                case Items::getSchemaKey():
                     $constraint = new Items($constraintData, $this);
                     break;
-                case Ref::KEY:
+                case Ref::getSchemaKey():
                     $constraint = new Ref($constraintData, $this);
                     break;
-                case AllOf::KEY:
+                case AllOf::getSchemaKey():
                     $constraint = new AllOf($constraintData, $this);
                     break;
-                case MinItems::KEY:
+                case MinItems::getSchemaKey():
                     $constraint = new MinItems($constraintData);
                     break;
             }

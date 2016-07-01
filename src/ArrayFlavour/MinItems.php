@@ -9,7 +9,10 @@ use Yaoi\Schema\Validator;
 
 class MinItems extends AbstractConstraint implements Flavour
 {
-    const KEY = 'minItems';
+    public static function getSchemaKey()
+    {
+        return 'minItems';
+    }
 
     /** @var int */
     public $minItems;

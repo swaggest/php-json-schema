@@ -3,6 +3,7 @@
 namespace Yaoi\Schema;
 
 
+use Yaoi\Schema\Types\AbstractType;
 use Yaoi\Schema\Types\ArrayType;
 use Yaoi\Schema\Types\BooleanType;
 use Yaoi\Schema\Types\IntegerType;
@@ -10,9 +11,34 @@ use Yaoi\Schema\Types\NumberType;
 use Yaoi\Schema\Types\ObjectType;
 use Yaoi\Schema\Types\StringType;
 
-class Type
+class Type extends AbstractConstraint implements Transformer
 {
-    const KEY = 'type';
+    public static function getSchemaKey()
+    {
+        return 'type';
+    }
+
+    public function __construct($schemaValue, Schema $ownerSchema = null)
+    {
+        $this->ownerSchema = $ownerSchema;
+        $this->typeHandler = self::factory($schemaValue, $ownerSchema);
+    }
+
+    /**
+     * @var AbstractType
+     */
+    private $typeHandler;
+
+    public function import($data)
+    {
+        return $this->typeHandler->import($data);
+    }
+
+    public function export($data)
+    {
+        return $this->typeHandler->export($data);
+    }
+
 
     public static function factory($schemaValue, Schema $parentSchema = null)
     {
@@ -38,5 +64,7 @@ class Type
         }
     }
 
+    
+    
 
 }

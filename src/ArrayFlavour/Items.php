@@ -8,7 +8,10 @@ use Yaoi\Schema\Schematic;
 
 class Items extends AbstractConstraint implements Schematic
 {
-    const KEY = 'items';
+    public static function getSchemaKey()
+    {
+        return 'items';
+    }
 
     /**
      * @var Schema
