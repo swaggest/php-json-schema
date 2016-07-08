@@ -21,26 +21,48 @@ class Type extends AbstractConstraint implements Transformer
     public function __construct($schemaValue, Schema $ownerSchema = null)
     {
         $this->ownerSchema = $ownerSchema;
-        $this->typeHandler = self::factory($schemaValue, $ownerSchema);
+        if (!is_array($schemaValue)) {
+            $schemaValue = array($schemaValue);
+        }
+        foreach ($schemaValue as $type) {
+            $this->typeHandlers[$type] = self::factory($type, $ownerSchema);
+        }
     }
 
     /**
-     * @var AbstractType
+     * @var AbstractType[]
      */
-    private $typeHandler;
+    private $typeHandlers = array();
 
     public function import($data)
     {
-        return $this->typeHandler->import($data);
+        $lastException = null;
+        foreach ($this->typeHandlers as $typeHandler) {
+            try {
+                return $typeHandler->import($data);
+            }
+            catch (Exception $exception) {
+                $lastException = $exception;
+            }
+        }
+        throw $lastException;
     }
 
     public function export($data)
     {
-        return $this->typeHandler->export($data);
+        $lastException = null;
+        foreach ($this->typeHandlers as $typeHandler) {
+            try {
+                return $typeHandler->export($data);
+            } catch (Exception $exception) {
+                $lastException = $exception;
+            }
+        }
+        throw $lastException;
     }
 
 
-    public static function factory($schemaValue, Schema $parentSchema = null)
+    private static function factory($schemaValue, Schema $parentSchema = null)
     {
         if (is_array($schemaValue)) {
             throw new Exception("Please implement me", Exception::NOT_IMPLEMENTED);
@@ -64,6 +86,12 @@ class Type extends AbstractConstraint implements Transformer
         }
     }
 
+    public function getHandlerByType($type) {
+        if (isset($this->typeHandlers[$type])) {
+            return $this->typeHandlers[$type];
+        }
+        return null;
+    }
     
     
 

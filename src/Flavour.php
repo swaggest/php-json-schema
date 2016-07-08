@@ -2,7 +2,6 @@
 
 namespace Yaoi\Schema;
 
-interface Flavour extends Constraint
+interface Flavour extends Schematic
 {
-    public function __construct($value);
 }

@@ -9,7 +9,6 @@ class CodeBuilderTest extends \PHPUnit_Framework_TestCase
 {
     public function testJsonSchema()
     {
-        return;
         $data = file_get_contents(__DIR__ . '/../../../res/json-schema.json');
         $data = json_decode($data, true);
         //print_r($data);
@@ -19,8 +18,8 @@ class CodeBuilderTest extends \PHPUnit_Framework_TestCase
         $codeBuilder->namespace = '\Yaoi\Schema\Tests\Helper\JsonSchema';
         $codeBuilder->rootClassName = 'JsonSchema';
 
-        //$instantiationCode =  $codeBuilder->getSchemaInstantiationCode($schema);
-        //$this->assertSame('JsonSchema::create()', $instantiationCode);
-        //$codeBuilder->storeToDisk(__DIR__ . '/../Helper/');
+        $instantiationCode =  $codeBuilder->getSchemaInstantiationCode($schema);
+        $this->assertSame('JsonSchema::create()', $instantiationCode);
+        $codeBuilder->storeToDisk(__DIR__ . '/../Helper/');
     }
 }

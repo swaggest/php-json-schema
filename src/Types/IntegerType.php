@@ -2,15 +2,30 @@
 
 namespace Yaoi\Schema\Types;
 
-use Yaoi\Schema\Validator;
+use Yaoi\Schema\Exception;
 
-class IntegerType extends AbstractType implements Validator
+class IntegerType extends AbstractType
 {
     const TYPE = 'integer';
 
-    public function isValid($data)
+    public function import($data)
     {
-        return is_int($data);
+        $this->validate($data);
+        return $data;
+    }
+
+    public function export($data)
+    {
+        $this->validate($data);
+        return $data;
+    }
+
+
+    public function validate($data)
+    {
+        if (!is_int($data)) {
+            throw new Exception('Integer required', Exception::INVALID_VALUE);
+        }
     }
 
 }

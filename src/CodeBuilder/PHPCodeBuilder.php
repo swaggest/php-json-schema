@@ -22,10 +22,6 @@ class PHPCodeBuilder
 
     public function getSchemaInstantiationCode(Schema $schema)
     {
-        foreach ($schema->getConstraints() as $constraintClass => $constraint) {
-            
-        }
-        
         switch (true) {
             case StringType::getFromSchema($schema):
                 return StringType::className() . '::makeSchema(' . ');';

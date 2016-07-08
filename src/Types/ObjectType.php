@@ -7,8 +7,9 @@ use Yaoi\Schema\Exception;
 use Yaoi\Schema\ObjectFlavour\Properties;
 use Yaoi\Schema\Schema;
 use Yaoi\Schema\Transformer;
+use Yaoi\Schema\TypeConstraint;
 
-class ObjectType extends AbstractType implements Transformer
+class ObjectType extends AbstractType
 {
     const TYPE = 'object';
 

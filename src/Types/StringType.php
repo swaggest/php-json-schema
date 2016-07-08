@@ -1,15 +1,28 @@
 <?php
 namespace Yaoi\Schema\Types;
 
-use Yaoi\Schema\TypeConstraint;
-use Yaoi\Schema\Validator;
+use Yaoi\Schema\Exception;
 
-class StringType extends AbstractType implements Validator, TypeConstraint
+class StringType extends AbstractType
 {
     const TYPE = 'string';
 
-    public function isValid($data)
+    public function import($data)
     {
-        return is_string($data);
+        // TODO: Implement import() method.
+    }
+
+    public function export($data)
+    {
+        // TODO: Implement export() method.
+    }
+
+    protected function validate($data)
+    {
+        if (!is_string($data)) {
+            throw new Exception("String required", Exception::INVALID_VALUE);
+        }
+        
+        
     }
 }

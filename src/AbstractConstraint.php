@@ -20,7 +20,7 @@ abstract class AbstractConstraint extends Base implements Constraint
      */
     public static function getFromSchema(Schema $schema)
     {
-        $class = self::className();
+        $class = static::className();
         if (isset($schema->constraints[$class])) {
             return $schema->constraints[$class];
         }

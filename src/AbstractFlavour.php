@@ -3,13 +3,13 @@
 namespace Yaoi\Schema;
 
 
-class AbstractFlavour extends AbstractConstraint implements Flavour
+abstract class AbstractFlavour extends AbstractConstraint implements Flavour
 {
     public $value;
 
-    public function __construct($value)
+    public function __construct($schemaValue, Schema $ownerSchema = null)
     {
-        $this->value = $value;
+        $this->value = $schemaValue;
     }
 
 }
