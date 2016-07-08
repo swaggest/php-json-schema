@@ -57,7 +57,7 @@ class ParentTest extends \PHPUnit_Framework_TestCase
     public function testInvalidImport()
     {
         $schema = $this->deepSchema();
-        $this->setExpectedException(get_class(new Exception()), 'Validation failed (Properties:level1->Properties:level2->Properties:level3)',
+        $this->setExpectedException(get_class(new Exception()), 'Integer required (Properties:level1->Properties:level2->Properties:level3)',
             Exception::INVALID_VALUE);
         try {
             $object = $schema->import(array(

@@ -8,15 +8,6 @@ use Yaoi\Schema\Types\StringType;
 
 class StringTest extends \PHPUnit_Framework_TestCase
 {
-    public function testString()
-    {
-        $schema = StringType::makeSchema();
-
-        $this->assertFalse($schema->isValid(123));
-        $this->assertTrue($schema->isValid('aaa'));
-    }
-
-
     public function testStringSchema()
     {
         $schema = StringType::makeSchema();
@@ -26,7 +17,7 @@ class StringTest extends \PHPUnit_Framework_TestCase
     public function testStringSchemaException()
     {
         $schema = StringType::makeSchema();
-        $this->setExpectedException(get_class(new Exception), 'Validation failed');
+        $this->setExpectedException(get_class(new Exception), 'String required');
         $schema->import(123);
     }
 

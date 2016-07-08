@@ -18,7 +18,7 @@ abstract class ClassStructure extends Base implements ClassStructureContract
         $schema = new Schema();
         $properties = new Properties();
         static::setUpProperties($properties, $schema);
-        $schema->setConstraint(new Type(ObjectType::TYPE));
+        $schema->setConstraint(new Type(ObjectType::TYPE, $schema));
         $schema->setConstraint($properties);
         return $schema;
     }

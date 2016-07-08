@@ -9,12 +9,14 @@ class StringType extends AbstractType
 
     public function import($data)
     {
-        // TODO: Implement import() method.
+        $this->validate($data);
+        return $data;
     }
 
     public function export($data)
     {
-        // TODO: Implement export() method.
+        $this->validate($data);
+        return $data;
     }
 
     protected function validate($data)
