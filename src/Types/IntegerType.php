@@ -4,7 +4,7 @@ namespace Yaoi\Schema\Types;
 
 use Yaoi\Schema\Exception;
 
-class IntegerType extends AbstractType
+class IntegerType extends NumberType
 {
     const TYPE = 'integer';
 
@@ -26,6 +26,8 @@ class IntegerType extends AbstractType
         if (!is_int($data)) {
             throw new Exception('Integer required', Exception::INVALID_VALUE);
         }
+
+        $this->validateFlavours($data);
     }
 
 }

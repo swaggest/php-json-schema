@@ -6,9 +6,12 @@ namespace Yaoi\Schema;
 use Yaoi\Schema\ArrayFlavour\Items;
 use Yaoi\Schema\ArrayFlavour\MinItems;
 use Yaoi\Schema\Logic\AllOf;
+use Yaoi\Schema\NumberFlavour\Minimum;
 use Yaoi\Schema\ObjectFlavour\AdditionalProperties;
 use Yaoi\Schema\ObjectFlavour\Properties;
 use Yaoi\Schema\StringFlavour\Format;
+use Yaoi\Schema\StringFlavour\MaxLength;
+use Yaoi\Schema\StringFlavour\MinLength;
 
 /**
  * @method static Schema create($schemaValue = null, Schema $parentSchema = null)
@@ -176,6 +179,9 @@ class Schema extends Base implements Transformer
             AllOf::getSchemaKey() => AllOf::className(),
             MinItems::getSchemaKey() => MinItems::className(),
             Format::getSchemaKey() => Format::className(),
+            Minimum::getSchemaKey() => Minimum::className(),
+            MinLength::getSchemaKey() => MinLength::className(),
+            MaxLength::getSchemaKey() => MaxLength::className(),
         );
 
     }

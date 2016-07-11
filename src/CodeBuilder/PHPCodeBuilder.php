@@ -4,6 +4,7 @@ namespace Yaoi\Schema\CodeBuilder;
 
 use Yaoi\Schema\CodeBuilder\Templates\ClassStructurePhp;
 use Yaoi\Schema\Exception;
+use Yaoi\Schema\Logic\AllOf;
 use Yaoi\Schema\ObjectFlavour\Properties;
 use Yaoi\Schema\Ref;
 use Yaoi\Schema\Schema;
@@ -44,8 +45,16 @@ class PHPCodeBuilder
 
     public function getPhpDocType(Schema $schema)
     {
+        if (!$contraints = $schema->getConstraints()) {
+            return '';
+        }
+
         if ($ref = Ref::getFromSchema($schema)) {
             return $this->getPhpDocType($ref->constraintSchema);
+        }
+
+        if ($allOf = AllOf::getFromSchema($schema)) {
+            return 'bitch';
         }
 
         switch (true) {
@@ -64,7 +73,9 @@ class PHPCodeBuilder
                 return 'object';
         }
 
-        //throw new Exception("Please im");
+        print_r($schema->getPath());
+        print_r($schema->getSchemaData());
+        throw new Exception("Please im");
         return '';
     }
 

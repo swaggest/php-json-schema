@@ -32,6 +32,9 @@ class AllOf extends AbstractConstraint implements Transformer, Constraint
 
     public function import($data)
     {
+        foreach ($this->composition as $item) {
+
+        }
         // @todo implement
         return $data;
     }
