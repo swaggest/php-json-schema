@@ -4,6 +4,10 @@ namespace Yaoi\Schema;
 
 interface Constraint
 {
+    const P0 = 0;
+    const P1 = 1;
+
+
     public function __construct($schemaValue, Schema $ownerSchema = null);
 
     public static function getSchemaKey();
@@ -17,11 +21,23 @@ interface Constraint
      * Some constraints may alter result, e.g. `Properties` would create object and fill properties values.
      *
      * @param $data
-     * @param $result
+     * @param $entity
      * @return string invalidation reason, false if valid
      */
-    public function importFailed($data, &$result);
+    public function importFailed($data, &$entity);
 
-    public function exportFailed($data);
+    /**
+     *
+     * @param $data
+     * @param $entity
+     * @return mixed
+     */
+    public function exportFailed($data, &$entity);
+
+
+    /**
+     * Constraints have priority, `Properties` first, `AdditionalProperties` after, etc...
+     */
+    public static function getPriority();
 
 }

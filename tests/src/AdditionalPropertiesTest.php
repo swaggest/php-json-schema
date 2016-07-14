@@ -21,7 +21,7 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
         //print_r($schema);
 
         $object = $schema->import(
-            array('one' => 1, 'two' => 2)
+            (object)array('one' => 1, 'two' => 2)
         );
 
         $this->assertSame(1, $object->one);

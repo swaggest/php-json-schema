@@ -85,4 +85,33 @@ class Properties extends AbstractConstraint
         return isset($this->properties[$name]);
     }
 
+    /**
+     * @param $data
+     * @param $result
+     * @return bool
+     */
+    public function importFailed($data, &$result)
+    {
+        $result = new \stdClass();
+
+        foreach ($this->properties as $name => $property) {
+
+
+        }
+
+        return false;
+    }
+
+    public function exportFailed($data, &$entity)
+    {
+        // TODO: Implement exportFailed() method.
+    }
+
+
+    public static function getPriority()
+    {
+        return self::P1;
+    }
+
+
 }

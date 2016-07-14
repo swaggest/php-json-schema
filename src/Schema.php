@@ -108,28 +108,32 @@ class Schema extends Base implements Transformer
 
     public function setConstraint(Constraint $constraint)
     {
-        $this->constraints[get_class($constraint)] = $constraint;
+        $this->constraints[$constraint::getSchemaKey()] = $constraint;
         $constraint->setOwnerSchema($this);
         return $this;
     }
 
     static public $debug = false;
 
-    public function import($data)
+    public function import($data, $deepValidation = false)
     {
         if (self::$debug) {
             print_r($data);
         }
+        $result = $data;
         foreach ($this->constraints as $constraint) {
-            $data = $constraint->import($data);
+            $failReason = $constraint->importFailed($data, $result);
+            if ($failReason && !$deepValidation) {
+                throw new Exception($failReason, Exception::INVALID_VALUE);
+            }
             if (self::$debug) {
                 var_dump(get_class($constraint), $data);
             }
         }
-        return $data;
+        return $result;
     }
 
-    public function export($data)
+    public function export($data, $deepValidation = false)
     {
         foreach ($this->constraints as $constraint) {
             $data = $constraint->export($data);
@@ -163,6 +167,7 @@ class Schema extends Base implements Transformer
         self::$constraintKeys = array(
             Type::getSchemaKey() => Type::className(),
             Properties::getSchemaKey() => Properties::className(),
+            /*
             AdditionalProperties::getSchemaKey() => AdditionalProperties::className(),
             Items::getSchemaKey() => Items::className(),
             Ref::getSchemaKey() => Ref::className(),
@@ -172,6 +177,7 @@ class Schema extends Base implements Transformer
             Minimum::getSchemaKey() => Minimum::className(),
             MinLength::getSchemaKey() => MinLength::className(),
             MaxLength::getSchemaKey() => MaxLength::className(),
+            */
         );
 
     }

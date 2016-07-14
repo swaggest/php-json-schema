@@ -3,98 +3,67 @@
 namespace Yaoi\Schema\Constraint;
 
 use Yaoi\Schema\AbstractConstraint;
-use Yaoi\Schema\Exception;
 use Yaoi\Schema\Schema;
-use Yaoi\Schema\Types\AbstractType;
-use Yaoi\Schema\Types\ArrayType;
-use Yaoi\Schema\Types\BooleanType;
-use Yaoi\Schema\Types\IntegerType;
-use Yaoi\Schema\Types\NumberType;
-use Yaoi\Schema\Types\ObjectType;
-use Yaoi\Schema\Types\StringType;
 
 class Type extends AbstractConstraint
 {
+    const OBJECT = 'object';
+    const STRING = 'string';
+    const INTEGER = 'integer';
+    const NUMBER = 'number';
+    const _ARRAY = 'array';
+    const BOOLEAN = 'boolean';
+    const NULL = 'null';
+
+
     public static function getSchemaKey()
     {
         return 'type';
     }
 
+    private $types;
     public function __construct($schemaValue, Schema $ownerSchema = null)
     {
         $this->ownerSchema = $ownerSchema;
-        if (!is_array($schemaValue)) {
-            $schemaValue = array($schemaValue);
-        }
-        foreach ($schemaValue as $type) {
-            $this->typeHandlers[$type] = self::factory($type, $ownerSchema);
-        }
+        $this->types = is_array($schemaValue) ? $schemaValue : array($schemaValue);
     }
 
-    /**
-     * @var AbstractType[]
-     */
-    private $typeHandlers = array();
-
-    public function import($data)
+    public function importFailed($data, &$entity)
     {
-        $lastException = null;
-        foreach ($this->typeHandlers as $typeHandler) {
-            try {
-                return $typeHandler->import($data);
+        $ok = false;
+        foreach ($this->types as $type) {
+            switch ($type) {
+                case self::OBJECT:
+                    $ok = is_object($data) || is_array($data);break;
+                case self::_ARRAY:
+                    $ok = is_array($data);break;
+                case self::STRING:
+                    $ok = is_string($data);break;
+                case self::INTEGER:
+                    $ok = is_int($data);break;
+                case self::NUMBER:
+                    $ok = is_int($data) || is_float($data);break;
+                case self::BOOLEAN:
+                    $ok = is_bool($data);break;
+                case self::NULL:
+                    $ok = null === $data;break;
             }
-            catch (Exception $exception) {
-                $lastException = $exception;
-            }
-        }
-        throw $lastException;
-    }
-
-    public function export($data)
-    {
-        $lastException = null;
-        foreach ($this->typeHandlers as $typeHandler) {
-            try {
-                return $typeHandler->export($data);
-            } catch (Exception $exception) {
-                $lastException = $exception;
+            if ($ok) {
+                return false;
             }
         }
-        throw $lastException;
+        return 'Wrong type';
     }
 
-
-    private static function factory($schemaValue, Schema $parentSchema = null)
+    public function exportFailed($data, &$entity)
     {
-        if (is_array($schemaValue)) {
-            throw new Exception("Please implement me", Exception::NOT_IMPLEMENTED);
-        }
-        
-        switch ($schemaValue) {
-            case ObjectType::TYPE:
-                return new ObjectType($parentSchema);
-            case StringType::TYPE:
-                return new StringType($parentSchema);
-            case IntegerType::TYPE:
-                return new IntegerType($parentSchema);
-            case NumberType::TYPE:
-                return new NumberType($parentSchema);
-            case BooleanType::TYPE:
-                return new BooleanType($parentSchema);
-            case ArrayType::TYPE:
-                return new ArrayType($parentSchema);
-            default:
-                throw new Exception('Unknown type ' . $schemaValue);
-        }
+        return $this->importFailed($data, $entity);
     }
 
-    public function getHandlerByType($type) {
-        if (isset($this->typeHandlers[$type])) {
-            return $this->typeHandlers[$type];
-        }
-        return null;
+    public static function getPriority()
+    {
+        return self::P0;
     }
-    
-    
+
 
 }
