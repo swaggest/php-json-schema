@@ -2,9 +2,26 @@
 
 namespace Yaoi\Schema;
 
-interface Constraint extends Transformer
+interface Constraint
 {
     public function __construct($schemaValue, Schema $ownerSchema = null);
+
     public static function getSchemaKey();
+
     public function setOwnerSchema(Schema $ownerSchema);
+
+
+    /**
+     * On import raw json data is available to validate against all of constraints.
+     * Constraint stores result in referenced variable (raw data value by default).
+     * Some constraints may alter result, e.g. `Properties` would create object and fill properties values.
+     *
+     * @param $data
+     * @param $result
+     * @return mixed
+     */
+    public function import($data, &$result);
+
+    public function export($data);
+
 }
