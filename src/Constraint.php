@@ -18,10 +18,10 @@ interface Constraint
      *
      * @param $data
      * @param $result
-     * @return mixed
+     * @return string invalidation reason, false if valid
      */
-    public function import($data, &$result);
+    public function importFailed($data, &$result);
 
-    public function export($data);
+    public function exportFailed($data);
 
 }
