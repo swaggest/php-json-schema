@@ -3,15 +3,17 @@
 namespace Yaoi\Schema;
 
 
-use Yaoi\Schema\ArrayFlavour\Items;
-use Yaoi\Schema\ArrayFlavour\MinItems;
-use Yaoi\Schema\Logic\AllOf;
-use Yaoi\Schema\NumberFlavour\Minimum;
-use Yaoi\Schema\ObjectFlavour\AdditionalProperties;
-use Yaoi\Schema\ObjectFlavour\Properties;
-use Yaoi\Schema\StringFlavour\Format;
-use Yaoi\Schema\StringFlavour\MaxLength;
-use Yaoi\Schema\StringFlavour\MinLength;
+use Yaoi\Schema\Constraint\Items;
+use Yaoi\Schema\Constraint\MinItems;
+use Yaoi\Schema\Constraint\Ref;
+use Yaoi\Schema\Constraint\Type;
+use Yaoi\Schema\Constraint\AllOf;
+use Yaoi\Schema\Constraint\Minimum;
+use Yaoi\Schema\Constraint\AdditionalProperties;
+use Yaoi\Schema\Constraint\Properties;
+use Yaoi\Schema\Constraint\Format;
+use Yaoi\Schema\Constraint\MaxLength;
+use Yaoi\Schema\Constraint\MinLength;
 
 /**
  * @method static Schema create($schemaValue = null, Schema $parentSchema = null)
@@ -96,7 +98,7 @@ class Schema extends Base implements Transformer
         foreach ($schemaValue as $constraintName => $constraintData) {
             $constraint = null;
             if (isset(self::$constraintKeys[$constraintName])) {
-                /** @var Schematic $class */
+                /** @var Constraint $class */
                 $class = self::$constraintKeys[$constraintName];
                 $constraint = new $class($constraintData, $this);
                 $this->setConstraint($constraint);
@@ -119,15 +121,9 @@ class Schema extends Base implements Transformer
             print_r($data);
         }
         foreach ($this->constraints as $constraint) {
-            if ($constraint instanceof Transformer) {
-                $data = $constraint->import($data);
-                if (self::$debug) {
-                    var_dump(get_class($constraint), $data);
-                }
-            } elseif ($constraint instanceof Validator) {
-                if (!$constraint->isValid($data)) {
-                    throw new Exception('Validation failed', Exception::INVALID_VALUE);
-                }
+            $data = $constraint->import($data);
+            if (self::$debug) {
+                var_dump(get_class($constraint), $data);
             }
         }
         return $data;
@@ -136,13 +132,7 @@ class Schema extends Base implements Transformer
     public function export($data)
     {
         foreach ($this->constraints as $constraint) {
-            if ($constraint instanceof Transformer) {
-                $data = $constraint->export($data);
-            } elseif ($constraint instanceof Validator) {
-                if (!$constraint->isValid($data)) {
-                    throw new Exception('Validation failed', Exception::INVALID_VALUE);
-                }
-            }
+            $data = $constraint->export($data);
         }
         return $data;
     }

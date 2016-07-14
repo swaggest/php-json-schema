@@ -1,10 +1,10 @@
 <?php
 
-namespace Yaoi\Schema\StringFlavour;
+namespace Yaoi\Schema\Constraint;
 
-use Yaoi\Schema\AbstractFlavour;
+use Yaoi\Schema\AbstractConstraint;
 
-class Format extends AbstractFlavour
+class Format extends AbstractConstraint
 {
     const FORMAT_URI = 'uri';
 

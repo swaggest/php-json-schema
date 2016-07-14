@@ -1,9 +1,13 @@
 <?php
 
-namespace Yaoi\Schema;
+namespace Yaoi\Schema\Constraint;
 
 
-class Ref extends AbstractConstraint implements Transformer, Constraint
+use Yaoi\Schema\AbstractConstraint;
+use Yaoi\Schema\Exception;
+use Yaoi\Schema\Schema;
+
+class Ref extends AbstractConstraint
 {
     public static function getSchemaKey()
     {

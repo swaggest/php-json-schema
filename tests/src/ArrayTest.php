@@ -2,7 +2,7 @@
 
 namespace Yaoi\Schema\Tests;
 
-use Yaoi\Schema\ArrayFlavour\Items;
+use Yaoi\Schema\Constraint\Items;
 use Yaoi\Schema\Schema;
 use Yaoi\Schema\Types\ArrayType;
 use Yaoi\Schema\Types\IntegerType;

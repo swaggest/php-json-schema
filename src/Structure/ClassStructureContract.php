@@ -2,7 +2,7 @@
 
 namespace Yaoi\Schema\Structure;
 
-use Yaoi\Schema\ObjectFlavour\Properties;
+use Yaoi\Schema\Constraint\Properties;
 use Yaoi\Schema\Schema;
 
 interface ClassStructureContract

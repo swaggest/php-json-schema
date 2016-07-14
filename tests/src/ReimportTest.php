@@ -2,7 +2,7 @@
 
 namespace Yaoi\Schema\Tests;
 
-use Yaoi\Schema\ObjectFlavour\Properties;
+use Yaoi\Schema\Constraint\Properties;
 use Yaoi\Schema\Schema;
 
 class ReImportTest extends \PHPUnit_Framework_TestCase

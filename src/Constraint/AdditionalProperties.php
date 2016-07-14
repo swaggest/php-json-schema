@@ -1,13 +1,11 @@
 <?php
 
-namespace Yaoi\Schema\ObjectFlavour;
+namespace Yaoi\Schema\Constraint;
 
 use Yaoi\Schema\AbstractConstraint;
-use Yaoi\Schema\Constraint;
 use Yaoi\Schema\Schema;
-use Yaoi\Schema\Schematic;
 
-class AdditionalProperties extends AbstractConstraint implements Schematic
+class AdditionalProperties extends AbstractConstraint
 {
     public static function getSchemaKey()
     {

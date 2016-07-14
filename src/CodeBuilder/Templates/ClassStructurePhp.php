@@ -5,7 +5,7 @@ namespace Yaoi\Schema\CodeBuilder\Templates;
 
 use Yaoi\Schema\Base;
 use Yaoi\Schema\CodeBuilder\PHPCodeBuilder;
-use Yaoi\Schema\ObjectFlavour\Properties;
+use Yaoi\Schema\Constraint\Properties;
 use Yaoi\Schema\Schema;
 
 /**

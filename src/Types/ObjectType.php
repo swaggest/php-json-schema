@@ -2,12 +2,9 @@
 
 namespace Yaoi\Schema\Types;
 
-use Yaoi\Schema\ObjectFlavour\AdditionalProperties;
+use Yaoi\Schema\Constraint\AdditionalProperties;
 use Yaoi\Schema\Exception;
-use Yaoi\Schema\ObjectFlavour\Properties;
-use Yaoi\Schema\Schema;
-use Yaoi\Schema\Transformer;
-use Yaoi\Schema\TypeConstraint;
+use Yaoi\Schema\Constraint\Properties;
 
 class ObjectType extends AbstractType
 {

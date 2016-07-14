@@ -3,7 +3,7 @@
 namespace Yaoi\Schema\Tests\Schema;
 
 
-use Yaoi\Schema\ObjectFlavour\Properties;
+use Yaoi\Schema\Constraint\Properties;
 use Yaoi\Schema\Types\IntegerType;
 use Yaoi\Schema\Types\ObjectType;
 

@@ -1,8 +1,10 @@
 <?php
 
-namespace Yaoi\Schema;
+namespace Yaoi\Schema\Constraint;
 
-
+use Yaoi\Schema\AbstractConstraint;
+use Yaoi\Schema\Exception;
+use Yaoi\Schema\Schema;
 use Yaoi\Schema\Types\AbstractType;
 use Yaoi\Schema\Types\ArrayType;
 use Yaoi\Schema\Types\BooleanType;
@@ -11,7 +13,7 @@ use Yaoi\Schema\Types\NumberType;
 use Yaoi\Schema\Types\ObjectType;
 use Yaoi\Schema\Types\StringType;
 
-class Type extends AbstractConstraint implements Transformer
+class Type extends AbstractConstraint
 {
     public static function getSchemaKey()
     {

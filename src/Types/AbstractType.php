@@ -2,15 +2,13 @@
 
 namespace Yaoi\Schema\Types;
 
-use Yaoi\Schema\AbstractConstraint;
 use Yaoi\Schema\Base;
 use Yaoi\Schema\Constraint;
 use Yaoi\Schema\Schema;
 use Yaoi\Schema\Transformer;
-use Yaoi\Schema\Type;
-use Yaoi\Schema\TypeConstraint;
+use Yaoi\Schema\Constraint\Type;
 
-abstract class AbstractType extends Base implements TypeConstraint, Transformer
+abstract class AbstractType extends Base implements Transformer
 {
     const TYPE = null;
 

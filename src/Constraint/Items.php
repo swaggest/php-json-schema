@@ -1,12 +1,11 @@
 <?php
 
-namespace Yaoi\Schema\ArrayFlavour;
+namespace Yaoi\Schema\Constraint;
 
 use Yaoi\Schema\AbstractConstraint;
 use Yaoi\Schema\Schema;
-use Yaoi\Schema\Schematic;
 
-class Items extends AbstractConstraint implements Schematic
+class Items extends AbstractConstraint
 {
     public static function getSchemaKey()
     {

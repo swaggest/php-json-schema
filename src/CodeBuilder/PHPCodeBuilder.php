@@ -4,9 +4,9 @@ namespace Yaoi\Schema\CodeBuilder;
 
 use Yaoi\Schema\CodeBuilder\Templates\ClassStructurePhp;
 use Yaoi\Schema\Exception;
-use Yaoi\Schema\Logic\AllOf;
-use Yaoi\Schema\ObjectFlavour\Properties;
-use Yaoi\Schema\Ref;
+use Yaoi\Schema\Constraint\AllOf;
+use Yaoi\Schema\Constraint\Properties;
+use Yaoi\Schema\Constraint\Ref;
 use Yaoi\Schema\Schema;
 use Yaoi\Schema\Types\ArrayType;
 use Yaoi\Schema\Types\BooleanType;

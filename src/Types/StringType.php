@@ -2,9 +2,9 @@
 namespace Yaoi\Schema\Types;
 
 use Yaoi\Schema\Exception;
-use Yaoi\Schema\StringFlavour\MaxLength;
-use Yaoi\Schema\StringFlavour\MinLength;
-use Yaoi\Schema\StringFlavour\Pattern;
+use Yaoi\Schema\Constraint\MaxLength;
+use Yaoi\Schema\Constraint\MinLength;
+use Yaoi\Schema\Constraint\Pattern;
 
 class StringType extends AbstractType
 {
