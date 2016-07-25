@@ -22,6 +22,7 @@ class Type extends AbstractConstraint
     }
 
     private $types;
+
     public function __construct($schemaValue, Schema $ownerSchema = null)
     {
         $this->ownerSchema = $ownerSchema;
@@ -34,19 +35,29 @@ class Type extends AbstractConstraint
         foreach ($this->types as $type) {
             switch ($type) {
                 case self::OBJECT:
-                    $ok = is_object($data) || is_array($data);break;
+                    $ok = is_object($data) || is_array($data);
+                    if ($ok && !is_object($entity)) {
+                        $entity = (object)$entity;
+                    }
+                    break;
                 case self::_ARRAY:
-                    $ok = is_array($data);break;
+                    $ok = is_array($data);
+                    break;
                 case self::STRING:
-                    $ok = is_string($data);break;
+                    $ok = is_string($data);
+                    break;
                 case self::INTEGER:
-                    $ok = is_int($data);break;
+                    $ok = is_int($data);
+                    break;
                 case self::NUMBER:
-                    $ok = is_int($data) || is_float($data);break;
+                    $ok = is_int($data) || is_float($data);
+                    break;
                 case self::BOOLEAN:
-                    $ok = is_bool($data);break;
+                    $ok = is_bool($data);
+                    break;
                 case self::NULL:
-                    $ok = null === $data;break;
+                    $ok = null === $data;
+                    break;
             }
             if ($ok) {
                 return false;
@@ -57,7 +68,39 @@ class Type extends AbstractConstraint
 
     public function exportFailed($data, &$entity)
     {
-        return $this->importFailed($data, $entity);
+        $ok = false;
+        foreach ($this->types as $type) {
+            switch ($type) {
+                case self::OBJECT:
+                    $ok = is_object($data) || is_array($data);
+                    if ($ok && !is_array($entity)) {
+                        $entity = (array)$entity;
+                    }
+                    break;
+                case self::_ARRAY:
+                    $ok = is_array($data);
+                    break;
+                case self::STRING:
+                    $ok = is_string($data);
+                    break;
+                case self::INTEGER:
+                    $ok = is_int($data);
+                    break;
+                case self::NUMBER:
+                    $ok = is_int($data) || is_float($data);
+                    break;
+                case self::BOOLEAN:
+                    $ok = is_bool($data);
+                    break;
+                case self::NULL:
+                    $ok = null === $data;
+                    break;
+            }
+            if ($ok) {
+                return false;
+            }
+        }
+        return 'Wrong type';
     }
 
     public static function getPriority()

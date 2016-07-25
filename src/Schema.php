@@ -135,10 +135,20 @@ class Schema extends Base implements Transformer
 
     public function export($data, $deepValidation = false)
     {
-        foreach ($this->constraints as $constraint) {
-            $data = $constraint->export($data);
+        if (self::$debug) {
+            print_r($data);
         }
-        return $data;
+        $result = $data;
+        foreach ($this->constraints as $constraint) {
+            $failReason = $constraint->exportFailed($data, $result);
+            if ($failReason && !$deepValidation) {
+                throw new Exception($failReason, Exception::INVALID_VALUE);
+            }
+            if (self::$debug) {
+                var_dump(get_class($constraint), $data);
+            }
+        }
+        return $result;
     }
 
 
