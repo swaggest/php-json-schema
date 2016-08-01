@@ -4,6 +4,7 @@ namespace Yaoi\Schema\Constraint;
 
 use Yaoi\Schema\AbstractConstraint;
 use Yaoi\Schema\Schema;
+use Yaoi\Schema\Structure\ObjectItem;
 
 class Type extends AbstractConstraint
 {
@@ -37,7 +38,7 @@ class Type extends AbstractConstraint
                 case self::OBJECT:
                     $ok = is_object($data) || is_array($data);
                     if ($ok && !is_object($entity)) {
-                        $entity = (object)$entity;
+                        $entity = new ObjectItem($data);
                     }
                     break;
                 case self::_ARRAY:
@@ -66,15 +67,15 @@ class Type extends AbstractConstraint
         return 'Wrong type';
     }
 
-    public function exportFailed($data, &$entity)
+    public function exportFailed($entity, &$data)
     {
         $ok = false;
         foreach ($this->types as $type) {
             switch ($type) {
                 case self::OBJECT:
                     $ok = is_object($data) || is_array($data);
-                    if ($ok && !is_array($entity)) {
-                        $entity = (array)$entity;
+                    if ($ok && $entity instanceof ObjectItem) {
+                        $data = $entity->getUnmatchedProperties();
                     }
                     break;
                 case self::_ARRAY:

@@ -16,7 +16,7 @@ class MultiType extends AbstractType
         // TODO: Implement import() method.
     }
 
-    public function export($data)
+    public function export($entity)
     {
         throw new Exception('Implement me');
         // TODO: Implement export() method.
