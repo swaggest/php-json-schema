@@ -7,7 +7,7 @@ use Yaoi\Schema\Exception;
 use Yaoi\Schema\ArrayFlavour\Items;
 use Yaoi\Schema\Transformer;
 
-class ArrayType extends AbstractType implements Transformer
+class ArrayType extends AbstractType
 {
     const TYPE = 'array';
 
@@ -17,8 +17,8 @@ class ArrayType extends AbstractType implements Transformer
             throw new Exception('Array expected');
         }
         if ($minItems = MinItems::getFromSchema($this->ownerSchema)) {
-            if (count($data) < $minItems->minItems) {
-                throw new Exception('Not enough items, ' , $minItems->minItems . ' expected');
+            if (count($data) < $minItems->value) {
+                throw new Exception('Not enough items, ' , $minItems->value . ' expected');
             }
         }
     }

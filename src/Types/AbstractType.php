@@ -3,16 +3,23 @@
 namespace Yaoi\Schema\Types;
 
 use Yaoi\Schema\AbstractConstraint;
+use Yaoi\Schema\Base;
 use Yaoi\Schema\Constraint;
 use Yaoi\Schema\Schema;
+use Yaoi\Schema\Transformer;
 use Yaoi\Schema\Type;
 use Yaoi\Schema\TypeConstraint;
 
-class AbstractType extends AbstractConstraint implements TypeConstraint
+abstract class AbstractType extends Base implements TypeConstraint, Transformer
 {
     const TYPE = null;
 
-    public function __construct(Schema $ownerSchema = null)
+    /**
+     * @var Schema
+     */
+    protected $ownerSchema;
+
+    public function __construct(Schema $ownerSchema)
     {
         $this->ownerSchema = $ownerSchema;
     }
@@ -23,7 +30,7 @@ class AbstractType extends AbstractConstraint implements TypeConstraint
      */
     public static function makeSchema($constraint = null)
     {
-        $schema = new Schema(array(Type::KEY => static::TYPE));
+        $schema = new Schema(array(Type::getSchemaKey() => static::TYPE));
         if ($constraint) {
             $constraints = func_get_args();
             foreach ($constraints as $constraintItem) {
@@ -31,6 +38,15 @@ class AbstractType extends AbstractConstraint implements TypeConstraint
             }
         }
         return $schema;
+    }
+
+    public static function getFromSchema(Schema $schema)
+    {
+        $type = Type::getFromSchema($schema);
+        if (null === $type) {
+            return null;
+        }
+        return $type->getHandlerByType(static::TYPE);
     }
 
 

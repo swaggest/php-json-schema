@@ -5,7 +5,10 @@ namespace Yaoi\Schema;
 
 class Ref extends AbstractConstraint implements Transformer, Constraint
 {
-    const KEY = '$ref';
+    public static function getSchemaKey()
+    {
+        return '$ref';
+    }
 
     public $ref;
 

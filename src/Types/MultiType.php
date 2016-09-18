@@ -6,7 +6,7 @@ use Yaoi\Schema\Exception;
 use Yaoi\Schema\Transformer;
 
 // TODO build automatically
-class MultiType extends AbstractType implements Transformer
+class MultiType extends AbstractType
 {
     private $typeConstraints = array();
 

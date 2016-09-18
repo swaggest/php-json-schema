@@ -3,6 +3,7 @@
 namespace Yaoi\Schema;
 
 
+use Yaoi\Schema\Types\AbstractType;
 use Yaoi\Schema\Types\ArrayType;
 use Yaoi\Schema\Types\BooleanType;
 use Yaoi\Schema\Types\IntegerType;
@@ -10,11 +11,58 @@ use Yaoi\Schema\Types\NumberType;
 use Yaoi\Schema\Types\ObjectType;
 use Yaoi\Schema\Types\StringType;
 
-class Type
+class Type extends AbstractConstraint implements Transformer
 {
-    const KEY = 'type';
+    public static function getSchemaKey()
+    {
+        return 'type';
+    }
 
-    public static function factory($schemaValue, Schema $parentSchema = null)
+    public function __construct($schemaValue, Schema $ownerSchema = null)
+    {
+        $this->ownerSchema = $ownerSchema;
+        if (!is_array($schemaValue)) {
+            $schemaValue = array($schemaValue);
+        }
+        foreach ($schemaValue as $type) {
+            $this->typeHandlers[$type] = self::factory($type, $ownerSchema);
+        }
+    }
+
+    /**
+     * @var AbstractType[]
+     */
+    private $typeHandlers = array();
+
+    public function import($data)
+    {
+        $lastException = null;
+        foreach ($this->typeHandlers as $typeHandler) {
+            try {
+                return $typeHandler->import($data);
+            }
+            catch (Exception $exception) {
+                $lastException = $exception;
+            }
+        }
+        throw $lastException;
+    }
+
+    public function export($data)
+    {
+        $lastException = null;
+        foreach ($this->typeHandlers as $typeHandler) {
+            try {
+                return $typeHandler->export($data);
+            } catch (Exception $exception) {
+                $lastException = $exception;
+            }
+        }
+        throw $lastException;
+    }
+
+
+    private static function factory($schemaValue, Schema $parentSchema = null)
     {
         if (is_array($schemaValue)) {
             throw new Exception("Please implement me", Exception::NOT_IMPLEMENTED);
@@ -38,5 +86,13 @@ class Type
         }
     }
 
+    public function getHandlerByType($type) {
+        if (isset($this->typeHandlers[$type])) {
+            return $this->typeHandlers[$type];
+        }
+        return null;
+    }
+    
+    
 
 }

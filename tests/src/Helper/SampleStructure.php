@@ -20,8 +20,8 @@ class SampleStructure extends ClassStructure
      */
     public static function setUpProperties($properties, Schema $schema)
     {
-        $properties->propOne = StringType::create();
-        $properties->propTwo = IntegerType::create();
+        $properties->propOne = StringType::makeSchema();
+        $properties->propTwo = IntegerType::makeSchema();
         $properties->recursion = $schema;
     }
 }

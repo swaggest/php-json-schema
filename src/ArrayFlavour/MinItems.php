@@ -3,25 +3,13 @@
 namespace Yaoi\Schema\ArrayFlavour;
 
 
-use Yaoi\Schema\AbstractConstraint;
+use Yaoi\Schema\AbstractFlavour;
 use Yaoi\Schema\Flavour;
-use Yaoi\Schema\Validator;
 
-class MinItems extends AbstractConstraint implements Flavour
+class MinItems extends AbstractFlavour implements Flavour
 {
-    const KEY = 'minItems';
-
-    /** @var int */
-    public $minItems;
-    public function __construct($minItems)
+    public static function getSchemaKey()
     {
-        $this->minItems = $minItems;
+        return 'minItems';
     }
-
-
-    public function isValid($data)
-    {
-        return count($data) >= $this->minItems;
-    }
-
 }

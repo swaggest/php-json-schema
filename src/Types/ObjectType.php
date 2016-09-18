@@ -7,8 +7,9 @@ use Yaoi\Schema\Exception;
 use Yaoi\Schema\ObjectFlavour\Properties;
 use Yaoi\Schema\Schema;
 use Yaoi\Schema\Transformer;
+use Yaoi\Schema\TypeConstraint;
 
-class ObjectType extends AbstractType implements Transformer
+class ObjectType extends AbstractType
 {
     const TYPE = 'object';
 
@@ -26,7 +27,7 @@ class ObjectType extends AbstractType implements Transformer
                         $result->$name = $property->import($data[$name]);
                     }
                     catch (Exception $exception) {
-                        $exception->pushStructureTrace('Properties:' . $name);
+                        $exception->pushStructureTrace('properties:' . $name);
                         throw $exception;
                     }
                     unset($data[$name]);
@@ -40,7 +41,7 @@ class ObjectType extends AbstractType implements Transformer
                     $result->$name = $additionalProperties->propertiesSchema->import($value);
                 }
                 catch (Exception $exception) {
-                    $exception->pushStructureTrace('AdditionalProperties:' . $name);
+                    $exception->pushStructureTrace('additionalProperties:' . $name);
                     throw $exception;
                 }
                 unset($data[$name]);

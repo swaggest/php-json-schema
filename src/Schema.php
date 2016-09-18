@@ -6,8 +6,12 @@ namespace Yaoi\Schema;
 use Yaoi\Schema\ArrayFlavour\Items;
 use Yaoi\Schema\ArrayFlavour\MinItems;
 use Yaoi\Schema\Logic\AllOf;
+use Yaoi\Schema\NumberFlavour\Minimum;
 use Yaoi\Schema\ObjectFlavour\AdditionalProperties;
 use Yaoi\Schema\ObjectFlavour\Properties;
+use Yaoi\Schema\StringFlavour\Format;
+use Yaoi\Schema\StringFlavour\MaxLength;
+use Yaoi\Schema\StringFlavour\MinLength;
 
 /**
  * @method static Schema create($schemaValue = null, Schema $parentSchema = null)
@@ -44,7 +48,7 @@ class Schema extends Base implements Transformer
     {
         return $this->parentSchema;
     }
-    
+
     public function setParentSchema(Schema $parentSchema, $parentName)
     {
         $this->parentSchema = $parentSchema;
@@ -91,30 +95,10 @@ class Schema extends Base implements Transformer
 
         foreach ($schemaValue as $constraintName => $constraintData) {
             $constraint = null;
-            switch ($constraintName) {
-                case Type::KEY:
-                    $constraint = Type::factory($constraintData, $this);
-                    break;
-                case Properties::KEY:
-                    $constraint = new Properties($constraintData, $this);
-                    break;
-                case AdditionalProperties::KEY:
-                    $constraint = new AdditionalProperties($constraintData, $this);
-                    break;
-                case Items::KEY:
-                    $constraint = new Items($constraintData, $this);
-                    break;
-                case Ref::KEY:
-                    $constraint = new Ref($constraintData, $this);
-                    break;
-                case AllOf::KEY:
-                    $constraint = new AllOf($constraintData, $this);
-                    break;
-                case MinItems::KEY:
-                    $constraint = new MinItems($constraintData);
-                    break;
-            }
-            if (null !== $constraint) {
+            if (isset(self::$constraintKeys[$constraintName])) {
+                /** @var Schematic $class */
+                $class = self::$constraintKeys[$constraintName];
+                $constraint = new $class($constraintData, $this);
                 $this->setConstraint($constraint);
             }
         }
@@ -128,7 +112,7 @@ class Schema extends Base implements Transformer
     }
 
     static public $debug = false;
-    
+
     public function import($data)
     {
         if (self::$debug) {
@@ -140,8 +124,7 @@ class Schema extends Base implements Transformer
                 if (self::$debug) {
                     var_dump(get_class($constraint), $data);
                 }
-            }
-            elseif ($constraint instanceof Validator) {
+            } elseif ($constraint instanceof Validator) {
                 if (!$constraint->isValid($data)) {
                     throw new Exception('Validation failed', Exception::INVALID_VALUE);
                 }
@@ -155,8 +138,7 @@ class Schema extends Base implements Transformer
         foreach ($this->constraints as $constraint) {
             if ($constraint instanceof Transformer) {
                 $data = $constraint->export($data);
-            }
-            elseif ($constraint instanceof Validator) {
+            } elseif ($constraint instanceof Validator) {
                 if (!$constraint->isValid($data)) {
                     throw new Exception('Validation failed', Exception::INVALID_VALUE);
                 }
@@ -182,4 +164,27 @@ class Schema extends Base implements Transformer
     {
         return $this->constraints;
     }
+
+
+    private static $constraintKeys;
+
+    public static function initConstraintKeys()
+    {
+        self::$constraintKeys = array(
+            Type::getSchemaKey() => Type::className(),
+            Properties::getSchemaKey() => Properties::className(),
+            AdditionalProperties::getSchemaKey() => AdditionalProperties::className(),
+            Items::getSchemaKey() => Items::className(),
+            Ref::getSchemaKey() => Ref::className(),
+            AllOf::getSchemaKey() => AllOf::className(),
+            MinItems::getSchemaKey() => MinItems::className(),
+            Format::getSchemaKey() => Format::className(),
+            Minimum::getSchemaKey() => Minimum::className(),
+            MinLength::getSchemaKey() => MinLength::className(),
+            MaxLength::getSchemaKey() => MaxLength::className(),
+        );
+
+    }
 }
+
+Schema::initConstraintKeys();
