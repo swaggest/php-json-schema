@@ -1,0 +1,34 @@
+language: php
+php:
+  - nightly
+  - hhvm
+  - 7.0
+  - 5.6
+  - 5.5
+  - 5.4
+  - 5.3
+
+sudo: false
+
+## Cache composer bits
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+# execute any number of scripts before the test run, custom env's are available as variables
+before_script:
+  - composer install --dev --no-interaction --prefer-dist
+
+matrix:
+  allow_failures:
+    - php: hhvm
+    - php: nightly
+  fast_finish: true
+
+script:
+  - mkdir -p build/logs
+  - ./vendor/bin/phpunit -v --configuration phpunit.xml --coverage-clover build/logs/clover.xml
+
+after_script:
+ - php vendor/bin/coveralls -v
+# - CODECLIMATE_REPO_TOKEN=bef21a7b3d0a531fec57b713df1720bb0da7114f5ce33a3e492ce9599b8ac8df ./vendor/bin/test-reporter

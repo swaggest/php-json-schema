@@ -13,7 +13,7 @@
         >
     <testsuites>
         <testsuite name="Yaoi PHP Schema Test Suite">
-            <directory>./tests/PHPUnit/</directory>
+            <directory>./tests/src/PHPUnit/</directory>
         </testsuite>
     </testsuites>
     <filter>

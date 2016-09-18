@@ -1,6 +1,6 @@
 <?php
 
-namespace Yaoi\Schema\Tests\ClassStructure;
+namespace Yaoi\Schema\Tests\PHPUnit\ClassStructure;
 
 
 use Yaoi\Schema\Exception;

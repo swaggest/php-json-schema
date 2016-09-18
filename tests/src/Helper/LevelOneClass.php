@@ -2,7 +2,6 @@
 
 namespace Yaoi\Schema\Tests\Helper;
 
-
 use Yaoi\Schema\ObjectFlavour\Properties;
 use Yaoi\Schema\Schema;
 use Yaoi\Schema\Structure\ClassStructure;
