@@ -27,7 +27,7 @@ class ObjectType extends AbstractType
                         $result->$name = $property->import($data[$name]);
                     }
                     catch (Exception $exception) {
-                        $exception->pushStructureTrace('Properties:' . $name);
+                        $exception->pushStructureTrace('properties:' . $name);
                         throw $exception;
                     }
                     unset($data[$name]);
@@ -41,7 +41,7 @@ class ObjectType extends AbstractType
                     $result->$name = $additionalProperties->propertiesSchema->import($value);
                 }
                 catch (Exception $exception) {
-                    $exception->pushStructureTrace('AdditionalProperties:' . $name);
+                    $exception->pushStructureTrace('additionalProperties:' . $name);
                     throw $exception;
                 }
                 unset($data[$name]);

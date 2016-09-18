@@ -57,7 +57,7 @@ class ParentTest extends \PHPUnit_Framework_TestCase
     public function testInvalidImport()
     {
         $schema = $this->deepSchema();
-        $this->setExpectedException(get_class(new Exception()), 'Integer required (Properties:level1->Properties:level2->Properties:level3)',
+        $this->setExpectedException(get_class(new Exception()), 'Integer required (properties:level1->properties:level2->properties:level3)',
             Exception::INVALID_VALUE);
         try {
             $object = $schema->import(array(
@@ -69,7 +69,7 @@ class ParentTest extends \PHPUnit_Framework_TestCase
             ));
         }
         catch (Exception $exception) {
-            $this->assertSame(array('Properties:level1', 'Properties:level2', 'Properties:level3'), $exception->getStructureTrace());
+            $this->assertSame(array('properties:level1', 'properties:level2', 'properties:level3'), $exception->getStructureTrace());
             throw $exception;
         }
         //$this->assertSame('abc', $object->level1->level2->level3);
