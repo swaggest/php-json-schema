@@ -1,6 +1,6 @@
 <?php
 
-namespace Yaoi\Schema\Tests\CodeBuilder;
+namespace Yaoi\Schema\Tests\PHPUnit\CodeBuilder;
 
 use Yaoi\Schema\CodeBuilder\PHPCodeBuilder;
 use Yaoi\Schema\Schema;

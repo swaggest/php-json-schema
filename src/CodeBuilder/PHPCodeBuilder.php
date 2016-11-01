@@ -73,8 +73,8 @@ class PHPCodeBuilder
                 return 'object';
         }
 
-        print_r($schema->getPath());
-        print_r($schema->getSchemaData());
+        //print_r($schema->getPath());
+        //print_r($schema->getSchemaData());
         throw new Exception("Please im");
         return '';
     }
@@ -165,7 +165,7 @@ class PHPCodeBuilder
 
     public function storeToDisk($srcPath)
     {
-        print_r($this->classes);
+        //print_r($this->classes);
         
     }
 

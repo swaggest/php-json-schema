@@ -1,6 +1,6 @@
 <?php
 
-namespace Yaoi\Schema\Tests;
+namespace Yaoi\Schema\Tests\PHPUnit;
 
 
 use Yaoi\Schema\Schema;

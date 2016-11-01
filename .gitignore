@@ -2,3 +2,4 @@ vendor
 .idea
 composer.lock
 cover.xml
+build
