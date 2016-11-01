@@ -39,10 +39,10 @@ class AllOf extends AbstractConstraint implements Transformer, Constraint
         return $data;
     }
 
-    public function export($data)
+    public function export($entity)
     {
         // TODO: Implement export() method.
-        return $data;
+        return $entity;
     }
 
 

@@ -44,19 +44,19 @@ class ArrayType extends AbstractType
         return $result;
     }
 
-    public function export($data)
+    public function export($entity)
     {
-        $this->validate($data);
+        $this->validate($entity);
         $result = array();
         if ($items = Items::getFromSchema($this->ownerSchema)) {
-            foreach ($data as $name => $value) {
+            foreach ($entity as $name => $value) {
                 try {
                     $result[$name] = $items->itemsSchema->export($value);
                 } catch (Exception $exception) {
                     $exception->pushStructureTrace('Items:' . $name);
                     throw $exception;
                 }
-                unset($data[$name]);
+                unset($entity[$name]);
             }
         }
         return $result;

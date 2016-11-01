@@ -16,10 +16,10 @@ class StringType extends AbstractType
         return $data;
     }
 
-    public function export($data)
+    public function export($entity)
     {
-        $this->validate($data);
-        return $data;
+        $this->validate($entity);
+        return $entity;
     }
 
     protected function validate($data)

@@ -6,6 +6,7 @@ use Yaoi\Schema\AbstractConstraint;
 use Yaoi\Schema\Constraint;
 use Yaoi\Schema\Exception;
 use Yaoi\Schema\Schema;
+use Yaoi\Schema\Structure\ObjectItem;
 
 class Properties extends AbstractConstraint
 {
@@ -92,17 +93,19 @@ class Properties extends AbstractConstraint
      */
     public function importFailed($data, &$result)
     {
-        $result = new \stdClass();
-
-        foreach ($this->properties as $name => $property) {
-
-
+        if (!$result instanceof ObjectItem) {
+            $result = new ObjectItem();
         }
+        foreach ($this->properties as $name => $property) {
+            $value = $property->import($data[$name]);
+            $result->setProperty($name, $value);
+        }
+
 
         return false;
     }
 
-    public function exportFailed($data, &$entity)
+    public function exportFailed($entity, &$data)
     {
         // TODO: Implement exportFailed() method.
     }

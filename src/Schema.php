@@ -118,9 +118,9 @@ class Schema extends Base implements Transformer
         if (self::$debug) {
             print_r($data);
         }
-        $result = $data;
+        $entity = $data;
         foreach ($this->constraints as $constraint) {
-            $failReason = $constraint->importFailed($data, $result);
+            $failReason = $constraint->importFailed($data, $entity);
             if ($failReason && !$deepValidation) {
                 throw new Exception($failReason, Exception::INVALID_VALUE);
             }
@@ -128,13 +128,23 @@ class Schema extends Base implements Transformer
                 var_dump(get_class($constraint), $data);
             }
         }
-        return $result;
+        return $entity;
     }
 
-    public function export($data, $deepValidation = false)
+    public function export($entity, $deepValidation = false)
     {
+        if (self::$debug) {
+            print_r($entity);
+        }
+        $data = $entity;
         foreach ($this->constraints as $constraint) {
-            $data = $constraint->export($data);
+            $failReason = $constraint->exportFailed($entity, $data);
+            if ($failReason && !$deepValidation) {
+                throw new Exception($failReason, Exception::INVALID_VALUE);
+            }
+            if (self::$debug) {
+                var_dump(get_class($constraint), $entity);
+            }
         }
         return $data;
     }

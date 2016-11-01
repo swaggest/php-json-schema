@@ -52,28 +52,28 @@ class ObjectType extends AbstractType
         return $result;
     }
 
-    public function export($data)
+    public function export($entity)
     {
         $result = array();
-        $data = (array)$data;
+        $entity = (array)$entity;
         if ($properties = Properties::getFromSchema($this->ownerSchema)) {
             foreach ($properties->properties as $name => $property) {
-                if (isset($data[$name])) {
-                    $result[$name] = $property->export($data[$name]);
-                    unset($data[$name]);
+                if (isset($entity[$name])) {
+                    $result[$name] = $property->export($entity[$name]);
+                    unset($entity[$name]);
                 }
             }
         }
 
         if ($additionalProperties = AdditionalProperties::getFromSchema($this->ownerSchema)) {
-            foreach ($data as $name => $value) {
+            foreach ($entity as $name => $value) {
                 $result[$name] = $additionalProperties->propertiesSchema->export($value);
-                unset($data[$name]);
+                unset($entity[$name]);
             }
         }
 
-        if (!empty($data)) {
-            throw new \Exception('Unexpected properties: ' . implode(', ', array_keys($data)));
+        if (!empty($entity)) {
+            throw new \Exception('Unexpected properties: ' . implode(', ', array_keys($entity)));
         }
 
         return $result;
