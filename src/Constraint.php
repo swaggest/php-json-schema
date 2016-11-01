@@ -33,11 +33,4 @@ interface Constraint
      * @return mixed
      */
     public function exportFailed($data, &$entity);
-
-
-    /**
-     * Constraints have priority, `Properties` first, `AdditionalProperties` after, etc...
-     */
-    public static function getPriority();
-
 }

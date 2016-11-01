@@ -61,3 +61,6 @@ $structure->import('http://sfsdf.sdfsd/'); // OK
 
 Use `\stdClass` instead of `array` for `JSON` objects, 
 cast to `array` on iteration
+
+
+https://github.com/epoberezkin/ajv
