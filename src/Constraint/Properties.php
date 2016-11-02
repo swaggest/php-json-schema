@@ -109,12 +109,4 @@ class Properties extends AbstractConstraint
     {
         // TODO: Implement exportFailed() method.
     }
-
-
-    public static function getPriority()
-    {
-        return self::P1;
-    }
-
-
 }

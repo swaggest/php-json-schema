@@ -64,4 +64,7 @@ cast to `array` on iteration
 
 ## Road map
  * Exceptions-less mode
- 
+
+
+
+https://github.com/epoberezkin/ajv

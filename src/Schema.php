@@ -95,12 +95,10 @@ class Schema extends Base implements Transformer
         $this->schemaData = $schemaValue;
         $this->parentSchema = $parentSchema ? $parentSchema : null;
 
-        foreach ($schemaValue as $constraintName => $constraintData) {
-            $constraint = null;
-            if (isset(self::$constraintKeys[$constraintName])) {
-                /** @var Constraint $class */
-                $class = self::$constraintKeys[$constraintName];
-                $constraint = new $class($constraintData, $this);
+        /** @var Constraint $class */
+        foreach (self::$constraintKeys as $constraintKey => $class) {
+            if (array_key_exists($constraintKey, $schemaValue)) {
+                $constraint = new $class($schemaValue[$constraintKey], $this);
                 $this->setConstraint($constraint);
             }
         }
