@@ -1,9 +1,9 @@
 <?php
 
-namespace Yaoi\Schema\Constraint;
+namespace Yaoi\Schema\OldConstraint;
 
 use Yaoi\Schema\AbstractConstraint;
-use Yaoi\Schema\Schema;
+use Yaoi\Schema\OldSchema;
 
 class Items extends AbstractConstraint
 {
@@ -13,24 +13,24 @@ class Items extends AbstractConstraint
     }
 
     /**
-     * @var Schema
+     * @var OldSchema
      */
     public $itemsSchema;
 
     public $isAllowed = true;
 
-    public function __construct($schemaValue, Schema $ownerSchema = null)
+    public function __construct($schemaValue, OldSchema $ownerSchema = null)
     {
         if (false === $schemaValue) {
             $this->isAllowed = false;
         } elseif (true === $schemaValue) {
-            $this->itemsSchema = new Schema(array(), $ownerSchema);
+            $this->itemsSchema = new OldSchema(array(), $ownerSchema);
         } else {
-            $this->itemsSchema = new Schema($schemaValue, $ownerSchema);
+            $this->itemsSchema = new OldSchema($schemaValue, $ownerSchema);
         }
     }
 
-    public function setOwnerSchema(Schema $ownerSchema)
+    public function setOwnerSchema(OldSchema $ownerSchema)
     {
         $this->ownerSchema = $ownerSchema;
         $this->itemsSchema->setParentSchema($ownerSchema, 'Items');

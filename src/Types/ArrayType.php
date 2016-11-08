@@ -2,9 +2,9 @@
 
 namespace Yaoi\Schema\Types;
 
-use Yaoi\Schema\Constraint\MinItems;
+use Yaoi\Schema\OldConstraint\MinItems;
 use Yaoi\Schema\Exception;
-use Yaoi\Schema\Constraint\Items;
+use Yaoi\Schema\OldConstraint\Items;
 use Yaoi\Schema\Transformer;
 
 class ArrayType extends AbstractType

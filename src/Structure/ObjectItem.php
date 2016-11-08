@@ -6,7 +6,7 @@ namespace Yaoi\Schema\Structure;
 class ObjectItem
 {
     private $unmatchedProperties;
-    private $additionalProperties = array();
+    public $additionalProperties = array();
     private $properties = array();
 
     public function __construct($unmatchedProperties = array())
@@ -49,7 +49,7 @@ class ObjectItem
         unset($this->unmatchedProperties[$name]);
     }
 
-    public function hasUnmatchedPproperties()
+    public function hasUnmatchedProperties()
     {
         return !empty($this->unmatchedProperties);
     }

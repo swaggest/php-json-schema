@@ -3,13 +3,13 @@
 namespace Yaoi\Schema\Tests\Naive;
 
 
-use Yaoi\Schema\Schema;
+use Yaoi\Schema\OldSchema;
 
 class PropertiesTest extends \PHPUnit_Framework_TestCase
 {
     public function testValid()
     {
-        $schema = new Schema(array(
+        $schema = new OldSchema(array(
             'properties' => array(
                 'one' => array('type' => 'string'),
                 'two' => array(),

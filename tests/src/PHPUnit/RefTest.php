@@ -3,7 +3,7 @@
 namespace Yaoi\Schema\Tests\PHPUnit;
 
 
-use Yaoi\Schema\Schema;
+use Yaoi\Schema\OldSchema;
 
 class RefTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,7 +24,7 @@ class RefTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $schema = new Schema($schemaData);
+        $schema = new OldSchema($schemaData);
         $this->assertSame(123, $schema->import(array('one' => 123))->one);
     }
 
@@ -53,7 +53,7 @@ class RefTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $schema = new Schema($schemaData);
+        $schema = new OldSchema($schemaData);
         $object = $schema->import(array(
                 'two' => array(
                     'one' => 123

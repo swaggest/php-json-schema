@@ -4,8 +4,8 @@ namespace Yaoi\Schema\Tests\PHPUnit\Schema;
 
 
 use Yaoi\Schema\Exception;
-use Yaoi\Schema\Constraint\Properties;
-use Yaoi\Schema\Schema;
+use Yaoi\Schema\OldConstraint\Properties;
+use Yaoi\Schema\OldSchema;
 
 class ParentTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,11 +29,11 @@ class ParentTest extends \PHPUnit_Framework_TestCase
                 ),
             ),
         );
-        $schema = new Schema($schemaValue);
+        $schema = new OldSchema($schemaValue);
         return $schema;
     }
 
-    private function assertSchema(Schema $schema)
+    private function assertSchema(OldSchema $schema)
     {
         $level1Schema = Properties::getFromSchema($schema)->getProperty('level1');
         $level2Schema = Properties::getFromSchema($level1Schema)->getProperty('level2');

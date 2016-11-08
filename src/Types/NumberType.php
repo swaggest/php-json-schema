@@ -3,7 +3,7 @@
 namespace Yaoi\Schema\Types;
 
 use Yaoi\Schema\Exception;
-use Yaoi\Schema\Constraint\Minimum;
+use Yaoi\Schema\OldConstraint\Minimum;
 
 class NumberType extends AbstractType
 {

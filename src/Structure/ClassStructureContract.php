@@ -2,15 +2,15 @@
 
 namespace Yaoi\Schema\Structure;
 
-use Yaoi\Schema\Constraint\Properties;
-use Yaoi\Schema\Schema;
+use Yaoi\Schema\OldConstraint\Properties;
+use Yaoi\Schema\OldSchema;
 
 interface ClassStructureContract
 {
     /**
      * @param Properties|static $properties
-     * @param Schema $ownerSchema
+     * @param OldSchema $ownerSchema
      */
-    public static function setUpProperties($properties, Schema $ownerSchema);
-    public static function getAdditionalProperties(Schema $ownerSchema);
+    public static function setUpProperties($properties, OldSchema $ownerSchema);
+    public static function getAdditionalProperties(OldSchema $ownerSchema);
 }

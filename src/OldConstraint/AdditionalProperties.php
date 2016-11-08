@@ -1,9 +1,9 @@
 <?php
 
-namespace Yaoi\Schema\Constraint;
+namespace Yaoi\Schema\OldConstraint;
 
 use Yaoi\Schema\AbstractConstraint;
-use Yaoi\Schema\Schema;
+use Yaoi\Schema\OldSchema;
 
 class AdditionalProperties extends AbstractConstraint
 {
@@ -13,24 +13,24 @@ class AdditionalProperties extends AbstractConstraint
     }
 
     /**
-     * @var Schema
+     * @var OldSchema
      */
     public $propertiesSchema;
 
     public $isAllowed = true;
 
-    public function __construct($schemaValue, Schema $ownerSchema = null)
+    public function __construct($schemaValue, OldSchema $ownerSchema = null)
     {
         if (false === $schemaValue) {
             $this->isAllowed = false;
         } elseif (true === $schemaValue) {
-            $this->propertiesSchema = new Schema(array(), $ownerSchema);
+            $this->propertiesSchema = new OldSchema(array(), $ownerSchema);
         } else {
-            $this->propertiesSchema = new Schema($schemaValue, $ownerSchema);
+            $this->propertiesSchema = new OldSchema($schemaValue, $ownerSchema);
         }
     }
 
-    public function setOwnerSchema(Schema $ownerSchema)
+    public function setOwnerSchema(OldSchema $ownerSchema)
     {
         $this->ownerSchema = $ownerSchema;
         $this->propertiesSchema->setParentSchema($ownerSchema, 'AdditionalProperties');

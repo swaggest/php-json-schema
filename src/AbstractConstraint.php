@@ -5,20 +5,20 @@ namespace Yaoi\Schema;
 
 abstract class AbstractConstraint extends Base implements Constraint
 {
-    /** @var Schema */
+    /** @var OldSchema */
     protected $ownerSchema;
 
-    public function setOwnerSchema(Schema $ownerSchema)
+    public function setOwnerSchema(OldSchema $ownerSchema)
     {
         $this->ownerSchema = $ownerSchema;
         return $this;
     }
 
     /**
-     * @param Schema $schema
+     * @param OldSchema $schema
      * @return null|static
      */
-    public static function getFromSchema(Schema $schema)
+    public static function getFromSchema(OldSchema $schema)
     {
         $class = static::className();
         if (isset($schema->constraints[$class])) {

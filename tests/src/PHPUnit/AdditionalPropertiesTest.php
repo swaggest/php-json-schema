@@ -3,7 +3,7 @@
 namespace Yaoi\Schema\Tests\PHPUnit;
 
 
-use Yaoi\Schema\Schema;
+use Yaoi\Schema\OldSchema;
 
 class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,7 +17,7 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $schema = new Schema($schemaData);
+        $schema = new OldSchema($schemaData);
         //print_r($schema);
 
         $object = $schema->import(
@@ -41,7 +41,7 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $schema = new Schema($schemaData);
+        $schema = new OldSchema($schemaData);
         //print_r($schema);
 
         $object = $schema->import(
@@ -70,7 +70,7 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $schema = new Schema($schemaData);
+        $schema = new OldSchema($schemaData);
 
         $object = $schema->import(
             array('zero' => '0', 'one' => 1, 'two' => 2)
@@ -96,7 +96,7 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $schema = new Schema($schemaData);
+        $schema = new OldSchema($schemaData);
         //print_r($schema);
 
         $object = $schema->import(

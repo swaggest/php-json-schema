@@ -3,19 +3,19 @@
 namespace Yaoi\Schema\Structure;
 
 use Yaoi\Schema\Base;
-use Yaoi\Schema\Constraint\Properties;
-use Yaoi\Schema\Schema;
-use Yaoi\Schema\Constraint\Type;
+use Yaoi\Schema\OldConstraint\Properties;
+use Yaoi\Schema\OldSchema;
+use Yaoi\Schema\OldConstraint\Type;
 use Yaoi\Schema\Types\ObjectType;
 
 abstract class ClassStructure extends Base implements ClassStructureContract
 {
     /**
-     * @return Schema
+     * @return OldSchema
      */
     public static function makeSchema()
     {
-        $schema = new Schema();
+        $schema = new OldSchema();
         $properties = new Properties();
         static::setUpProperties($properties, $schema);
         $schema->setConstraint(new Type(ObjectType::TYPE, $schema));
@@ -44,7 +44,7 @@ abstract class ClassStructure extends Base implements ClassStructureContract
         return static::makeSchema()->export($data);
     }
 
-    public static function getAdditionalProperties(Schema $ownerSchema)
+    public static function getAdditionalProperties(OldSchema $ownerSchema)
     {
         return null;
     }

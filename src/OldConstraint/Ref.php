@@ -1,11 +1,11 @@
 <?php
 
-namespace Yaoi\Schema\Constraint;
+namespace Yaoi\Schema\OldConstraint;
 
 
 use Yaoi\Schema\AbstractConstraint;
 use Yaoi\Schema\Exception;
-use Yaoi\Schema\Schema;
+use Yaoi\Schema\OldSchema;
 
 class Ref extends AbstractConstraint
 {
@@ -16,10 +16,10 @@ class Ref extends AbstractConstraint
 
     public $ref;
 
-    /** @var Schema */
+    /** @var OldSchema */
     public $constraintSchema;
 
-    public function __construct($schemaValue, Schema $ownerSchema = null)
+    public function __construct($schemaValue, OldSchema $ownerSchema = null)
     {
         $this->ref = $schemaValue;
         if ($this->ref === '#') {
@@ -39,7 +39,7 @@ class Ref extends AbstractConstraint
                     throw new \Exception('Could not resolve ' . $this->ref . ', ' . $folder);
                 }
             }
-            $this->constraintSchema = new Schema($branch, $ownerSchema);
+            $this->constraintSchema = new OldSchema($branch, $ownerSchema);
             return;
         }
 

@@ -2,8 +2,8 @@
 
 namespace Yaoi\Schema\Tests\PHPUnit;
 
-use Yaoi\Schema\Constraint\Items;
-use Yaoi\Schema\Schema;
+use Yaoi\Schema\OldConstraint\Items;
+use Yaoi\Schema\OldSchema;
 use Yaoi\Schema\Types\ArrayType;
 use Yaoi\Schema\Types\IntegerType;
 use Yaoi\Schema\Types\StringType;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Yaoi\Schema\Constraint;
+namespace Yaoi\Schema\OldConstraint;
 
 use Yaoi\Schema\AbstractConstraint;
 

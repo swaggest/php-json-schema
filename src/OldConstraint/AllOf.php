@@ -1,11 +1,11 @@
 <?php
 
-namespace Yaoi\Schema\Constraint;
+namespace Yaoi\Schema\OldConstraint;
 
 use Yaoi\Schema\AbstractConstraint;
-use Yaoi\Schema\Constraint;
+use Yaoi\Schema\OldConstraint;
 use Yaoi\Schema\Exception;
-use Yaoi\Schema\Schema;
+use Yaoi\Schema\OldSchema;
 use Yaoi\Schema\Transformer;
 
 class AllOf extends AbstractConstraint implements Transformer, Constraint
@@ -15,17 +15,17 @@ class AllOf extends AbstractConstraint implements Transformer, Constraint
         return 'allOf';
     }
 
-    /** @var Schema[] */
+    /** @var OldSchema[] */
     private $composition;
 
-    public function __construct($schemaValue, Schema $ownerSchema = null)
+    public function __construct($schemaValue, OldSchema $ownerSchema = null)
     {
         if (!is_array($schemaValue)) {
             throw new Exception('Array expected', Exception::INVALID_VALUE);
         }
         $this->composition = array();
         foreach ($schemaValue as $item) {
-            $this->composition[] = new Schema($item, $ownerSchema);
+            $this->composition[] = new OldSchema($item, $ownerSchema);
         }
     }
 

@@ -3,32 +3,32 @@
 namespace Yaoi\Schema\Types;
 
 use Yaoi\Schema\Base;
-use Yaoi\Schema\Constraint;
-use Yaoi\Schema\Schema;
+use Yaoi\Schema\OldConstraint;
+use Yaoi\Schema\OldSchema;
 use Yaoi\Schema\Transformer;
-use Yaoi\Schema\Constraint\Type;
+use Yaoi\Schema\OldConstraint\Type;
 
 abstract class AbstractType extends Base implements Transformer
 {
     const TYPE = null;
 
     /**
-     * @var Schema
+     * @var OldSchema
      */
     protected $ownerSchema;
 
-    public function __construct(Schema $ownerSchema)
+    public function __construct(OldSchema $ownerSchema)
     {
         $this->ownerSchema = $ownerSchema;
     }
 
     /**
      * @param Constraint ...$constraint
-     * @return Schema
+     * @return OldSchema
      */
     public static function makeSchema($constraint = null)
     {
-        $schema = new Schema(array(Type::getSchemaKey() => static::TYPE));
+        $schema = new OldSchema(array(Type::getSchemaKey() => static::TYPE));
         if ($constraint) {
             $constraints = func_get_args();
             foreach ($constraints as $constraintItem) {
@@ -38,7 +38,7 @@ abstract class AbstractType extends Base implements Transformer
         return $schema;
     }
 
-    public static function getFromSchema(Schema $schema)
+    public static function getFromSchema(OldSchema $schema)
     {
         $type = Type::getFromSchema($schema);
         if (null === $type) {

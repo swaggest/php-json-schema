@@ -8,11 +8,11 @@ interface Constraint
     const P1 = 1;
 
 
-    public function __construct($schemaValue, Schema $ownerSchema = null);
+    public function __construct($schemaValue, OldSchema $ownerSchema = null);
 
     public static function getSchemaKey();
 
-    public function setOwnerSchema(Schema $ownerSchema);
+    public function setOwnerSchema(OldSchema $ownerSchema);
 
 
     /**
