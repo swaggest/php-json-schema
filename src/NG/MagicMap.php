@@ -1,6 +1,6 @@
 <?php
 
-namespace Yaoi\Schema;
+namespace Yaoi\Schema\NG;
 
 class MagicMap implements \ArrayAccess
 {

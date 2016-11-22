@@ -2,8 +2,8 @@
 
 namespace Yaoi\Schema\Constraint;
 
-use Yaoi\Schema\MagicMap;
-use Yaoi\Schema\Schema;
+use Yaoi\Schema\NG\MagicMap;
+use Yaoi\Schema\NG\Schema;
 use Yaoi\Schema\Structure\ObjectItem;
 
 class Properties extends MagicMap implements Constraint
@@ -27,7 +27,7 @@ class Properties extends MagicMap implements Constraint
         return new static;
     }
 
-    public function getConstraintName()
+    public static function getConstraintName()
     {
         return 'properties';
     }
@@ -39,5 +39,14 @@ class Properties extends MagicMap implements Constraint
                 $result->$key = $this->_arrayOfData[$key]->import($value);
             }
         }
+    }
+
+    public function export(ObjectItem $data)
+    {
+        $result = array();
+        foreach ($this->_arrayOfData as $key => $value) {
+            $result[$key] = $value->export($data->$key);
+        }
+        return $result;
     }
 }

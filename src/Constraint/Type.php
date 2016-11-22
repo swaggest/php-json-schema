@@ -20,7 +20,7 @@ class Type implements Constraint
         $this->types = is_array($type) ? $type : array($type);
     }
 
-    public function getConstraintName()
+    public static function getConstraintName()
     {
         return 'type';
     }
