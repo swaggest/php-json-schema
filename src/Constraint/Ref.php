@@ -2,23 +2,22 @@
 
 namespace Yaoi\Schema\Constraint;
 
-use Yaoi\Schema\NG\SchemaLoader;
 use Yaoi\Schema\NG\Schema;
 
 class Ref implements Constraint
 {
-    public static function getConstraintName()
-    {
-        return '$ref';
-    }
-
     private $ref;
-    private $rootSchema;
-    public function __construct($ref, Schema $rootSchema)
+    public function __construct($ref, Schema $schema)
     {
         $this->ref = $ref;
-        $this->rootSchema = $rootSchema;
+        $this->schema = $schema;
     }
+
+    public function setToSchema(Schema $schema)
+    {
+        $schema->ref = $this;
+    }
+
 
     /** @var Schema */
     private $schema;
@@ -30,9 +29,6 @@ class Ref implements Constraint
      */
     public function getSchema()
     {
-        if (null === $this->schema) {
-            $this->schema = $this->rootSchema->getDefinition($this->ref);
-        }
         return $this->schema;
     }
 }

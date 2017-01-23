@@ -4,20 +4,29 @@ namespace Yaoi\Schema\Tests\Naive;
 
 
 use Yaoi\Schema\Exception;
+use Yaoi\Schema\NG\SchemaLoader;
 use Yaoi\Schema\OldSchema;
 
 class TypeStringTest extends \PHPUnit_Framework_TestCase
 {
     public function testValid()
     {
-        $schema = new OldSchema(array('type' => 'string'));
+        $schema = SchemaLoader::create()->readSchema(
+            array(
+                'type' => 'string',
+            )
+        );
         $this->assertSame('123', $schema->import('123'));
     }
 
     public function testInvalidInteger()
     {
-        $this->setExpectedException(get_class(new Exception), 'Wrong type', Exception::INVALID_VALUE);
-        $schema = new OldSchema(array('type' => 'string'));
-        $this->assertSame(123, $schema->import(123));
+        $schema = SchemaLoader::create()->readSchema(
+            array(
+                'type' => 'integer',
+            )
+        );
+        $this->setExpectedException(get_class(new Exception), 'Integer required', Exception::INVALID_VALUE);
+        $this->assertSame(123, $schema->import('123'));
     }
 }

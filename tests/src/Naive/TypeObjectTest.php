@@ -4,13 +4,19 @@ namespace Yaoi\Schema\Tests\Naive;
 
 
 use Yaoi\Schema\Exception;
+use Yaoi\Schema\NG\SchemaLoader;
 use Yaoi\Schema\OldSchema;
 
 class TypeObjectTest extends \PHPUnit_Framework_TestCase
 {
     public function testValid()
     {
-        $schema = new OldSchema(array('type' => 'object'));
+//        $this->markTestSkipped('additionalProperties or generic object required, not implemented');
+        $schema = SchemaLoader::create()->readSchema(
+            array(
+                'type' => 'object',
+            )
+        );
         $this->assertSame('123', $schema->import(array('aaa' => '123'))->aaa);
 
         $object = $schema->import(array('3.45' => '123'));
@@ -22,8 +28,10 @@ class TypeObjectTest extends \PHPUnit_Framework_TestCase
 
     public function testInvalidObject()
     {
-        $this->setExpectedException(get_class(new Exception()), 'Wrong type', Exception::INVALID_VALUE);
-        $schema = new OldSchema(array('type' => 'object'));
+//        $this->markTestSkipped('additionalProperties or generic object required, not implemented');
+
+        $this->setExpectedException(get_class(new Exception()), 'Object required', Exception::INVALID_VALUE);
+        $schema = SchemaLoader::create()->readSchema(array('type' => 'object'));
         $this->assertSame(123, $schema->import(123));
     }
 }

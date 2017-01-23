@@ -2,8 +2,8 @@
 
 namespace Yaoi\Schema\Tests\PHPUnit;
 
-use Yaoi\Schema\OldConstraint\Properties;
-use Yaoi\Schema\OldSchema;
+
+use Yaoi\Schema\NG\SchemaLoader;
 
 class ReImportTest extends \PHPUnit_Framework_TestCase
 {
@@ -14,7 +14,7 @@ class ReImportTest extends \PHPUnit_Framework_TestCase
         $data = json_decode($data, true);
         //print_r($data);
 
-        $schema = new OldSchema($data);
+        $schema = SchemaLoader::create()->readSchema($data);
         //print_r($schema);
         //print_r($schema->constraints[Properties::className()]->properties['definitions']);
     }
@@ -26,7 +26,7 @@ class ReImportTest extends \PHPUnit_Framework_TestCase
         $data = json_decode($data, true);
         //print_r($data);
 
-        $schema = new OldSchema($data);
+        $schema = SchemaLoader::create()->readSchema($data);
         //print_r(Properties::getFromSchema($schema)->enum);
         $jsonSchema = $schema->import($data);
         //print_r($jsonSchema);

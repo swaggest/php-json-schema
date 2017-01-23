@@ -4,8 +4,12 @@ namespace Yaoi\Schema\Constraint;
 
 use Yaoi\Schema\NG\MagicMap;
 use Yaoi\Schema\NG\Schema;
+use Yaoi\Schema\NG\SchemaLoader;
 use Yaoi\Schema\Structure\ObjectItem;
 
+/**
+ * @method Schema __get($key)
+ */
 class Properties extends MagicMap implements Constraint
 {
     /** @var Schema[] */
@@ -15,11 +19,16 @@ class Properties extends MagicMap implements Constraint
     {
         if ($column instanceof Constraint) {
             $schema = new Schema();
-            $schema->{$column->getConstraintName()} = $column;
-            $column = $schema;
+            $column->setToSchema($schema);
+            return parent::__set($name, $schema);
         }
 
         return parent::__set($name, $column);
+    }
+
+    public function setToSchema(Schema $schema)
+    {
+        $schema->properties = $this;
     }
 
     public static function create()
@@ -27,16 +36,24 @@ class Properties extends MagicMap implements Constraint
         return new static;
     }
 
-    public static function getConstraintName()
+    public function import($data, ObjectItem $result, Schema $schema = null)
     {
-        return 'properties';
-    }
+        $traceHelper = Schema::$traceHelper;
 
-    public function import($data, ObjectItem $result)
-    {
+        $additionalProperties = $schema->additionalProperties;
+
         foreach ($data as $key => $value) {
             if (isset($this->_arrayOfData[$key])) {
+                $traceHelper->push()->addData(SchemaLoader::PROPERTIES . ':' . $key);
                 $result->$key = $this->_arrayOfData[$key]->import($value);
+                $traceHelper->pop();
+            } else {
+                if (null !== $additionalProperties) {
+                    $traceHelper->push()->addData(SchemaLoader::ADDITIONAL_PROPERTIES);
+                    $value = $additionalProperties->import($value);
+                    $traceHelper->pop();
+                }
+                $result->$key = $value;
             }
         }
     }
@@ -48,5 +65,18 @@ class Properties extends MagicMap implements Constraint
             $result[$key] = $value->export($data->$key);
         }
         return $result;
+    }
+
+    /** @var Schema */
+    private $additionalProperties;
+
+    /**
+     * @param Schema $additionalProperties
+     * @return Properties
+     */
+    public function setAdditionalProperties(Schema $additionalProperties = null)
+    {
+        $this->additionalProperties = $additionalProperties;
+        return $this;
     }
 }

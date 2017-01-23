@@ -3,6 +3,8 @@
 namespace Yaoi\Schema\Constraint;
 
 
+use Yaoi\Schema\NG\Schema;
+
 class Type implements Constraint
 {
     const OBJECT = 'object';
@@ -13,16 +15,21 @@ class Type implements Constraint
     const BOOLEAN = 'boolean';
     const NULL = 'null';
 
-    private $types;
+    public $types;
 
     public function __construct($type)
     {
         $this->types = is_array($type) ? $type : array($type);
     }
 
-    public static function getConstraintName()
+    public function setToSchema(Schema $schema)
     {
-        return 'type';
+        $schema->type = $this;
+    }
+
+    public function has($type)
+    {
+        return in_array($type, $this->types);
     }
 
     public function isValid($data)

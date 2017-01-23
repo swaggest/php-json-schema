@@ -3,6 +3,7 @@
 namespace Yaoi\Schema\Tests\PHPUnit;
 
 
+use Yaoi\Schema\NG\SchemaLoader;
 use Yaoi\Schema\OldSchema;
 
 class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
@@ -17,8 +18,7 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $schema = new OldSchema($schemaData);
-        //print_r($schema);
+        $schema = SchemaLoader::create()->readSchema($schemaData);
 
         $object = $schema->import(
             (object)array('one' => 1, 'two' => 2)
@@ -31,6 +31,7 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
 
     public function testRef()
     {
+//        $this->markTestSkipped('Not implemented');
         $schemaData = array(
             'type' => 'object',
             'additionalProperties' => array(
@@ -41,7 +42,8 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $schema = new OldSchema($schemaData);
+
+        $schema = SchemaLoader::create()->readSchema($schemaData);
         //print_r($schema);
 
         $object = $schema->import(
@@ -70,8 +72,7 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $schema = new OldSchema($schemaData);
-
+        $schema = SchemaLoader::create()->readSchema($schemaData);
         $object = $schema->import(
             array('zero' => '0', 'one' => 1, 'two' => 2)
         );
@@ -96,7 +97,8 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $schema = new OldSchema($schemaData);
+        $schema = SchemaLoader::create()->readSchema($schemaData);
+
         //print_r($schema);
 
         $object = $schema->import(

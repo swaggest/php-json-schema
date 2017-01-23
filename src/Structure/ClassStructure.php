@@ -3,23 +3,23 @@
 namespace Yaoi\Schema\Structure;
 
 use Yaoi\Schema\Base;
-use Yaoi\Schema\OldConstraint\Properties;
+use Yaoi\Schema\Constraint\Properties;
+use Yaoi\Schema\Constraint\Type;
+use Yaoi\Schema\NG\Schema;
 use Yaoi\Schema\OldSchema;
-use Yaoi\Schema\OldConstraint\Type;
-use Yaoi\Schema\Types\ObjectType;
 
 abstract class ClassStructure extends Base implements ClassStructureContract
 {
     /**
-     * @return OldSchema
+     * @return Schema
      */
     public static function makeSchema()
     {
-        $schema = new OldSchema();
+        $schema = new Schema();
+        $schema->type = new Type(Type::OBJECT);
         $properties = new Properties();
+        $schema->properties = $properties;
         static::setUpProperties($properties, $schema);
-        $schema->setConstraint(new Type(ObjectType::TYPE, $schema));
-        $schema->setConstraint($properties);
         return $schema;
     }
 
@@ -30,7 +30,7 @@ abstract class ClassStructure extends Base implements ClassStructureContract
      */
     public static function import($data)
     {
-        static $schemas = array();
+        //static $schemas = array();
         return static::makeSchema()->import($data);
     }
 

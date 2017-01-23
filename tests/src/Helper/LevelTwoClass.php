@@ -3,8 +3,8 @@
 namespace Yaoi\Schema\Tests\Helper;
 
 
-use Yaoi\Schema\OldConstraint\Properties;
-use Yaoi\Schema\OldSchema;
+use Yaoi\Schema\Constraint\Properties;
+use Yaoi\Schema\NG\Schema;
 use Yaoi\Schema\Structure\ClassStructure;
 
 class LevelTwoClass extends ClassStructure
@@ -16,9 +16,9 @@ class LevelTwoClass extends ClassStructure
 
     /**
      * @param Properties|static $properties
-     * @param OldSchema $ownerSchema
+     * @param Schema $ownerSchema
      */
-    public static function setUpProperties($properties, OldSchema $ownerSchema)
+    public static function setUpProperties($properties, Schema $ownerSchema)
     {
         $properties->level2 = LevelThreeClass::makeSchema();
     }

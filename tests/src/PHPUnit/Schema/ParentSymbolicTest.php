@@ -2,34 +2,27 @@
 
 namespace Yaoi\Schema\Tests\PHPUnit\Schema;
 
-
 use Yaoi\Schema\Constraint\Properties;
-use Yaoi\Schema\Types\IntegerType;
-use Yaoi\Schema\Types\ObjectType;
+use Yaoi\Schema\Constraint\Type;
+use Yaoi\Schema\NG\Schema;
 
 class ParentSymbolicTest extends ParentTest
 {
     protected function deepSchema()
     {
-        $schema = ObjectType::makeSchema(
-            Properties::create()
-                ->setProperty(
+        $schema = Schema::create()
+            ->setType(new Type(Type::OBJECT))
+            ->setProperties(
+                Properties::create()->__set(
                     'level1',
-                    ObjectType::makeSchema(
-                        Properties::create()
-                            ->setProperty(
-                                'level2',
-                                ObjectType::makeSchema(
-                                    Properties::create()
-                                        ->setProperty(
-                                            'level3',
-                                            IntegerType::makeSchema()
-                                        )
-                                )
-                            )
-                    )
-                )
-        );
+                    Schema::create()->setProperties(Properties::create()->__set(
+                        'level2',
+                        Schema::create()->setProperties(Properties::create()->__set(
+                            'level3',
+                            Schema::integer()
+                        )))))
+            );
+
         return $schema;
     }
 

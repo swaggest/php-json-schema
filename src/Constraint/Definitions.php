@@ -11,10 +11,8 @@ class Definitions extends MagicMap implements Constraint
     /** @var Schema[] */
     protected $_arrayOfData = array();
 
-    public static function getConstraintName()
+    public function setToSchema(Schema $schema)
     {
-        return 'definitions';
+        $schema->definitions = $this;
     }
-
-
 }

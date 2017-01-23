@@ -3,8 +3,8 @@
 namespace Yaoi\Schema\Tests\Helper;
 
 
-use Yaoi\Schema\OldConstraint\Properties;
-use Yaoi\Schema\OldSchema;
+use Yaoi\Schema\NG\Schema;
+use Yaoi\Schema\Constraint\Properties;
 use Yaoi\Schema\Structure\ClassStructure;
 use Yaoi\Schema\Types\IntegerType;
 
@@ -17,11 +17,11 @@ class LevelThreeClass extends ClassStructure
 
     /**
      * @param Properties|static $properties
-     * @param OldSchema $ownerSchema
+     * @param Schema $ownerSchema
      */
-    public static function setUpProperties($properties, OldSchema $ownerSchema)
+    public static function setUpProperties($properties, Schema $ownerSchema)
     {
-        $properties->level3 = IntegerType::makeSchema();
+        $properties->level3 = Schema::integer();
     }
 
 

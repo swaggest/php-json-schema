@@ -12,7 +12,7 @@ class MagicMap implements \ArrayAccess
         return $this;
     }
 
-    public function __get($name)
+    public function &__get($name)
     {
         return $this->_arrayOfData[$name];
     }
@@ -22,7 +22,7 @@ class MagicMap implements \ArrayAccess
         return array_key_exists($offset, $this->_arrayOfData);
     }
 
-    public function offsetGet($offset)
+    public function &offsetGet($offset)
     {
         return $this->_arrayOfData[$offset];
     }
@@ -37,4 +37,8 @@ class MagicMap implements \ArrayAccess
         unset($this->_arrayOfData[$offset]);
     }
 
+    public function &toArray()
+    {
+        return $this->_arrayOfData;
+    }
 }

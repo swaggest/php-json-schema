@@ -2,9 +2,10 @@
 
 namespace Yaoi\Schema\Constraint;
 
+use Yaoi\Schema\NG\Schema;
 
 interface Constraint
 {
-    public static function getConstraintName();
+    public function setToSchema(Schema $schema);
 
 }

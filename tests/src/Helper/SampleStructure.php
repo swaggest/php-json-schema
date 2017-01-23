@@ -2,10 +2,8 @@
 
 namespace Yaoi\Schema\Tests\Helper;
 
-use Yaoi\Schema\OldSchema;
+use Yaoi\Schema\NG\Schema;
 use Yaoi\Schema\Structure\ClassStructure;
-use Yaoi\Schema\Types\IntegerType;
-use Yaoi\Schema\Types\StringType;
 
 /**
  * @property $propOne
@@ -15,13 +13,13 @@ use Yaoi\Schema\Types\StringType;
 class SampleStructure extends ClassStructure
 {
     /**
-     * @param \Yaoi\Schema\OldConstraint\Properties|static $properties
-     * @param OldSchema $schema
+     * @param \Yaoi\Schema\Constraint\Properties|static $properties
+     * @param Schema $schema
      */
-    public static function setUpProperties($properties, OldSchema $schema)
+    public static function setUpProperties($properties, Schema $schema)
     {
-        $properties->propOne = StringType::makeSchema();
-        $properties->propTwo = IntegerType::makeSchema();
+        $properties->propOne = Schema::string();
+        $properties->propTwo = Schema::integer();
         $properties->recursion = $schema;
     }
 }
