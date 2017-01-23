@@ -3,7 +3,7 @@
 namespace Yaoi\Schema\Tests\Naive;
 
 
-use Yaoi\Schema\NG\SchemaLoader;
+use Yaoi\Schema\SchemaLoader;
 
 class PropertiesTest extends \PHPUnit_Framework_TestCase
 {

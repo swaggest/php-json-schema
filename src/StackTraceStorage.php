@@ -1,6 +1,6 @@
 <?php
 
-namespace Yaoi\Schema\NG;
+namespace Yaoi\Schema;
 
 
 class StackTraceStorage

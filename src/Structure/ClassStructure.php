@@ -5,7 +5,7 @@ namespace Yaoi\Schema\Structure;
 use Yaoi\Schema\Base;
 use Yaoi\Schema\Constraint\Properties;
 use Yaoi\Schema\Constraint\Type;
-use Yaoi\Schema\NG\Schema;
+use Yaoi\Schema\Schema;
 use Yaoi\Schema\OldSchema;
 
 abstract class ClassStructure extends Base implements ClassStructureContract

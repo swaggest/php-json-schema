@@ -3,7 +3,7 @@
 namespace Yaoi\Schema\Tests\PHPUnit;
 
 
-use Yaoi\Schema\NG\SchemaLoader;
+use Yaoi\Schema\SchemaLoader;
 
 class RefTest extends \PHPUnit_Framework_TestCase
 {

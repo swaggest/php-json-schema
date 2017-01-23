@@ -2,7 +2,7 @@
 
 namespace Yaoi\Schema\Tests\Helper;
 
-use Yaoi\Schema\NG\Schema;
+use Yaoi\Schema\Schema;
 use Yaoi\Schema\Structure\ClassStructure;
 
 /**

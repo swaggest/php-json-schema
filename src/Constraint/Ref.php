@@ -2,7 +2,7 @@
 
 namespace Yaoi\Schema\Constraint;
 
-use Yaoi\Schema\NG\Schema;
+use Yaoi\Schema\Schema;
 
 class Ref implements Constraint
 {

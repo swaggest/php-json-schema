@@ -1,13 +1,14 @@
 <?php
 
-namespace Yaoi\Schema\NG;
+namespace Yaoi\Schema;
 
 
-use Yaoi\Schema\Constraint\Definitions;
 use Yaoi\Schema\Constraint\Properties;
 use Yaoi\Schema\Constraint\Ref;
 use Yaoi\Schema\Constraint\Type;
 use Yaoi\Schema\Exception;
+use Yaoi\Schema\MagicMap;
+use Yaoi\Schema\StackTraceStorage;
 use Yaoi\Schema\Structure\ObjectItem;
 
 class Schema extends MagicMap
@@ -26,9 +27,6 @@ class Schema extends MagicMap
 
     /** @var Schema */
     public $items;
-
-    /** @var Definitions */
-    public $definitions;
 
     /** @var Ref */
     public $ref;
@@ -119,29 +117,6 @@ class Schema extends MagicMap
 
         return $result;
     }
-
-
-    /**
-     * @param $ref
-     * @return $this|mixed
-     * @throws \Exception
-     */
-    public function getDefinition($ref)
-    {
-        if ($ref === '#') {
-            return $this;
-        }
-
-        if (substr($ref, 0, 14) === '#/definitions/') {
-            $defName = substr($ref, 14);
-            if (isset($this->definitions[$defName])) {
-                return $this->definitions[$defName];
-            }
-        }
-
-        throw new \Exception('Could not resolve ' . $ref);
-    }
-
 
     public static function integer()
     {

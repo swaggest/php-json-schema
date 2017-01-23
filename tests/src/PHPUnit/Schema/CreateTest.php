@@ -5,7 +5,7 @@ namespace Yaoi\Schema\Tests\PHPUnit\Schema;
 use Yaoi\Schema\Constraint\Ref;
 use Yaoi\Schema\Constraint\Type;
 use Yaoi\Schema\Constraint\Properties;
-use Yaoi\Schema\NG\Schema;
+use Yaoi\Schema\Schema;
 
 class CreateTest extends \PHPUnit_Framework_TestCase
 {

@@ -3,7 +3,7 @@
 namespace Yaoi\Schema\Tests\Helper;
 
 
-use Yaoi\Schema\NG\Schema;
+use Yaoi\Schema\Schema;
 use Yaoi\Schema\Constraint\Properties;
 use Yaoi\Schema\Structure\ClassStructure;
 use Yaoi\Schema\Types\IntegerType;

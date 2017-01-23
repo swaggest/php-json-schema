@@ -3,7 +3,7 @@
 namespace Yaoi\Schema\Tests\PHPUnit;
 
 
-use Yaoi\Schema\NG\SchemaLoader;
+use Yaoi\Schema\SchemaLoader;
 
 class ReImportTest extends \PHPUnit_Framework_TestCase
 {

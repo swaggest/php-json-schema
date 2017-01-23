@@ -2,7 +2,7 @@
 
 namespace Yaoi\Schema\Tests\PHPUnit\Misc;
 
-use Yaoi\Schema\NG\StackTraceStorage;
+use Yaoi\Schema\StackTraceStorage;
 
 class StackTraceStorageTest extends \PHPUnit_Framework_TestCase
 {

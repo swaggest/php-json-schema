@@ -2,7 +2,7 @@
 
 namespace Yaoi\Schema\Tests\PHPUnit;
 
-use Yaoi\Schema\NG\Schema;
+use Yaoi\Schema\Schema;
 
 class ArrayTest extends \PHPUnit_Framework_TestCase
 {

@@ -4,7 +4,7 @@ namespace Yaoi\Schema\Tests\Naive;
 
 
 use Yaoi\Schema\Exception;
-use Yaoi\Schema\NG\SchemaLoader;
+use Yaoi\Schema\SchemaLoader;
 use Yaoi\Schema\OldSchema;
 
 class TypeObjectTest extends \PHPUnit_Framework_TestCase

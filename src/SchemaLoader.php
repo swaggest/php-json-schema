@@ -1,18 +1,17 @@
 <?php
 
-namespace Yaoi\Schema\NG;
+namespace Yaoi\Schema;
 
 
 use Yaoi\Schema\Base;
-use Yaoi\Schema\Constraint\Definitions;
 use Yaoi\Schema\Constraint\Properties;
 use Yaoi\Schema\Constraint\Ref;
 use Yaoi\Schema\Constraint\Type;
+use Yaoi\Schema\Schema;
 
 class SchemaLoader extends Base
 {
     const TYPE = 'type';
-    const DEFINITIONS = 'definitions';
 
     const PROPERTIES = 'properties';
     const ADDITIONAL_PROPERTIES = 'additionalProperties';
@@ -39,15 +38,6 @@ class SchemaLoader extends Base
         if (null === $this->rootSchema) {
             $this->rootSchema = $schema;
             $this->rootData = $schemaData;
-        }
-
-        if (isset($schemaData[self::DEFINITIONS])) {
-            if (null === $schema->definitions) {
-                $schema->definitions = new Definitions();
-            }
-            foreach ($schemaData[self::DEFINITIONS] as $name => $defData) {
-                $schema->definitions->__set($name, $this->readSchemaDeeper($defData, $schema));
-            }
         }
 
         if (isset($schemaData[self::TYPE])) {

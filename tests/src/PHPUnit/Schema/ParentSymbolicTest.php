@@ -4,7 +4,7 @@ namespace Yaoi\Schema\Tests\PHPUnit\Schema;
 
 use Yaoi\Schema\Constraint\Properties;
 use Yaoi\Schema\Constraint\Type;
-use Yaoi\Schema\NG\Schema;
+use Yaoi\Schema\Schema;
 
 class ParentSymbolicTest extends ParentTest
 {

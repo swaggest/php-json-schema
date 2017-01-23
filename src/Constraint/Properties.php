@@ -2,9 +2,9 @@
 
 namespace Yaoi\Schema\Constraint;
 
-use Yaoi\Schema\NG\MagicMap;
-use Yaoi\Schema\NG\Schema;
-use Yaoi\Schema\NG\SchemaLoader;
+use Yaoi\Schema\MagicMap;
+use Yaoi\Schema\Schema;
+use Yaoi\Schema\SchemaLoader;
 use Yaoi\Schema\Structure\ObjectItem;
 
 /**

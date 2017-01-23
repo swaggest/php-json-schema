@@ -3,7 +3,7 @@
 namespace Yaoi\Schema\Structure;
 
 use Yaoi\Schema\Constraint\Properties;
-use Yaoi\Schema\NG\Schema;
+use Yaoi\Schema\Schema;
 
 interface ClassStructureContract
 {

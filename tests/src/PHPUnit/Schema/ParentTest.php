@@ -4,8 +4,8 @@ namespace Yaoi\Schema\Tests\PHPUnit\Schema;
 
 
 use Yaoi\Schema\Exception;
-use Yaoi\Schema\NG\Schema;
-use Yaoi\Schema\NG\SchemaLoader;
+use Yaoi\Schema\Schema;
+use Yaoi\Schema\SchemaLoader;
 use Yaoi\Schema\OldConstraint\Properties;
 use Yaoi\Schema\OldSchema;
 

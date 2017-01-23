@@ -16,17 +16,6 @@ class Exception extends \Exception
         parent::__construct($message, $code, $previous);
     }
 
-    public function pushStructureTrace($prefix)
-    {
-        array_unshift($this->structureTrace, $prefix);
-        $this->message = $this->originalMessage . ' (' . implode('->', $this->structureTrace) . ')';
-    }
-
-    public function getStructureTrace()
-    {
-        return $this->structureTrace;
-    }
-
     public $constraint;
     public function setConstraint(Constraint $constraint)
     {

@@ -4,7 +4,7 @@ namespace Yaoi\Schema\Tests\PHPUnit;
 
 
 use Yaoi\Schema\Exception;
-use Yaoi\Schema\NG\Schema;
+use Yaoi\Schema\Schema;
 use Yaoi\Schema\Types\StringType;
 
 class StringTest extends \PHPUnit_Framework_TestCase

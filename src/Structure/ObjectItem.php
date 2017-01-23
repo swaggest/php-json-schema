@@ -3,7 +3,7 @@
 namespace Yaoi\Schema\Structure;
 
 
-use Yaoi\Schema\NG\MagicMap;
+use Yaoi\Schema\MagicMap;
 
 class ObjectItem extends MagicMap
 {
