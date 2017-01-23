@@ -10,7 +10,7 @@ class ArrayTest extends \PHPUnit_Framework_TestCase
     {
         $data = array(1, 2, 3);
         $schema = new Schema();
-        $schema->items = Schema::integer();
+        $schema->additionalItems = Schema::integer();
 
         $this->assertSame($data, $schema->import($data));
     }

@@ -17,13 +17,13 @@ class TypeObjectTest extends \PHPUnit_Framework_TestCase
                 'type' => 'object',
             )
         );
-        $this->assertSame('123', $schema->import(array('aaa' => '123'))->aaa);
+        $this->assertSame('123', $schema->import((object)array('aaa' => '123'))->aaa);
 
-        $object = $schema->import(array('3.45' => '123'));
+        $object = $schema->import((object)array('3.45' => '123'));
         $this->assertSame('123', $object->{3.45});
 
         $data = $schema->export($object);
-        $this->assertSame(array('3.45' => '123'), $data);
+        $this->assertSame((object)array('3.45' => '123'), $data);
     }
 
     public function testInvalidObject()

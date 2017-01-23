@@ -2,6 +2,7 @@
 
 namespace Yaoi\Schema\Constraint;
 
+use Yaoi\Schema\Exception;
 use Yaoi\Schema\MagicMap;
 use Yaoi\Schema\Schema;
 use Yaoi\Schema\SchemaLoader;
@@ -50,6 +51,9 @@ class Properties extends MagicMap implements Constraint
             } else {
                 if (null !== $additionalProperties) {
                     $traceHelper->push()->addData(SchemaLoader::ADDITIONAL_PROPERTIES);
+                    if ($additionalProperties === false) {
+                        throw new Exception('Additional properties not allowed', Exception::INVALID_VALUE);
+                    }
                     $value = $additionalProperties->import($value);
                     $traceHelper->pop();
                 }

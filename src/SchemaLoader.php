@@ -17,6 +17,10 @@ class SchemaLoader extends Base
     const ADDITIONAL_PROPERTIES = 'additionalProperties';
     const REF = '$ref';
 
+    const ITEMS = 'items';
+    const ADDITIONAL_ITEMS = 'additionalItems';
+    const UNIQUE_ITEMS = 'uniqueItems';
+
     /** @var Schema */
     private $rootSchema;
 
@@ -40,6 +44,10 @@ class SchemaLoader extends Base
             $this->rootData = $schemaData;
         }
 
+        if ($schemaData instanceof \stdClass) {
+            $schemaData = (array)$schemaData;
+        }
+
         if (isset($schemaData[self::TYPE])) {
             $schema->type = new Type($schemaData[self::TYPE]);
         }
@@ -53,7 +61,39 @@ class SchemaLoader extends Base
         }
 
         if (isset($schemaData[self::ADDITIONAL_PROPERTIES])) {
-            $schema->additionalProperties = $this->readSchemaDeeper($schemaData[self::ADDITIONAL_PROPERTIES], $schema);
+            $additionalProperties = $schemaData[self::ADDITIONAL_PROPERTIES];
+            if ($additionalProperties instanceof \stdClass) {
+                $schema->additionalProperties = $this->readSchemaDeeper($additionalProperties, $schema);
+            } else {
+                $schema->additionalProperties = $additionalProperties;
+            }
+        }
+
+
+        if (isset($schemaData[self::ITEMS])) {
+            $items = $schemaData[self::ITEMS];
+            if (is_array($items)) {
+                $schema->items = array();
+                foreach ($items as $item) {
+                    $schema->items[] = $this->readSchemaDeeper($item);
+                }
+            } elseif ($items instanceof \stdClass) {
+                $schema->items = $this->readSchemaDeeper($items);
+            }
+        }
+
+
+        if (isset($schemaData[self::ADDITIONAL_ITEMS])) {
+            $additionalItems = $schemaData[self::ADDITIONAL_ITEMS];
+            if ($additionalItems instanceof \stdClass) {
+                $schema->additionalItems = $this->readSchemaDeeper($additionalItems, $schema);
+            } else {
+                $schema->additionalItems = $additionalItems;
+            }
+        }
+
+        if (isset($schemaData[self::UNIQUE_ITEMS]) && $schemaData[self::UNIQUE_ITEMS] === true) {
+            $schema->uniqueItems = true;
         }
 
         // should resolve references on load
