@@ -29,7 +29,7 @@ class SpecTest extends \PHPUnit_Framework_TestCase
             }
         }
 
-        $this->assertSame($isValid, $actualValid, print_r(array('schema' => $schemaData, 'data' => $data), 1));
+        $this->assertSame($isValid, $actualValid, "Schema:\n" . json_encode($schemaData, JSON_PRETTY_PRINT) . "\nData:\n" . json_encode($data, JSON_PRETTY_PRINT));
     }
 
 
