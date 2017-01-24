@@ -2,7 +2,6 @@
 
 namespace Yaoi\Schema;
 
-
 use Yaoi\Schema\Base;
 use Yaoi\Schema\Constraint\Properties;
 use Yaoi\Schema\Constraint\Ref;
@@ -21,6 +20,11 @@ class SchemaLoader extends Base
     const ADDITIONAL_ITEMS = 'additionalItems';
     const UNIQUE_ITEMS = 'uniqueItems';
 
+    const MINIMUM = 'minimum';
+    const EXCLUSIVE_MINIMUM = 'exclusiveMinimum';
+    const MAXIMUM = 'maximum';
+    const EXCLUSIVE_MAXIMUM = 'exclusiveMaximum';
+
     /** @var Schema */
     private $rootSchema;
 
@@ -36,32 +40,32 @@ class SchemaLoader extends Base
     }
 
 
-    protected function readSchemaDeeper($schemaData, Schema $parentSchema = null)
+    protected function readSchemaDeeper($schemaArray, Schema $parentSchema = null)
     {
         $schema = new Schema();
         if (null === $this->rootSchema) {
             $this->rootSchema = $schema;
-            $this->rootData = $schemaData;
+            $this->rootData = $schemaArray;
         }
 
-        if ($schemaData instanceof \stdClass) {
-            $schemaData = (array)$schemaData;
+        if ($schemaArray instanceof \stdClass) {
+            $schemaArray = (array)$schemaArray;
         }
 
-        if (isset($schemaData[self::TYPE])) {
-            $schema->type = new Type($schemaData[self::TYPE]);
+        if (isset($schemaArray[self::TYPE])) {
+            $schema->type = new Type($schemaArray[self::TYPE]);
         }
 
-        if (isset($schemaData[self::PROPERTIES])) {
+        if (isset($schemaArray[self::PROPERTIES])) {
             $properties = new Properties();
             $schema->properties = $properties;
-            foreach ($schemaData[self::PROPERTIES] as $name => $data) {
+            foreach ($schemaArray[self::PROPERTIES] as $name => $data) {
                 $properties->__set($name, $this->readSchemaDeeper($data, $schema));
             }
         }
 
-        if (isset($schemaData[self::ADDITIONAL_PROPERTIES])) {
-            $additionalProperties = $schemaData[self::ADDITIONAL_PROPERTIES];
+        if (isset($schemaArray[self::ADDITIONAL_PROPERTIES])) {
+            $additionalProperties = $schemaArray[self::ADDITIONAL_PROPERTIES];
             if ($additionalProperties instanceof \stdClass) {
                 $schema->additionalProperties = $this->readSchemaDeeper($additionalProperties, $schema);
             } else {
@@ -70,8 +74,8 @@ class SchemaLoader extends Base
         }
 
 
-        if (isset($schemaData[self::ITEMS])) {
-            $items = $schemaData[self::ITEMS];
+        if (isset($schemaArray[self::ITEMS])) {
+            $items = $schemaArray[self::ITEMS];
             if (is_array($items)) {
                 $schema->items = array();
                 foreach ($items as $item) {
@@ -83,8 +87,8 @@ class SchemaLoader extends Base
         }
 
 
-        if (isset($schemaData[self::ADDITIONAL_ITEMS])) {
-            $additionalItems = $schemaData[self::ADDITIONAL_ITEMS];
+        if (isset($schemaArray[self::ADDITIONAL_ITEMS])) {
+            $additionalItems = $schemaArray[self::ADDITIONAL_ITEMS];
             if ($additionalItems instanceof \stdClass) {
                 $schema->additionalItems = $this->readSchemaDeeper($additionalItems, $schema);
             } else {
@@ -92,13 +96,28 @@ class SchemaLoader extends Base
             }
         }
 
-        if (isset($schemaData[self::UNIQUE_ITEMS]) && $schemaData[self::UNIQUE_ITEMS] === true) {
+        if (isset($schemaArray[self::UNIQUE_ITEMS]) && $schemaArray[self::UNIQUE_ITEMS] === true) {
             $schema->uniqueItems = true;
         }
 
+
+        if (isset($schemaArray[self::MINIMUM])) {
+            $schema->minimum = $schemaArray[self::MINIMUM];
+        }
+        if (isset($schemaArray[self::EXCLUSIVE_MINIMUM])) {
+            $schema->exclusiveMinimum = $schemaArray[self::EXCLUSIVE_MINIMUM];
+        }
+        if (isset($schemaArray[self::MAXIMUM])) {
+            $schema->maximum = $schemaArray[self::MAXIMUM];
+        }
+        if (isset($schemaArray[self::EXCLUSIVE_MAXIMUM])) {
+            $schema->exclusiveMaximum = $schemaArray[self::EXCLUSIVE_MAXIMUM];
+        }
+
+
         // should resolve references on load
-        if (isset($schemaData[self::REF])) {
-            $schema->ref = $this->resolveReference($schemaData[self::REF]);
+        if (isset($schemaArray[self::REF])) {
+            $schema->ref = $this->resolveReference($schemaArray[self::REF]);
         }
 
         return $schema;
@@ -114,7 +133,14 @@ class SchemaLoader extends Base
     {
         $ref = &$this->refs[$referencePath];
         if (null === $ref) {
-            if ($referencePath === '#') {
+            if ($referencePath === 'http://json-schema.org/draft-04/schema#') {
+                $ref = new Ref(
+                    $referencePath,
+                    SchemaLoader::create()->readSchema(json_decode(file_get_contents(__DIR__ . '/../spec/json-schema.json')))
+                );
+            }
+
+            elseif ($referencePath === '#') {
                 $ref = new Ref($referencePath, $this->rootSchema);
             }
 
@@ -123,8 +149,8 @@ class SchemaLoader extends Base
                 $branch = &$this->rootData;
                 while ($path) {
                     $folder = array_shift($path);
-                    if (isset($branch[$folder])) {
-                        $branch = &$branch[$folder];
+                    if (isset($branch->$folder)) {
+                        $branch = &$branch->$folder;
                     } else {
                         throw new \Exception('Could not resolve ' . $referencePath . ', ' . $folder);
                     }
@@ -145,3 +171,8 @@ class SchemaLoader extends Base
     }
 
 }
+
+/**
+ * @property $minimum
+ */
+class __stubJsonSchema {}

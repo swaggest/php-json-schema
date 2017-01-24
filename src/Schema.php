@@ -3,6 +3,7 @@
 namespace Yaoi\Schema;
 
 
+use Yaoi\Schema\Constraint\InvalidValue;
 use Yaoi\Schema\Constraint\Properties;
 use Yaoi\Schema\Constraint\Ref;
 use Yaoi\Schema\Constraint\Type;
@@ -34,6 +35,12 @@ class Schema extends MagicMap
     public $ref;
 
 
+    public $maximum;
+    public $exclusiveMaximum;
+    public $minimum;
+    public $exclusiveMinimum;
+
+
     public function import($data)
     {
         $result = $data;
@@ -45,6 +52,34 @@ class Schema extends MagicMap
             if (!$this->type->isValid($data)) {
                 $this->fail(ucfirst(implode(', ', $this->type->types) . ' required'));
             }
+        }
+
+        if (is_int($data) || is_float($data)) {
+            if ($this->maximum !== null) {
+                if ($this->exclusiveMaximum === true) {
+                    if ($data >= $this->maximum) {
+                        $this->fail('Maximum value exceeded');
+                    }
+                } else {
+                    if ($data > $this->maximum) {
+                        $this->fail('Maximum value exceeded');
+                    }
+                }
+            }
+
+            if ($this->minimum !== null) {
+                if ($this->exclusiveMinimum === true) {
+                    if ($data <= $this->minimum) {
+                        $this->fail('Minimum value exceeded');
+                    }
+                } else {
+                    if ($data < $this->minimum) {
+                        $this->fail('Minimum value exceeded');
+                    }
+                }
+            }
+
+
         }
 
         if ($data instanceof \stdClass) {
@@ -129,7 +164,6 @@ class Schema extends MagicMap
             throw new Exception($message, Exception::INVALID_VALUE);
         }
     }
-
 
     public function export($data)
     {

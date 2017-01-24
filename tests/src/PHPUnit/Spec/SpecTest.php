@@ -57,7 +57,7 @@ class SpecTest extends \PHPUnit_Framework_TestCase
                     foreach ($tests as $test) {
                         //$schema = SchemaLoader::create()->readSchema($test->schema);
                         foreach ($test->tests as $case) {
-                            $testCases[$test->description . ': ' . $case->description] = array(
+                            $testCases[$entry . ' ' . $test->description . ': ' . $case->description] = array(
                                 'schema' => $test->schema,
                                 'data' => $case->data,
                                 'isValid' => $case->valid,
@@ -82,11 +82,15 @@ class SpecTest extends \PHPUnit_Framework_TestCase
  * @property $schema
  * @property _SpecTestCase[] $tests
  */
-class _SpecTest{}
+class _SpecTest
+{
+}
 
 /**
  * @property $description
  * @property $data
  * @property bool $valid
  */
-class _SpecTestCase{}
+class _SpecTestCase
+{
+}
