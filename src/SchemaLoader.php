@@ -2,6 +2,7 @@
 
 namespace Yaoi\Schema;
 
+use PhpLang\ScopeExit;
 use Yaoi\Schema\Constraint\Properties;
 use Yaoi\Schema\Constraint\Ref;
 use Yaoi\Schema\Constraint\Type;
@@ -9,6 +10,8 @@ use Yaoi\Schema\RemoteRef\BasicFetcher;
 
 class SchemaLoader extends Base
 {
+    const ID = 'id';
+
     const TYPE = 'type';
 
     const PROPERTIES = 'properties';
@@ -77,6 +80,12 @@ class SchemaLoader extends Base
         return $this->readSchemaDeeper($schemaData);
     }
 
+    private $resolutionScope;
+
+    public function __construct()
+    {
+        $this->resolutionScope = new StackTraceStorage();
+    }
 
     protected function readSchemaDeeper($schemaArray, Schema $parentSchema = null)
     {
@@ -88,6 +97,14 @@ class SchemaLoader extends Base
 
         if ($schemaArray instanceof \stdClass) {
             $schemaArray = (array)$schemaArray;
+        }
+
+        if (isset($schemaArray[self::ID])) {
+            $parentScope = $this->resolutionScope;
+            $this->resolutionScope = Helper::resolveURI($parentScope, $schemaArray[self::ID]);
+            $defer = new ScopeExit(function () use ($parentScope) {
+                $this->resolutionScope = $parentScope;
+            });
         }
 
         if (isset($schemaArray[self::TYPE])) {
@@ -276,7 +293,8 @@ class SchemaLoader extends Base
                 }
             } else {
                 $refParts = explode('#', $referencePath);
-                $url = $refParts[0];
+                $url = Helper::resolveURI($this->resolutionScope, $refParts[0]);
+                $url = rtrim($url, '#');
                 $refLocalPath = isset($refParts[1]) ? '#' . $refParts[1] : '#';
                 $schemaLoader = &$this->remoteSchemaLoaders[$url];
                 if (null === $schemaLoader) {

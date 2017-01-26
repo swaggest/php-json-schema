@@ -28,4 +28,34 @@ class Helper
         return $pattern;
     }
 
+    public static function resolveURI($parent, $current)
+    {
+        if (false !== $pos = strpos($current, '://')) {
+            if (strpos($current, '/') > $pos) {
+                return $current;
+            }
+        }
+
+        if ($current === '') {
+            return $parent;
+        }
+
+        $result = $parent;
+        if ($current[0] === '#') {
+            if (false !== $pos = strpos($parent, '#')) {
+                $result = substr($parent, 0, $pos) . $current;
+            }
+        } elseif ($current[0] === '/') {
+        } else {
+            if (false !== $pos = strrpos($parent, '/')) {
+                $result = substr($parent, 0, $pos + 1) . $current;
+            }
+        }
+        if (false === strpos($result, '#')) {
+            $result .= '#';
+        }
+        return $result;
+    }
+
+
 }
