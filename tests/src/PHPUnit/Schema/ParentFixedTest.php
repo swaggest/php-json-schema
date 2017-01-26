@@ -27,7 +27,7 @@ class ParentFixedTest extends ParentTest
         );
         $object = LevelOneClass::import($data);
         $this->assertSame(123, $object->level1->level2->level3);
-        $this->assertSame($data, LevelOneClass::export($object));
+        $this->assertEquals($data, LevelOneClass::export($object));
     }
 
 

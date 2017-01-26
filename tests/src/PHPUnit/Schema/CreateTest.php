@@ -38,7 +38,7 @@ class CreateTest extends \PHPUnit_Framework_TestCase
 
 
         $rawDataTwo = $schema->export($data);
-        $this->assertSame($rawData, $rawDataTwo);
+        $this->assertEquals($rawData, $rawDataTwo);
     }
 
 }

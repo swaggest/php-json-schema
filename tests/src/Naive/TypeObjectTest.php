@@ -23,7 +23,7 @@ class TypeObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('123', $object->{3.45});
 
         $data = $schema->export($object);
-        $this->assertSame((object)array('3.45' => '123'), $data);
+        $this->assertSame(array('3.45' => '123'), (array)$data);
     }
 
     public function testInvalidObject()
