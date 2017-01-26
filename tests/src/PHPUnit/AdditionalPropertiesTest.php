@@ -13,7 +13,7 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
     {
         $schemaData = array(
             'type' => 'object',
-            'additionalProperties' => array(
+            'additionalProperties' => (object)array(
                 'type' => 'integer'
             ),
         );
@@ -34,10 +34,10 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
 //        $this->markTestSkipped('Not implemented');
         $schemaData = array(
             'type' => 'object',
-            'additionalProperties' => array(
+            'additionalProperties' => (object)array(
                 '$ref' => '#/def'
             ),
-            'def' => array(
+            'def' => (object)array(
                 'type' => 'integer',
             ),
         );
@@ -47,7 +47,7 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
         //print_r($schema);
 
         $object = $schema->import(
-            array('one' => 1, 'two' => 2)
+            (object)array('one' => 1, 'two' => 2)
         );
 
         $this->assertSame(1, $object->one);
@@ -59,7 +59,7 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
 
         $schemaData = array(
             'type' => 'object',
-            'additionalProperties' => array(
+            'additionalProperties' => (object)array(
                 '$ref' => '#/def'
             ),
             'properties' => array(
@@ -67,14 +67,14 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
                     'type' => 'string',
                 ),
             ),
-            'def' => array(
+            'def' => (object)array(
                 'type' => 'integer',
             ),
         );
 
         $schema = SchemaLoader::create()->readSchema($schemaData);
         $object = $schema->import(
-            array('zero' => '0', 'one' => 1, 'two' => 2)
+            (object)array('zero' => '0', 'one' => 1, 'two' => 2)
         );
 
         $this->assertSame('0', $object->zero);
@@ -88,9 +88,9 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
         $schemaData = array(
             'type' => 'object',
             'properties' => array(
-                'deeper' => array(
+                'deeper' => (object)array(
                     'type' => 'object',
-                    'additionalProperties' => array(
+                    'additionalProperties' => (object)array(
                         'type' => 'integer'
                     ),
                 )
@@ -102,8 +102,8 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
         //print_r($schema);
 
         $object = $schema->import(
-            array(
-                'deeper' => array('one' => 1, 'two' => 2)
+            (object)array(
+                'deeper' => (object)array('one' => 1, 'two' => 2)
             )
         );
 

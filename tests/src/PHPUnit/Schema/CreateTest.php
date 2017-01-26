@@ -23,10 +23,10 @@ class CreateTest extends \PHPUnit_Framework_TestCase
             );
 
         $schema->properties = $properties;
-        $rawData = array(
+        $rawData = (object)array(
             'stringValue' => 'abc',
-            'one' => array(
-                'two' => array(
+            'one' => (object)array(
+                'two' => (object)array(
                     'three' => 3
                 ),
             ),

@@ -57,9 +57,9 @@ class ParentTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(get_class(new Exception()), 'Integer required at properties:level1->properties:level2->properties:level3',
             Exception::INVALID_VALUE);
         try {
-            $object = $schema->import(array(
-                'level1'=> array(
-                    'level2' =>array(
+            $object = $schema->import((object)array(
+                'level1'=> (object)array(
+                    'level2' =>(object)array(
                         'level3' => 'abc' // integer required
                     ),
                 ),
@@ -75,9 +75,9 @@ class ParentTest extends \PHPUnit_Framework_TestCase
 
     public function testImport()
     {
-        $object = $this->deepSchema()->import(array(
-            'level1'=> array(
-                'level2' =>array(
+        $object = $this->deepSchema()->import((object)array(
+            'level1'=> (object)array(
+                'level2' => (object)array(
                     'level3' => 123 // integer required
                 ),
             ),

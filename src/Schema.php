@@ -343,6 +343,8 @@ class Schema extends MagicMap
 
     public function export($data)
     {
+        throw new Exception('Implement me');
+
         $result = $data;
         if ($this->ref !== null) {
             $result = $this->ref->getSchema()->export($data);

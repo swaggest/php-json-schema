@@ -16,7 +16,9 @@ class PropertiesTest extends \PHPUnit_Framework_TestCase
             )
         ));
 
-        $data = array(
+
+
+        $data = (object)array(
             'one' => 'aaa',
             'two' => 123,
         );

@@ -10,8 +10,8 @@ class ReImportTest extends \PHPUnit_Framework_TestCase
 
     public function testJsonSchema()
     {
-        $data = file_get_contents(__DIR__ . '/../../res/json-schema.json');
-        $data = json_decode($data, true);
+        $data = file_get_contents(__DIR__ . '/../../../spec/json-schema.json');
+        $data = json_decode($data);
         //print_r($data);
 
         $schema = SchemaLoader::create()->readSchema($data);
@@ -22,8 +22,8 @@ class ReImportTest extends \PHPUnit_Framework_TestCase
 
     public function testDoubleImport()
     {
-        $data = file_get_contents(__DIR__ . '/../../res/json-schema.json');
-        $data = json_decode($data, true);
+        $data = file_get_contents(__DIR__ . '/../../../spec/json-schema.json');
+        $data = json_decode($data);
         //print_r($data);
 
         $schema = SchemaLoader::create()->readSchema($data);

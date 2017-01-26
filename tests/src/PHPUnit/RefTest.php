@@ -27,7 +27,7 @@ class RefTest extends \PHPUnit_Framework_TestCase
         $loader = new SchemaLoader();
         $schema = $loader->readSchema($schemaData);
 
-        $import = $schema->import(array('one' => 123));
+        $import = $schema->import((object)array('one' => 123));
         $this->assertSame(123, $import->one);
     }
 
@@ -60,8 +60,8 @@ class RefTest extends \PHPUnit_Framework_TestCase
         $loader = new SchemaLoader();
         $schema = $loader->readSchema($schemaData);
 
-        $object = $schema->import(array(
-                'two' => array(
+        $object = $schema->import((object)array(
+                'two' => (object)array(
                     'one' => 123
                 )
             )

@@ -131,8 +131,10 @@ class SchemaLoader extends Base
             $additionalProperties = $schemaArray[self::ADDITIONAL_PROPERTIES];
             if ($additionalProperties instanceof \stdClass) {
                 $schema->additionalProperties = $this->readSchemaDeeper($additionalProperties);
-            } else {
+            } elseif (is_bool($additionalProperties)) {
                 $schema->additionalProperties = $additionalProperties;
+            } else {
+                throw new Exception('Object or boolean required for additionalProperties', Exception::INVALID_VALUE);
             }
         }
 

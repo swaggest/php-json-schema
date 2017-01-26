@@ -12,10 +12,10 @@ class ClassStructureTest extends \PHPUnit_Framework_TestCase
     {
         $schema = SampleStructure::makeSchema();
         //print_r($schema);
-        $object = $schema->import(array(
+        $object = $schema->import((object)array(
             'propOne' => '1',
             'propTwo' => 2,
-            'recursion' => array(
+            'recursion' => (object)array(
                 'propOne' => '11',
                 'propTwo' => 22,
             )
@@ -33,10 +33,10 @@ class ClassStructureTest extends \PHPUnit_Framework_TestCase
     {
         $schema = SampleStructure::makeSchema();
         $this->setExpectedException(get_class(new Exception()), 'String required at properties:recursion->properties:propOne');
-        $schema->import(array(
+        $schema->import((object)array(
             'propOne' => '1',
             'propTwo' => 2,
-            'recursion' => array(
+            'recursion' => (object)array(
                 'propOne' => 11,
                 'propTwo' => 22,
             )

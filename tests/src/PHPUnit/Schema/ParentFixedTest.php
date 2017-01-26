@@ -18,9 +18,9 @@ class ParentFixedTest extends ParentTest
 
     public function testImportClass()
     {
-        $data = array(
-            'level1' => array(
-                'level2' => array(
+        $data = (object)array(
+            'level1' => (object)array(
+                'level2' => (object)array(
                     'level3' => 123 // integer required
                 ),
             ),
