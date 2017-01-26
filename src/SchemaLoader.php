@@ -38,6 +38,11 @@ class SchemaLoader extends Base
     const MIN_LENGTH = 'minLength';
     const MAX_LENGTH = 'maxLength';
 
+    const NOT = 'not';
+    const ALL_OF = 'allOf';
+    const ANY_OF = 'anyOf';
+    const ONE_OF = 'oneOf';
+
     /** @var Schema */
     private $rootSchema;
 
@@ -51,7 +56,6 @@ class SchemaLoader extends Base
     {
         return $this->readSchemaDeeper($schemaData);
     }
-
 
 
     protected function readSchemaDeeper($schemaArray, Schema $parentSchema = null)
@@ -153,7 +157,6 @@ class SchemaLoader extends Base
         }
 
 
-
         // Number
         if (isset($schemaArray[self::MINIMUM])) {
             $schema->minimum = $schemaArray[self::MINIMUM];
@@ -189,6 +192,26 @@ class SchemaLoader extends Base
             $schema->enum = $schemaArray[self::ENUM];
         }
 
+        // Logic
+        if (isset($schemaArray[self::ALL_OF])) {
+            foreach ($schemaArray[self::ALL_OF] as $item) {
+                $schema->allOf[] = $this->readSchemaDeeper($item);
+            }
+        }
+        if (isset($schemaArray[self::ANY_OF])) {
+            foreach ($schemaArray[self::ANY_OF] as $item) {
+                $schema->anyOf[] = $this->readSchemaDeeper($item);
+            }
+        }
+        if (isset($schemaArray[self::ONE_OF])) {
+            foreach ($schemaArray[self::ONE_OF] as $item) {
+                $schema->oneOf[] = $this->readSchemaDeeper($item);
+            }
+        }
+        if (isset($schemaArray[self::NOT])) {
+            $schema->not = $this->readSchemaDeeper($schemaArray[self::NOT]);
+        }
+
         // should resolve references on load
         if (isset($schemaArray[self::REF])) {
             $schema->ref = $this->resolveReference($schemaArray[self::REF]);
@@ -212,13 +235,9 @@ class SchemaLoader extends Base
                     $referencePath,
                     SchemaLoader::create()->readSchema(json_decode(file_get_contents(__DIR__ . '/../spec/json-schema.json')))
                 );
-            }
-
-            elseif ($referencePath === '#') {
+            } elseif ($referencePath === '#') {
                 $ref = new Ref($referencePath, $this->rootSchema);
-            }
-
-            elseif ($referencePath[0] === '#') {
+            } elseif ($referencePath[0] === '#') {
                 $path = explode('/', trim($referencePath, '#/'));
                 $branch = &$this->rootData;
                 while ($path) {
@@ -249,4 +268,6 @@ class SchemaLoader extends Base
 /**
  * @property $minimum
  */
-class __stubJsonSchema {}
+class __stubJsonSchema
+{
+}

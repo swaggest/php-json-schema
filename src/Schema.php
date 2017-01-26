@@ -74,6 +74,16 @@ class Schema extends MagicMap
     /** @var int */
     public $maxLength;
 
+
+    /** @var Schema[] */
+    public $allOf;
+    /** @var Schema */
+    public $not;
+    /** @var Schema[] */
+    public $anyOf;
+    /** @var Schema[] */
+    public $oneOf;
+
     public function import($data)
     {
         $result = $data;
@@ -99,6 +109,58 @@ class Schema extends MagicMap
                 $this->fail('Enum failed');
             }
         }
+
+        if ($this->not !== null) {
+            $exception = false;
+            try {
+                $this->not->import($data);
+            } catch (Exception $exception) {
+            }
+            if ($exception === false) {
+                $this->fail('Failed due to logical constraint: not');
+            }
+        }
+
+        if ($this->oneOf !== null) {
+            $successes = 0;
+            foreach ($this->oneOf as $item) {
+                try {
+                    $result = $item->import($data);
+                    $successes++;
+                    if ($successes > 1) {
+                        break;
+                    }
+                } catch (Exception $exception) {
+                }
+            }
+            if ($successes !== 1) {
+                $this->fail('Failed due to logical constraint: oneOf');
+            }
+        }
+
+        if ($this->anyOf !== null) {
+            $successes = 0;
+            foreach ($this->anyOf as $item) {
+                try {
+                    $result = $item->import($data);
+                    $successes++;
+                    if ($successes) {
+                        break;
+                    }
+                } catch (Exception $exception) {
+                }
+            }
+            if (!$successes) {
+                $this->fail('Failed due to logical constraint: anyOf');
+            }
+        }
+
+        if ($this->allOf !== null) {
+            foreach ($this->allOf as $item) {
+                $result = $item->import($data);
+            }
+        }
+
 
         if (is_string($data)) {
             if ($this->minLength !== null) {
