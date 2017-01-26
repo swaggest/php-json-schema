@@ -88,7 +88,8 @@ class Schema extends MagicMap
     {
         $result = $data;
         if ($this->ref !== null) {
-            $result = $this->ref->getSchema()->import($data);
+            // https://github.com/json-schema-org/JSON-Schema-Test-Suite/pull/129
+            return $this->ref->getSchema()->import($data);
         }
 
         if ($this->type !== null) {

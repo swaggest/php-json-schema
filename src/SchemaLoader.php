@@ -242,10 +242,18 @@ class SchemaLoader extends Base
                 $branch = &$this->rootData;
                 while ($path) {
                     $folder = array_shift($path);
-                    if (isset($branch->$folder)) {
+
+                    // unescaping special characters
+                    // https://tools.ietf.org/html/draft-ietf-appsawg-json-pointer-07#section-4
+                    // https://github.com/json-schema-org/JSON-Schema-Test-Suite/issues/130
+                    $folder = str_replace(array('~0','~1', '%25'), array('~', '/', '%'), $folder);
+
+                    if ($branch instanceof \stdClass && isset($branch->$folder)) {
                         $branch = &$branch->$folder;
+                    } elseif (is_array($branch) && isset($branch[$folder])) {
+                        $branch = &$branch[$folder];
                     } else {
-                        throw new \Exception('Could not resolve ' . $referencePath . ', ' . $folder);
+                        throw new \Exception('Could not resolve ' . $referencePath . ': ' . $folder);
                     }
                 }
                 $ref = new Ref($referencePath, $this->readSchema($branch));
