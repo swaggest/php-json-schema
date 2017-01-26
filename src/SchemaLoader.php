@@ -15,12 +15,16 @@ class SchemaLoader extends Base
     const ADDITIONAL_PROPERTIES = 'additionalProperties';
     const REQUIRED = 'required';
     const DEPENDENCIES = 'dependencies';
+    const MIN_PROPERTIES = 'minProperties';
+    const MAX_PROPERTIES = 'maxProperties';
 
     const REF = '$ref';
 
     const ITEMS = 'items';
     const ADDITIONAL_ITEMS = 'additionalItems';
     const UNIQUE_ITEMS = 'uniqueItems';
+    const MIN_ITEMS = 'minItems';
+    const MAX_ITEMS = 'maxItems';
 
     const ENUM = 'enum';
 
@@ -28,8 +32,11 @@ class SchemaLoader extends Base
     const EXCLUSIVE_MINIMUM = 'exclusiveMinimum';
     const MAXIMUM = 'maximum';
     const EXCLUSIVE_MAXIMUM = 'exclusiveMaximum';
+    const MULTIPLE_OF = 'multipleOf';
 
     const PATTERN = 'pattern';
+    const MIN_LENGTH = 'minLength';
+    const MAX_LENGTH = 'maxLength';
 
     /** @var Schema */
     private $rootSchema;
@@ -102,6 +109,12 @@ class SchemaLoader extends Base
             }
         }
 
+        if (isset($schemaArray[self::MIN_PROPERTIES])) {
+            $schema->minProperties = $schemaArray[self::MIN_PROPERTIES];
+        }
+        if (isset($schemaArray[self::MAX_PROPERTIES])) {
+            $schema->maxProperties = $schemaArray[self::MAX_PROPERTIES];
+        }
 
 
         // Array
@@ -131,6 +144,14 @@ class SchemaLoader extends Base
             $schema->uniqueItems = true;
         }
 
+        if (isset($schemaArray[self::MIN_ITEMS])) {
+            $schema->minItems = $schemaArray[self::MIN_ITEMS];
+        }
+
+        if (isset($schemaArray[self::MAX_ITEMS])) {
+            $schema->maxItems = $schemaArray[self::MAX_ITEMS];
+        }
+
 
 
         // Number
@@ -146,13 +167,21 @@ class SchemaLoader extends Base
         if (isset($schemaArray[self::EXCLUSIVE_MAXIMUM])) {
             $schema->exclusiveMaximum = $schemaArray[self::EXCLUSIVE_MAXIMUM];
         }
+        if (isset($schemaArray[self::MULTIPLE_OF])) {
+            $schema->multipleOf = $schemaArray[self::MULTIPLE_OF];
+        }
 
 
         // String
         if (isset($schemaArray[self::PATTERN])) {
             $schema->pattern = Helper::toPregPattern($schemaArray[self::PATTERN]);
         }
-
+        if (isset($schemaArray[self::MIN_LENGTH])) {
+            $schema->minLength = $schemaArray[self::MIN_LENGTH];
+        }
+        if (isset($schemaArray[self::MAX_LENGTH])) {
+            $schema->maxLength = $schemaArray[self::MAX_LENGTH];
+        }
 
 
         // Misc

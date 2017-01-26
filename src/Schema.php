@@ -28,6 +28,10 @@ class Schema extends MagicMap
     public $required;
     /** @var string[][]|Schema[] */
     public $dependencies;
+    /** @var int */
+    public $minProperties;
+    /** @var int */
+    public $maxProperties;
 
     // Array
     /** @var Schema|Schema[] */
@@ -36,6 +40,10 @@ class Schema extends MagicMap
     public $additionalItems;
     /** @var bool */
     public $uniqueItems;
+    /** @var int */
+    public $minItems;
+    /** @var int */
+    public $maxItems;
 
     // Reference
     /** @var Ref */
@@ -46,14 +54,25 @@ class Schema extends MagicMap
     public $enum;
 
     // Number
+    /** @var int */
     public $maximum;
+    /** @var bool */
     public $exclusiveMaximum;
+    /** @var int */
     public $minimum;
+    /** @var bool */
     public $exclusiveMinimum;
+    /** @var float|int */
+    public $multipleOf;
 
 
     // String
+    /** @var string */
     public $pattern;
+    /** @var int */
+    public $minLength;
+    /** @var int */
+    public $maxLength;
 
     public function import($data)
     {
@@ -82,7 +101,17 @@ class Schema extends MagicMap
         }
 
         if (is_string($data)) {
-            if ($this->pattern) {
+            if ($this->minLength !== null) {
+                if (mb_strlen($data) < $this->minLength) {
+                    $this->fail('String is too short');
+                }
+            }
+            if ($this->maxLength !== null) {
+                if (mb_strlen($data) > $this->maxLength) {
+                    $this->fail('String is too long');
+                }
+            }
+            if ($this->pattern !== null) {
                 if (0 === preg_match($this->pattern, $data)) {
                     $this->fail('Does not match to ' . $this->pattern);
                 }
@@ -90,6 +119,13 @@ class Schema extends MagicMap
         }
 
         if (is_int($data) || is_float($data)) {
+            if ($this->multipleOf !== null) {
+                $div = $data / $this->multipleOf;
+                if ($div != (int)$div) {
+                    $this->fail($data . ' is not multiple of ' . $this->multipleOf);
+                }
+            }
+
             if ($this->maximum !== null) {
                 if ($this->exclusiveMaximum === true) {
                     if ($data >= $this->maximum) {
@@ -135,7 +171,14 @@ class Schema extends MagicMap
                 $properties = &$this->properties->toArray();
             }
 
-            foreach ((array)$data as $key => $value) {
+            $array = (array)$data;
+            if ($this->minProperties !== null && count($array) < $this->minProperties) {
+                $this->fail("Not enough properties");
+            }
+            if ($this->maxProperties !== null && count($array) > $this->maxProperties) {
+                $this->fail("Too many properties");
+            }
+            foreach ($array as $key => $value) {
                 $found = false;
                 if (isset($this->dependencies[$key])) {
                     $dependencies = $this->dependencies[$key];
@@ -155,7 +198,7 @@ class Schema extends MagicMap
                     $value = $properties[$key]->import($value);
                 }
 
-                if (!$found && $this->patternProperties !== null) {
+                if ($this->patternProperties !== null) {
                     foreach ($this->patternProperties as $pattern => $propertySchema) {
                         if (preg_match($pattern, $key)) {
                             $found = true;
@@ -177,6 +220,14 @@ class Schema extends MagicMap
         }
 
         if (is_array($data)) {
+
+            if ($this->minItems !== null && count($data) < $this->minItems) {
+                $this->fail("Not enough items in array");
+            }
+
+            if ($this->maxItems !== null && count($data) > $this->maxItems) {
+                $this->fail("Too many items in array");
+            }
 
             if ($this->items instanceof Schema) {
                 $items = array();
