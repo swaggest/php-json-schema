@@ -3,20 +3,21 @@
 namespace Yaoi\Schema\Tests\PHPUnit\Spec;
 
 use Yaoi\Schema\Exception;
-use Yaoi\Schema\Schema;
 use Yaoi\Schema\SchemaLoader;
 
 class SpecTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider provider
-     * @param $schema
+     * @param $schemaData
      * @param $data
      * @param $isValid
+     * @throws Exception
      */
     public function testSpecDraft4($schemaData, $data, $isValid)
     {
         $actualValid = true;
+        $error = '';
         try {
             $schema = SchemaLoader::create()->readSchema($schemaData);
             $res = $schema->import($data);
@@ -24,12 +25,15 @@ class SpecTest extends \PHPUnit_Framework_TestCase
         } catch (Exception $exception) {
             if ($exception->getCode() === Exception::INVALID_VALUE) {
                 $actualValid = false;
+                $error = $exception->getMessage();
             } else {
                 throw $exception;
             }
         }
 
-        $this->assertSame($isValid, $actualValid, "Schema:\n" . json_encode($schemaData, JSON_PRETTY_PRINT) . "\nData:\n" . json_encode($data, JSON_PRETTY_PRINT));
+        $this->assertSame($isValid, $actualValid, "Schema:\n" . json_encode($schemaData, JSON_PRETTY_PRINT)
+            . "\nData:\n" . json_encode($data, JSON_PRETTY_PRINT)
+            . "\nError: " . $error . "\n");
     }
 
 

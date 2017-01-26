@@ -37,6 +37,14 @@ class Properties extends MagicMap implements Constraint
         return new static;
     }
 
+    /**
+     * @param $data
+     * @param ObjectItem $result
+     * @param Schema|null $schema
+     * @throws Exception
+     * @throws \Exception
+     * @deprecated move relevant code to Schema
+     */
     public function import($data, ObjectItem $result, Schema $schema = null)
     {
         $traceHelper = Schema::$traceHelper;
@@ -49,7 +57,19 @@ class Properties extends MagicMap implements Constraint
                 $result->$key = $this->_arrayOfData[$key]->import($value);
                 $traceHelper->pop();
             } else {
-                if (null !== $additionalProperties) {
+                // todo remove code duplication
+
+                $found = false;
+                if ($schema->patternProperties !== null) {
+                    foreach ($schema->patternProperties as $pattern => $propertySchema) {
+                        if (preg_match($pattern, $key)) {
+                            $found = true;
+                            $value = $propertySchema->import($value);
+                            //break; // todo manage multiple import data properly (pattern accessor)
+                        }
+                    }
+                }
+                if (!$found && null !== $additionalProperties) {
                     $traceHelper->push()->addData(SchemaLoader::ADDITIONAL_PROPERTIES);
                     if ($additionalProperties === false) {
                         throw new Exception('Additional properties not allowed', Exception::INVALID_VALUE);

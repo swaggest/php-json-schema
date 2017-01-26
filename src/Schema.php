@@ -3,7 +3,6 @@
 namespace Yaoi\Schema;
 
 
-use Yaoi\Schema\Constraint\InvalidValue;
 use Yaoi\Schema\Constraint\Properties;
 use Yaoi\Schema\Constraint\Ref;
 use Yaoi\Schema\Constraint\Type;
@@ -18,12 +17,19 @@ class Schema extends MagicMap
     /** @var Type */
     public $type;
 
+    // Object
     /** @var Properties */
     public $properties;
     /** @var Schema|bool */
     public $additionalProperties;
+    /** @var Schema[] */
+    public $patternProperties;
+    /** @var string[] */
+    public $required;
+    /** @var string[][]|Schema[] */
+    public $dependencies;
 
-
+    // Array
     /** @var Schema|Schema[] */
     public $items;
     /** @var Schema|bool */
@@ -31,15 +37,23 @@ class Schema extends MagicMap
     /** @var bool */
     public $uniqueItems;
 
+    // Reference
     /** @var Ref */
     public $ref;
 
+    // Enum
+    /** @var array */
+    public $enum;
 
+    // Number
     public $maximum;
     public $exclusiveMaximum;
     public $minimum;
     public $exclusiveMinimum;
 
+
+    // String
+    public $pattern;
 
     public function import($data)
     {
@@ -51,6 +65,27 @@ class Schema extends MagicMap
         if ($this->type !== null) {
             if (!$this->type->isValid($data)) {
                 $this->fail(ucfirst(implode(', ', $this->type->types) . ' required'));
+            }
+        }
+
+        if ($this->enum !== null) {
+            $enumOk = false;
+            foreach ($this->enum as $item) {
+                if ($item === $data) {
+                    $enumOk = true;
+                    break;
+                }
+            }
+            if (!$enumOk) {
+                $this->fail('Enum failed');
+            }
+        }
+
+        if (is_string($data)) {
+            if ($this->pattern) {
+                if (0 === preg_match($this->pattern, $data)) {
+                    $this->fail('Does not match to ' . $this->pattern);
+                }
             }
         }
 
@@ -83,35 +118,62 @@ class Schema extends MagicMap
         }
 
         if ($data instanceof \stdClass) {
-            if ($this->properties !== null) {
-                if (!$result instanceof ObjectItem) {
-                    $result = new ObjectItem();
-                }
-                try {
-                    $this->properties->import($data, $result, $this);
-                } catch (Exception $exception) {
-                    if ($exception->getCode() === Exception::INVALID_VALUE) {
-                        $this->fail($exception->getMessage());
-                    }
-                }
-
-            } else {
-                if ($this->additionalProperties
-                    || ($this->type && $this->type->has(Type::OBJECT))
-                ) {
-
-                    if (!$result instanceof ObjectItem) {
-                        $result = new ObjectItem();
-                    }
-
-                    foreach ((array)$data as $key => $value) {
-                        if ($this->additionalProperties !== null) {
-                            $value = $this->additionalProperties->import($value);
-                        }
-                        $result[$key] = $value;
+            if ($this->required !== null) {
+                foreach ($this->required as $item) {
+                    if (!property_exists($data, $item)) {
+                        $this->fail('Required property missing: ' . $item);
                     }
                 }
             }
+
+            if (!$result instanceof ObjectItem) {
+                $result = new ObjectItem();
+            }
+
+            if ($this->properties !== null) {
+                /** @var Schema[] $properties */
+                $properties = &$this->properties->toArray();
+            }
+
+            foreach ((array)$data as $key => $value) {
+                $found = false;
+                if (isset($this->dependencies[$key])) {
+                    $dependencies = $this->dependencies[$key];
+                    if ($dependencies instanceof Schema) {
+                        $dependencies->import($data);
+                    } else {
+                        foreach ($dependencies as $item) {
+                            if (!property_exists($data, $item)) {
+                                $this->fail('Dependency property missing: ' . $item);
+                            }
+                        }
+                    }
+                }
+
+                if (isset($properties[$key])) {
+                    $found = true;
+                    $value = $properties[$key]->import($value);
+                }
+
+                if (!$found && $this->patternProperties !== null) {
+                    foreach ($this->patternProperties as $pattern => $propertySchema) {
+                        if (preg_match($pattern, $key)) {
+                            $found = true;
+                            $value = $propertySchema->import($value);
+                            //break; // todo manage multiple import data properly (pattern accessor)
+                        }
+                    }
+                }
+                if (!$found && $this->additionalProperties !== null) {
+                    if ($this->additionalProperties === false) {
+                        $this->fail('Additional properties not allowed');
+                    }
+
+                    $value = $this->additionalProperties->import($value);
+                }
+                $result[$key] = $value;
+            }
+
         }
 
         if (is_array($data)) {

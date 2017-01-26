@@ -2,28 +2,34 @@
 
 namespace Yaoi\Schema;
 
-use Yaoi\Schema\Base;
 use Yaoi\Schema\Constraint\Properties;
 use Yaoi\Schema\Constraint\Ref;
 use Yaoi\Schema\Constraint\Type;
-use Yaoi\Schema\Schema;
 
 class SchemaLoader extends Base
 {
     const TYPE = 'type';
 
     const PROPERTIES = 'properties';
+    const PATTERN_PROPERTIES = 'patternProperties';
     const ADDITIONAL_PROPERTIES = 'additionalProperties';
+    const REQUIRED = 'required';
+    const DEPENDENCIES = 'dependencies';
+
     const REF = '$ref';
 
     const ITEMS = 'items';
     const ADDITIONAL_ITEMS = 'additionalItems';
     const UNIQUE_ITEMS = 'uniqueItems';
 
+    const ENUM = 'enum';
+
     const MINIMUM = 'minimum';
     const EXCLUSIVE_MINIMUM = 'exclusiveMinimum';
     const MAXIMUM = 'maximum';
     const EXCLUSIVE_MAXIMUM = 'exclusiveMaximum';
+
+    const PATTERN = 'pattern';
 
     /** @var Schema */
     private $rootSchema;
@@ -38,6 +44,7 @@ class SchemaLoader extends Base
     {
         return $this->readSchemaDeeper($schemaData);
     }
+
 
 
     protected function readSchemaDeeper($schemaArray, Schema $parentSchema = null)
@@ -56,24 +63,48 @@ class SchemaLoader extends Base
             $schema->type = new Type($schemaArray[self::TYPE]);
         }
 
+
+        // Object
         if (isset($schemaArray[self::PROPERTIES])) {
             $properties = new Properties();
             $schema->properties = $properties;
             foreach ($schemaArray[self::PROPERTIES] as $name => $data) {
-                $properties->__set($name, $this->readSchemaDeeper($data, $schema));
+                $properties->__set($name, $this->readSchemaDeeper($data));
+            }
+        }
+
+        if (isset($schemaArray[self::PATTERN_PROPERTIES])) {
+            foreach ($schemaArray[self::PATTERN_PROPERTIES] as $name => $data) {
+                $schema->patternProperties[Helper::toPregPattern($name)] = $this->readSchemaDeeper($data);
             }
         }
 
         if (isset($schemaArray[self::ADDITIONAL_PROPERTIES])) {
             $additionalProperties = $schemaArray[self::ADDITIONAL_PROPERTIES];
             if ($additionalProperties instanceof \stdClass) {
-                $schema->additionalProperties = $this->readSchemaDeeper($additionalProperties, $schema);
+                $schema->additionalProperties = $this->readSchemaDeeper($additionalProperties);
             } else {
                 $schema->additionalProperties = $additionalProperties;
             }
         }
 
+        if (isset($schemaArray[self::REQUIRED])) {
+            $schema->required = $schemaArray[self::REQUIRED];
+        }
 
+        if (isset($schemaArray[self::DEPENDENCIES])) {
+            foreach ($schemaArray[self::DEPENDENCIES] as $key => $value) {
+                if ($value instanceof \stdClass) {
+                    $schema->dependencies[$key] = $this->readSchemaDeeper($value);
+                } else {
+                    $schema->dependencies[$key] = $value;
+                }
+            }
+        }
+
+
+
+        // Array
         if (isset($schemaArray[self::ITEMS])) {
             $items = $schemaArray[self::ITEMS];
             if (is_array($items)) {
@@ -90,7 +121,7 @@ class SchemaLoader extends Base
         if (isset($schemaArray[self::ADDITIONAL_ITEMS])) {
             $additionalItems = $schemaArray[self::ADDITIONAL_ITEMS];
             if ($additionalItems instanceof \stdClass) {
-                $schema->additionalItems = $this->readSchemaDeeper($additionalItems, $schema);
+                $schema->additionalItems = $this->readSchemaDeeper($additionalItems);
             } else {
                 $schema->additionalItems = $additionalItems;
             }
@@ -101,6 +132,8 @@ class SchemaLoader extends Base
         }
 
 
+
+        // Number
         if (isset($schemaArray[self::MINIMUM])) {
             $schema->minimum = $schemaArray[self::MINIMUM];
         }
@@ -114,6 +147,18 @@ class SchemaLoader extends Base
             $schema->exclusiveMaximum = $schemaArray[self::EXCLUSIVE_MAXIMUM];
         }
 
+
+        // String
+        if (isset($schemaArray[self::PATTERN])) {
+            $schema->pattern = Helper::toPregPattern($schemaArray[self::PATTERN]);
+        }
+
+
+
+        // Misc
+        if (isset($schemaArray[self::ENUM])) {
+            $schema->enum = $schemaArray[self::ENUM];
+        }
 
         // should resolve references on load
         if (isset($schemaArray[self::REF])) {
