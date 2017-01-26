@@ -2,7 +2,7 @@
 
 namespace Yaoi\Schema;
 
-class MagicMap implements \ArrayAccess
+class MagicMap implements \ArrayAccess, \JsonSerializable
 {
     protected $_arrayOfData = array();
 
@@ -41,4 +41,11 @@ class MagicMap implements \ArrayAccess
     {
         return $this->_arrayOfData;
     }
+
+    function jsonSerialize()
+    {
+        return (object)$this->_arrayOfData;
+    }
+
+
 }

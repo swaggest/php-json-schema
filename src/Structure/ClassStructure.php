@@ -26,7 +26,7 @@ abstract class ClassStructure extends Base implements ClassStructureContract
     /**
      * @param $data
      * @return static
-     * @throws \Yaoi\Schema\Exception
+     * @throws \Yaoi\Schema\InvalidValue
      */
     public static function import($data)
     {
@@ -37,7 +37,7 @@ abstract class ClassStructure extends Base implements ClassStructureContract
     /**
      * @param $data
      * @return mixed
-     * @throws \Yaoi\Schema\Exception
+     * @throws \Yaoi\Schema\InvalidValue
      */
     public static function export($data)
     {

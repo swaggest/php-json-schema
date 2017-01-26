@@ -3,8 +3,8 @@
 namespace Yaoi\Schema\Constraint;
 
 
-use Yaoi\Schema\Exception;
+use Yaoi\Schema\InvalidValue;
 
-class InvalidValue extends Exception
+class InvalidValue extends InvalidValue
 {
 }

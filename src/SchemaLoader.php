@@ -134,7 +134,7 @@ class SchemaLoader extends Base
             } elseif (is_bool($additionalProperties)) {
                 $schema->additionalProperties = $additionalProperties;
             } else {
-                throw new Exception('Object or boolean required for additionalProperties', Exception::INVALID_VALUE);
+                throw new InvalidValue('Object or boolean required for additionalProperties', InvalidValue::INVALID_VALUE);
             }
         }
 

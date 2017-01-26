@@ -3,7 +3,7 @@
 namespace Yaoi\Schema\Tests\PHPUnit\Constraint;
 
 
-use Yaoi\Schema\Exception;
+use Yaoi\Schema\InvalidValue;
 use Yaoi\Schema\SchemaLoader;
 
 class AdditionalItemsTest extends \PHPUnit_Framework_TestCase
@@ -21,7 +21,7 @@ class AdditionalItemsTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $this->setExpectedException(get_class(new Exception()));
+        $this->setExpectedException(get_class(new InvalidValue()));
         $schema->import(array(1,2,3,4));
     }
 

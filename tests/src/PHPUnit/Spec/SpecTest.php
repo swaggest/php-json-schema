@@ -2,7 +2,7 @@
 
 namespace Yaoi\Schema\Tests\PHPUnit\Spec;
 
-use Yaoi\Schema\Exception;
+use Yaoi\Schema\InvalidValue;
 use Yaoi\Schema\RemoteRef\Preloaded;
 use Yaoi\Schema\SchemaLoader;
 
@@ -13,7 +13,7 @@ class SpecTest extends \PHPUnit_Framework_TestCase
      * @param $schemaData
      * @param $data
      * @param $isValid
-     * @throws Exception
+     * @throws InvalidValue
      */
     public function testSpecDraft4($schemaData, $data, $isValid)
     {
@@ -33,8 +33,7 @@ class SpecTest extends \PHPUnit_Framework_TestCase
                 ->setSchemaData(
                     'http://localhost:1234/folder/folderInteger.json',
                     json_decode(file_get_contents(__DIR__
-                        . '/../../../../spec/JSON-Schema-Test-Suite/remotes/folder/folderInteger.json')))
-                ;
+                        . '/../../../../spec/JSON-Schema-Test-Suite/remotes/folder/folderInteger.json')));
         }
 
         $actualValid = true;
@@ -43,13 +42,9 @@ class SpecTest extends \PHPUnit_Framework_TestCase
             $schema = SchemaLoader::create()->setRemoteRefProvider($refProvider)->readSchema($schemaData);
             $res = $schema->import($data);
             //$res = $schema->export($res);
-        } catch (Exception $exception) {
-            if ($exception->getCode() === Exception::INVALID_VALUE) {
-                $actualValid = false;
-                $error = $exception->getMessage();
-            } else {
-                throw $exception;
-            }
+        } catch (InvalidValue $exception) {
+            $actualValid = false;
+            $error = $exception->getMessage();
         }
 
         $this->assertSame($isValid, $actualValid, "Schema:\n" . json_encode($schemaData, JSON_PRETTY_PRINT)

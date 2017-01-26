@@ -18,11 +18,11 @@ class Helper
         }
 
         if (false === $pattern) {
-            throw new Exception('Failed to prepare preg pattern');
+            throw new InvalidValue('Failed to prepare preg pattern');
         }
 
         if (@preg_match($pattern, '') === false) {
-            throw new Exception('Regex pattern is invalid: ' . $jsonPattern);
+            throw new InvalidValue('Regex pattern is invalid: ' . $jsonPattern);
         }
 
         return $pattern;

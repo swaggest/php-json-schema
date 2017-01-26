@@ -6,7 +6,7 @@ use Yaoi\Schema\Schema;
 
 class Ref implements Constraint
 {
-    private $ref;
+    public $ref;
     public function __construct($ref, Schema $schema)
     {
         $this->ref = $ref;
