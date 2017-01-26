@@ -5,6 +5,7 @@ namespace Yaoi\Schema;
 use Yaoi\Schema\Constraint\Properties;
 use Yaoi\Schema\Constraint\Ref;
 use Yaoi\Schema\Constraint\Type;
+use Yaoi\Schema\RemoteRef\BasicFetcher;
 
 class SchemaLoader extends Base
 {
@@ -51,6 +52,25 @@ class SchemaLoader extends Base
     /** @var Ref[] */
     private $refs = array();
 
+    /** @var SchemaLoader[] */
+    private $remoteSchemaLoaders = array();
+
+    /** @var RemoteRefProvider */
+    private $refProvider;
+
+    public function setRemoteRefProvider(RemoteRefProvider $provider)
+    {
+        $this->refProvider = $provider;
+        return $this;
+    }
+
+    private function getRefProvider()
+    {
+        if (null === $this->refProvider) {
+            $this->refProvider = new BasicFetcher();
+        }
+        return $this->refProvider;
+    }
 
     public function readSchema($schemaData)
     {
@@ -230,35 +250,41 @@ class SchemaLoader extends Base
     {
         $ref = &$this->refs[$referencePath];
         if (null === $ref) {
-            if ($referencePath === 'http://json-schema.org/draft-04/schema#') {
-                $ref = new Ref(
-                    $referencePath,
-                    SchemaLoader::create()->readSchema(json_decode(file_get_contents(__DIR__ . '/../spec/json-schema.json')))
-                );
-            } elseif ($referencePath === '#') {
-                $ref = new Ref($referencePath, $this->rootSchema);
-            } elseif ($referencePath[0] === '#') {
-                $path = explode('/', trim($referencePath, '#/'));
-                $branch = &$this->rootData;
-                while ($path) {
-                    $folder = array_shift($path);
+            if ($referencePath[0] === '#') {
+                if ($referencePath === '#') {
+                    $ref = new Ref($referencePath, $this->rootSchema);
+                } else {
+                    $path = explode('/', trim($referencePath, '#/'));
+                    $branch = &$this->rootData;
+                    while ($path) {
+                        $folder = array_shift($path);
 
-                    // unescaping special characters
-                    // https://tools.ietf.org/html/draft-ietf-appsawg-json-pointer-07#section-4
-                    // https://github.com/json-schema-org/JSON-Schema-Test-Suite/issues/130
-                    $folder = str_replace(array('~0','~1', '%25'), array('~', '/', '%'), $folder);
+                        // unescaping special characters
+                        // https://tools.ietf.org/html/draft-ietf-appsawg-json-pointer-07#section-4
+                        // https://github.com/json-schema-org/JSON-Schema-Test-Suite/issues/130
+                        $folder = str_replace(array('~0', '~1', '%25'), array('~', '/', '%'), $folder);
 
-                    if ($branch instanceof \stdClass && isset($branch->$folder)) {
-                        $branch = &$branch->$folder;
-                    } elseif (is_array($branch) && isset($branch[$folder])) {
-                        $branch = &$branch[$folder];
-                    } else {
-                        throw new \Exception('Could not resolve ' . $referencePath . ': ' . $folder);
+                        if ($branch instanceof \stdClass && isset($branch->$folder)) {
+                            $branch = &$branch->$folder;
+                        } elseif (is_array($branch) && isset($branch[$folder])) {
+                            $branch = &$branch[$folder];
+                        } else {
+                            throw new \Exception('Could not resolve ' . $referencePath . ': ' . $folder);
+                        }
                     }
+                    $ref = new Ref($referencePath, $this->readSchema($branch));
                 }
-                $ref = new Ref($referencePath, $this->readSchema($branch));
             } else {
-                throw new \Exception('Could not resolve ' . $referencePath);
+                $refParts = explode('#', $referencePath);
+                $url = $refParts[0];
+                $refLocalPath = isset($refParts[1]) ? '#' . $refParts[1] : '#';
+                $schemaLoader = &$this->remoteSchemaLoaders[$url];
+                if (null === $schemaLoader) {
+                    $schemaLoader = SchemaLoader::create();
+                    $schemaLoader->readSchema($this->getRefProvider()->getSchemaData($url));
+                }
+
+                $ref = $schemaLoader->resolveReference($refLocalPath);
             }
         }
 

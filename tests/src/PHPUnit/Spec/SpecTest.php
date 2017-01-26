@@ -3,6 +3,7 @@
 namespace Yaoi\Schema\Tests\PHPUnit\Spec;
 
 use Yaoi\Schema\Exception;
+use Yaoi\Schema\RemoteRef\Preloaded;
 use Yaoi\Schema\SchemaLoader;
 
 class SpecTest extends \PHPUnit_Framework_TestCase
@@ -16,10 +17,30 @@ class SpecTest extends \PHPUnit_Framework_TestCase
      */
     public function testSpecDraft4($schemaData, $data, $isValid)
     {
+        static $refProvider = null;
+
+        if (null === $refProvider) {
+            $refProvider = new Preloaded();
+            $refProvider
+                ->setSchemaData(
+                    'http://localhost:1234/integer.json',
+                    json_decode(file_get_contents(__DIR__
+                        . '/../../../../spec/JSON-Schema-Test-Suite/remotes/integer.json')))
+                ->setSchemaData(
+                    'http://localhost:1234/subSchemas.json',
+                    json_decode(file_get_contents(__DIR__
+                        . '/../../../../spec/JSON-Schema-Test-Suite/remotes/subSchemas.json')))
+                ->setSchemaData(
+                    'http://localhost:1234/folder/folderInteger.json',
+                    json_decode(file_get_contents(__DIR__
+                        . '/../../../../spec/JSON-Schema-Test-Suite/remotes/folder/folderInteger.json')))
+                ;
+        }
+
         $actualValid = true;
         $error = '';
         try {
-            $schema = SchemaLoader::create()->readSchema($schemaData);
+            $schema = SchemaLoader::create()->setRemoteRefProvider($refProvider)->readSchema($schemaData);
             $res = $schema->import($data);
             //$res = $schema->export($res);
         } catch (Exception $exception) {
