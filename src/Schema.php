@@ -406,17 +406,6 @@ class Schema extends MagicMap
         return $this;
     }
 
-    /**
-     * @param Type $type
-     * @return Schema
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-        return $this;
-    }
-
-
     public function setProperty($name, Schema $schema)
     {
         if (null === $this->properties) {

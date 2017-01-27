@@ -22,11 +22,6 @@ class Type implements Constraint
         $this->types = is_array($type) ? $type : array($type);
     }
 
-    public function has($type)
-    {
-        return in_array($type, $this->types);
-    }
-
     public function isValid($data)
     {
         $ok = false;

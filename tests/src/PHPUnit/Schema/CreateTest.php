@@ -11,18 +11,14 @@ class CreateTest extends \PHPUnit_Framework_TestCase
 {
     public function testCreate()
     {
-        $schema = new Schema();
-
-        $properties = new Properties();
-        $properties['stringValue'] = Schema::string();
-
-        $properties['one'] =
-            Schema::create()
+        $schema = Schema::create()
+            ->setProperty('stringValue', Schema::string())
+            ->setProperty('one', Schema::create()
                 ->setProperty('two', Schema::create()
-                    ->setProperty('three', Schema::number()));
+                    ->setProperty('three', Schema::number())
+                )
+            );
 
-
-        $schema->properties = $properties;
         $rawData = (object)array(
             'stringValue' => 'abc',
             'one' => (object)array(
@@ -35,7 +31,6 @@ class CreateTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame('abc', $data->stringValue);
         $this->assertSame(3, $data->one->two->three);
-
 
         $rawDataTwo = $schema->export($data);
         $this->assertEquals($rawData, $rawDataTwo);
