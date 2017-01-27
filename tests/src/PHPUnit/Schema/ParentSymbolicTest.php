@@ -10,8 +10,7 @@ class ParentSymbolicTest extends ParentTest
 {
     protected function deepSchema()
     {
-        $schema = Schema::create()
-            ->setType(new Type(Type::OBJECT))
+        $schema = Schema::object()
             ->setProperties(
                 Properties::create()->__set(
                     'level1',

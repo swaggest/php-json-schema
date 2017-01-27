@@ -82,11 +82,6 @@ class SchemaLoader extends Base
 
     private $resolutionScope;
 
-    public function __construct()
-    {
-        $this->resolutionScope = new StackTraceStorage();
-    }
-
     protected function readSchemaDeeper($schemaArray, Schema $parentSchema = null)
     {
         $schema = new Schema();

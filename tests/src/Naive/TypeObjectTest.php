@@ -3,9 +3,8 @@
 namespace Yaoi\Schema\Tests\Naive;
 
 
-use Yaoi\Schema\InvalidValue;
+use Yaoi\Schema\Exception\TypeException;
 use Yaoi\Schema\SchemaLoader;
-use Yaoi\Schema\OldSchema;
 
 class TypeObjectTest extends \PHPUnit_Framework_TestCase
 {
@@ -30,7 +29,7 @@ class TypeObjectTest extends \PHPUnit_Framework_TestCase
     {
 //        $this->markTestSkipped('additionalProperties or generic object required, not implemented');
 
-        $this->setExpectedException(get_class(new InvalidValue()), 'Object required', InvalidValue::INVALID_VALUE);
+        $this->setExpectedException(get_class(new TypeException()), 'Object required');
         $schema = SchemaLoader::create()->readSchema(array('type' => 'object'));
         $this->assertSame(123, $schema->import(123));
     }

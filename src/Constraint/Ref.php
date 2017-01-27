@@ -13,12 +13,6 @@ class Ref implements Constraint
         $this->schema = $schema;
     }
 
-    public function setToSchema(Schema $schema)
-    {
-        $schema->ref = $this;
-    }
-
-
     /** @var Schema */
     private $schema;
 

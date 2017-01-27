@@ -41,7 +41,7 @@ class SpecTest extends \PHPUnit_Framework_TestCase
         try {
             $schema = SchemaLoader::create()->setRemoteRefProvider($refProvider)->readSchema($schemaData);
             $res = $schema->import($data);
-            //$res = $schema->export($res);
+            $this->assertEquals($data, $schema->export($res));
         } catch (InvalidValue $exception) {
             $actualValid = false;
             $error = $exception->getMessage();

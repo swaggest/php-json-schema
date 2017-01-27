@@ -10,6 +10,7 @@ class ResolveURITest extends \PHPUnit_Framework_TestCase
     public function testResolve()
     {
         $root = 'http://x.y.z/rootschema.json#';
+        $this->assertSame($root, Helper::resolveURI($root, ''));
         $this->assertSame('http://x.y.z/rootschema.json#foo', Helper::resolveURI($root, "#foo"));
         $deeper = Helper::resolveURI($root, "otherschema.json");
         $this->assertSame('http://x.y.z/otherschema.json#', $deeper);

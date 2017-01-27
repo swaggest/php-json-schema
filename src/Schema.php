@@ -7,18 +7,17 @@ use Yaoi\Schema\Constraint\Properties;
 use Yaoi\Schema\Constraint\Ref;
 use Yaoi\Schema\Constraint\Type;
 use Yaoi\Schema\Constraint\UniqueItems;
+use Yaoi\Schema\Exception\ArrayException;
 use Yaoi\Schema\Exception\EnumException;
 use Yaoi\Schema\Exception\LogicException;
 use Yaoi\Schema\Exception\NumericException;
 use Yaoi\Schema\Exception\ObjectException;
 use Yaoi\Schema\Exception\StringException;
+use Yaoi\Schema\Exception\TypeException;
 use Yaoi\Schema\Structure\ObjectItem;
 
 class Schema extends MagicMap
 {
-    /** @var StackTraceStorage */
-    public static $traceHelper;
-
     /** @var Type */
     public $type;
 
@@ -99,7 +98,7 @@ class Schema extends MagicMap
         return $this->process($data, false);
     }
 
-    private function process($data, $import = true, $path = '')
+    private function process($data, $import = true, $path = '#')
     {
         if (!$import && $data instanceof ObjectItem) {
             $data = $data->jsonSerialize();
@@ -112,7 +111,7 @@ class Schema extends MagicMap
 
         if ($this->type !== null) {
             if (!$this->type->isValid($data)) {
-                $this->fail(ucfirst(implode(', ', $this->type->types) . ' required'));
+                $this->fail(new TypeException(ucfirst(implode(', ', $this->type->types) . ' required')), $path);
             }
         }
 
@@ -294,7 +293,7 @@ class Schema extends MagicMap
                 }
                 if (!$found && $this->additionalProperties !== null) {
                     if ($this->additionalProperties === false) {
-                        $this->fail('Additional properties not allowed');
+                        $this->fail(new ObjectException('Additional properties not allowed'), $path);
                     }
 
                     $value = $this->additionalProperties->process($value, $import, $path . '->additionalProperties');
@@ -307,11 +306,11 @@ class Schema extends MagicMap
         if (is_array($data)) {
 
             if ($this->minItems !== null && count($data) < $this->minItems) {
-                $this->fail("Not enough items in array");
+                $this->fail(new ArrayException("Not enough items in array"), $path);
             }
 
             if ($this->maxItems !== null && count($data) > $this->maxItems) {
-                $this->fail("Too many items in array");
+                $this->fail(new ArrayException("Too many items in array"), $path);
             }
 
             $pathItems = 'items';
@@ -337,7 +336,7 @@ class Schema extends MagicMap
                         if ($additionalItems instanceof Schema) {
                             $value = $additionalItems->process($value, $import, $path . '->' . $pathItems);
                         } elseif ($additionalItems === false) {
-                            $this->fail('Unexpected array item');
+                            $this->fail(new ArrayException('Unexpected array item'), $path);
                         }
                     }
                     ++$index;
@@ -346,7 +345,7 @@ class Schema extends MagicMap
 
             if ($this->uniqueItems) {
                 if (!UniqueItems::isValid($data)) {
-                    $this->fail('Array is not unique');
+                    $this->fail(new ArrayException('Array is not unique'), $path);
                 }
             }
         }
@@ -356,19 +355,23 @@ class Schema extends MagicMap
     }
 
 
-    private function fail($message)
+    private function fail(InvalidValue $exception, $path)
     {
-        if ($traceFrames = Schema::$traceHelper->getClean()) {
-            throw new InvalidValue($message . ' at ' . implode('->', $traceFrames), InvalidValue::INVALID_VALUE);
-        } else {
-            throw new InvalidValue($message, InvalidValue::INVALID_VALUE);
-        }
+        $exception->addPath($path);
+        throw $exception;
     }
 
     public static function integer()
     {
         $schema = new Schema();
         $schema->type = new Type(Type::INTEGER);
+        return $schema;
+    }
+
+    public static function number()
+    {
+        $schema = new Schema();
+        $schema->type = new Type(Type::NUMBER);
         return $schema;
     }
 
@@ -414,6 +417,13 @@ class Schema extends MagicMap
     }
 
 
-}
+    public function setProperty($name, Schema $schema)
+    {
+        if (null === $this->properties) {
+            $this->properties = new Properties();
+        }
+        $this->properties->__set($name, $schema);
+        return $this;
+    }
 
-Schema::$traceHelper = new StackTraceStorage();
+}

@@ -8,7 +8,7 @@ use Yaoi\Schema\Tests\Helper\LevelOneClass;
 class ParentFixedTest extends ParentTest
 {
     /**
-     * @return \Yaoi\Schema\OldSchema|LevelOneClass
+     * @return \Yaoi\Schema\Schema|LevelOneClass
      */
     protected function deepSchema()
     {

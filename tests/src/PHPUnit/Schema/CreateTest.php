@@ -14,13 +14,13 @@ class CreateTest extends \PHPUnit_Framework_TestCase
         $schema = new Schema();
 
         $properties = new Properties();
-        $properties['stringValue'] = new Type('string');
+        $properties['stringValue'] = Schema::string();
 
-        $properties['one'] = new Schema();
-        $properties['one']->properties = Properties::create()
-            ->__set('two', Properties::create()
-                ->__set('three', new Type('number'))
-            );
+        $properties['one'] =
+            Schema::create()
+                ->setProperty('two', Schema::create()
+                    ->setProperty('three', Schema::number()));
+
 
         $schema->properties = $properties;
         $rawData = (object)array(

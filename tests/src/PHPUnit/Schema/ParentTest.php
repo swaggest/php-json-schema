@@ -3,11 +3,10 @@
 namespace Yaoi\Schema\Tests\PHPUnit\Schema;
 
 
+use Yaoi\Schema\Exception\TypeException;
 use Yaoi\Schema\InvalidValue;
 use Yaoi\Schema\Schema;
 use Yaoi\Schema\SchemaLoader;
-use Yaoi\Schema\OldConstraint\Properties;
-use Yaoi\Schema\OldSchema;
 
 class ParentTest extends \PHPUnit_Framework_TestCase
 {
@@ -54,8 +53,8 @@ class ParentTest extends \PHPUnit_Framework_TestCase
     public function testInvalidImport()
     {
         $schema = $this->deepSchema();
-        $this->setExpectedException(get_class(new InvalidValue()), 'Integer required at properties:level1->properties:level2->properties:level3',
-            InvalidValue::INVALID_VALUE);
+        $this->setExpectedException(get_class(new TypeException()),
+            'Integer required at #->properties:level1->properties:level2->properties:level3');
         try {
             $object = $schema->import((object)array(
                 'level1'=> (object)array(
@@ -66,7 +65,7 @@ class ParentTest extends \PHPUnit_Framework_TestCase
             ));
         }
         catch (InvalidValue $exception) {
-            $this->assertSame('Integer required at properties:level1->properties:level2->properties:level3',
+            $this->assertSame('Integer required at #->properties:level1->properties:level2->properties:level3',
                 $exception->getMessage());
             throw $exception;
         }

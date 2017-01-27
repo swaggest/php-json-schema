@@ -2,7 +2,11 @@
 
 namespace Yaoi\Schema;
 
-
+/**
+ * Class StackTraceStorage
+ * @package Yaoi\Schema
+ * @deprecated redundant!
+ */
 class StackTraceStorage
 {
     private $inclusive = array();
