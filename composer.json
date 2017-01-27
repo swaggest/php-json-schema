@@ -21,7 +21,6 @@
   "support": {
     "email": "vearutop@gmail.com"
   },
-  "minimum-stability": "dev",
   "prefer-stable": true,
   "autoload": {
     "psr-4": {

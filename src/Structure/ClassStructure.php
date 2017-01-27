@@ -8,7 +8,7 @@ use Swaggest\JsonSchema\Constraint\Type;
 use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\OldSchema;
 
-abstract class ClassStructure extends Base implements ClassStructureContract
+abstract class ClassStructure implements ClassStructureContract
 {
     /**
      * @return Schema
@@ -42,5 +42,13 @@ abstract class ClassStructure extends Base implements ClassStructureContract
     public static function export($data)
     {
         return static::makeSchema()->export($data);
+    }
+
+    /**
+     * @return static
+     */
+    static function create()
+    {
+        return new static;
     }
 }

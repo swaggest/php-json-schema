@@ -8,7 +8,7 @@ use Swaggest\JsonSchema\Constraint\Ref;
 use Swaggest\JsonSchema\Constraint\Type;
 use Swaggest\JsonSchema\RemoteRef\BasicFetcher;
 
-class SchemaLoader extends Base
+class SchemaLoader
 {
     const ID = 'id';
 
@@ -306,17 +306,11 @@ class SchemaLoader extends Base
         return $this->refs[$referencePath];
     }
 
-
-    public function writeSchema()
+    /**
+     * @return static
+     */
+    static function create()
     {
-
+        return new static;
     }
-
-}
-
-/**
- * @property $minimum
- */
-class __stubJsonSchema
-{
 }
