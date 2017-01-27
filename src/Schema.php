@@ -124,7 +124,7 @@ class Schema extends MagicMap
                 }
             }
             if (!$enumOk) {
-                throw new EnumException('Enum failed ' . $path);
+                $this->fail(new EnumException('Enum failed'), $path);
             }
         }
 
@@ -135,7 +135,7 @@ class Schema extends MagicMap
             } catch (InvalidValue $exception) {
             }
             if ($exception === false) {
-                throw new LogicException('Failed due to logical constraint: not ' . $path);
+                $this->fail(new LogicException('Failed due to logical constraint: not'), $path);
             }
         }
 
@@ -152,7 +152,7 @@ class Schema extends MagicMap
                 }
             }
             if ($successes !== 1) {
-                throw new LogicException('Failed due to logical constraint: oneOf ' . $path);
+                $this->fail(new LogicException('Failed due to logical constraint: oneOf'), $path);
             }
         }
 
@@ -169,7 +169,7 @@ class Schema extends MagicMap
                 }
             }
             if (!$successes) {
-                throw new LogicException('Failed due to logical constraint: anyOf ' . $path);
+                $this->fail(new LogicException('Failed due to logical constraint: anyOf'), $path);
             }
         }
 
@@ -183,18 +183,18 @@ class Schema extends MagicMap
         if (is_string($data)) {
             if ($this->minLength !== null) {
                 if (mb_strlen($data) < $this->minLength) {
-                    throw new StringException('String is too short ' . $path, StringException::TOO_SHORT);
+                    $this->fail(new StringException('String is too short', StringException::TOO_SHORT), $path);
                 }
             }
             if ($this->maxLength !== null) {
                 if (mb_strlen($data) > $this->maxLength) {
-                    throw new StringException('String is too long ' . $path, StringException::TOO_LONG);
+                    $this->fail(new StringException('String is too long', StringException::TOO_LONG), $path);
                 }
             }
             if ($this->pattern !== null) {
                 if (0 === preg_match($this->pattern, $data)) {
-                    throw new StringException('Does not match to ' . $this->pattern . ' ' . $path,
-                        StringException::PATTERN_MISMATCH);
+                    $this->fail(new StringException('Does not match to '
+                        . $this->pattern, StringException::PATTERN_MISMATCH), $path);
                 }
             }
         }
@@ -203,19 +203,18 @@ class Schema extends MagicMap
             if ($this->multipleOf !== null) {
                 $div = $data / $this->multipleOf;
                 if ($div != (int)$div) {
-                    throw new NumericException($data . ' is not multiple of ' . $this->multipleOf . ' ' . $path,
-                        NumericException::MULTIPLE_OF);
+                    $this->fail(new NumericException($data . ' is not multiple of ' . $this->multipleOf, NumericException::MULTIPLE_OF), $path);
                 }
             }
 
             if ($this->maximum !== null) {
                 if ($this->exclusiveMaximum === true) {
                     if ($data >= $this->maximum) {
-                        throw new NumericException('Maximum value exceeded ' . $path, NumericException::MAXIMUM);
+                        $this->fail(new NumericException('Maximum value exceeded', NumericException::MAXIMUM), $path);
                     }
                 } else {
                     if ($data > $this->maximum) {
-                        throw new NumericException('Maximum value exceeded ' . $path, NumericException::MAXIMUM);
+                        $this->fail(new NumericException('Maximum value exceeded', NumericException::MAXIMUM), $path);
                     }
                 }
             }
@@ -223,11 +222,11 @@ class Schema extends MagicMap
             if ($this->minimum !== null) {
                 if ($this->exclusiveMinimum === true) {
                     if ($data <= $this->minimum) {
-                        throw new NumericException('Minimum value exceeded ' . $path, NumericException::MINIMUM);
+                        $this->fail(new NumericException('Minimum value exceeded', NumericException::MINIMUM), $path);
                     }
                 } else {
                     if ($data < $this->minimum) {
-                        throw new NumericException('Minimum value exceeded ' . $path, NumericException::MINIMUM);
+                        $this->fail(new NumericException('Minimum value exceeded', NumericException::MINIMUM), $path);
                     }
                 }
             }
@@ -239,8 +238,7 @@ class Schema extends MagicMap
             if ($this->required !== null) {
                 foreach ($this->required as $item) {
                     if (!property_exists($data, $item)) {
-                        throw new ObjectException('Required property missing: ' . $item . ' ' . $path,
-                            ObjectException::REQUIRED);
+                        $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
                     }
                 }
             }
@@ -256,10 +254,10 @@ class Schema extends MagicMap
 
             $array = (array)$data;
             if ($this->minProperties !== null && count($array) < $this->minProperties) {
-                throw new ObjectException("Not enough properties " . $path, ObjectException::TOO_FEW);
+                $this->fail(new ObjectException("Not enough properties", ObjectException::TOO_FEW), $path);
             }
             if ($this->maxProperties !== null && count($array) > $this->maxProperties) {
-                throw new ObjectException("Too many properties " . $path, ObjectException::TOO_MANY);
+                $this->fail(new ObjectException("Too many properties", ObjectException::TOO_MANY), $path);
             }
             foreach ($array as $key => $value) {
                 $found = false;
@@ -270,8 +268,7 @@ class Schema extends MagicMap
                     } else {
                         foreach ($dependencies as $item) {
                             if (!property_exists($data, $item)) {
-                                throw new ObjectException('Dependency property missing: ' . $item . ' ' . $path,
-                                    ObjectException::DEPENDENCY_MISSING);
+                                $this->fail(new ObjectException('Dependency property missing: ' . $item, ObjectException::DEPENDENCY_MISSING), $path);
                             }
                         }
                     }
