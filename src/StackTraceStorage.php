@@ -1,10 +1,10 @@
 <?php
 
-namespace Yaoi\Schema;
+namespace Swaggest\JsonSchema;
 
 /**
  * Class StackTraceStorage
- * @package Yaoi\Schema
+ * @package Swaggest\JsonSchema
  * @deprecated redundant!
  */
 class StackTraceStorage

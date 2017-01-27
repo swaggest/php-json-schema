@@ -1,8 +1,8 @@
 <?php
 
-namespace Yaoi\Schema\Tests\PHPUnit\Misc;
+namespace Swaggest\JsonSchema\Tests\PHPUnit\Misc;
 
-use Yaoi\Schema\StackTraceStorage;
+use Swaggest\JsonSchema\StackTraceStorage;
 
 class StackTraceStorageTest extends \PHPUnit_Framework_TestCase
 {

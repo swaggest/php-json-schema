@@ -1,9 +1,9 @@
 <?php
 
-namespace Yaoi\Schema\Constraint;
+namespace Swaggest\JsonSchema\Constraint;
 
-use Yaoi\Schema\MagicMap;
-use Yaoi\Schema\Schema;
+use Swaggest\JsonSchema\MagicMap;
+use Swaggest\JsonSchema\Schema;
 
 /**
  * @method Schema __get($key)

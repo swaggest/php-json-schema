@@ -1,8 +1,8 @@
 <?php
 
-namespace Yaoi\Schema\RemoteRef;
+namespace Swaggest\JsonSchema\RemoteRef;
 
-use Yaoi\Schema\RemoteRefProvider;
+use Swaggest\JsonSchema\RemoteRefProvider;
 
 class BasicFetcher implements RemoteRefProvider
 {

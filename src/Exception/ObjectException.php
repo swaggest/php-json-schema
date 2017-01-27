@@ -1,8 +1,8 @@
 <?php
 
-namespace Yaoi\Schema\Exception;
+namespace Swaggest\JsonSchema\Exception;
 
-use Yaoi\Schema\InvalidValue;
+use Swaggest\JsonSchema\InvalidValue;
 
 class ObjectException extends InvalidValue
 {

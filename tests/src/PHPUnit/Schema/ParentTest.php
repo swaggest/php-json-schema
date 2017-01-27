@@ -1,12 +1,12 @@
 <?php
 
-namespace Yaoi\Schema\Tests\PHPUnit\Schema;
+namespace Swaggest\JsonSchema\Tests\PHPUnit\Schema;
 
 
-use Yaoi\Schema\Exception\TypeException;
-use Yaoi\Schema\InvalidValue;
-use Yaoi\Schema\Schema;
-use Yaoi\Schema\SchemaLoader;
+use Swaggest\JsonSchema\Exception\TypeException;
+use Swaggest\JsonSchema\InvalidValue;
+use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\SchemaLoader;
 
 class ParentTest extends \PHPUnit_Framework_TestCase
 {

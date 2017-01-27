@@ -1,12 +1,12 @@
 <?php
 
-namespace Yaoi\Schema\Structure;
+namespace Swaggest\JsonSchema\Structure;
 
-use Yaoi\Schema\Base;
-use Yaoi\Schema\Constraint\Properties;
-use Yaoi\Schema\Constraint\Type;
-use Yaoi\Schema\Schema;
-use Yaoi\Schema\OldSchema;
+use Swaggest\JsonSchema\Base;
+use Swaggest\JsonSchema\Constraint\Properties;
+use Swaggest\JsonSchema\Constraint\Type;
+use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\OldSchema;
 
 abstract class ClassStructure extends Base implements ClassStructureContract
 {
@@ -26,7 +26,7 @@ abstract class ClassStructure extends Base implements ClassStructureContract
     /**
      * @param $data
      * @return static
-     * @throws \Yaoi\Schema\InvalidValue
+     * @throws \Swaggest\JsonSchema\InvalidValue
      */
     public static function import($data)
     {
@@ -37,7 +37,7 @@ abstract class ClassStructure extends Base implements ClassStructureContract
     /**
      * @param $data
      * @return mixed
-     * @throws \Yaoi\Schema\InvalidValue
+     * @throws \Swaggest\JsonSchema\InvalidValue
      */
     public static function export($data)
     {

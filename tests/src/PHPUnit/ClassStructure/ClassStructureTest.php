@@ -1,11 +1,11 @@
 <?php
 
-namespace Yaoi\Schema\Tests\PHPUnit\ClassStructure;
+namespace Swaggest\JsonSchema\Tests\PHPUnit\ClassStructure;
 
 
-use Yaoi\Schema\Exception\TypeException;
-use Yaoi\Schema\InvalidValue;
-use Yaoi\Schema\Tests\Helper\SampleStructure;
+use Swaggest\JsonSchema\Exception\TypeException;
+use Swaggest\JsonSchema\InvalidValue;
+use Swaggest\JsonSchema\Tests\Helper\SampleStructure;
 
 class ClassStructureTest extends \PHPUnit_Framework_TestCase
 {

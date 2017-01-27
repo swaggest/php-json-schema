@@ -1,20 +1,20 @@
 <?php
 
-namespace Yaoi\Schema;
+namespace Swaggest\JsonSchema;
 
 
-use Yaoi\Schema\Constraint\Properties;
-use Yaoi\Schema\Constraint\Ref;
-use Yaoi\Schema\Constraint\Type;
-use Yaoi\Schema\Constraint\UniqueItems;
-use Yaoi\Schema\Exception\ArrayException;
-use Yaoi\Schema\Exception\EnumException;
-use Yaoi\Schema\Exception\LogicException;
-use Yaoi\Schema\Exception\NumericException;
-use Yaoi\Schema\Exception\ObjectException;
-use Yaoi\Schema\Exception\StringException;
-use Yaoi\Schema\Exception\TypeException;
-use Yaoi\Schema\Structure\ObjectItem;
+use Swaggest\JsonSchema\Constraint\Properties;
+use Swaggest\JsonSchema\Constraint\Ref;
+use Swaggest\JsonSchema\Constraint\Type;
+use Swaggest\JsonSchema\Constraint\UniqueItems;
+use Swaggest\JsonSchema\Exception\ArrayException;
+use Swaggest\JsonSchema\Exception\EnumException;
+use Swaggest\JsonSchema\Exception\LogicException;
+use Swaggest\JsonSchema\Exception\NumericException;
+use Swaggest\JsonSchema\Exception\ObjectException;
+use Swaggest\JsonSchema\Exception\StringException;
+use Swaggest\JsonSchema\Exception\TypeException;
+use Swaggest\JsonSchema\Structure\ObjectItem;
 
 class Schema extends MagicMap
 {

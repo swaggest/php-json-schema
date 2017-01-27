@@ -1,9 +1,9 @@
 <?php
 
-namespace Yaoi\Schema\Constraint;
+namespace Swaggest\JsonSchema\Constraint;
 
 
-use Yaoi\Schema\Schema;
+use Swaggest\JsonSchema\Schema;
 
 class Type implements Constraint
 {

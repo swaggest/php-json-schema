@@ -1,14 +1,14 @@
 <?php
 
-namespace Yaoi\Schema\Tests\PHPUnit\Schema;
+namespace Swaggest\JsonSchema\Tests\PHPUnit\Schema;
 
 
-use Yaoi\Schema\Tests\Helper\LevelOneClass;
+use Swaggest\JsonSchema\Tests\Helper\LevelOneClass;
 
 class ParentFixedTest extends ParentTest
 {
     /**
-     * @return \Yaoi\Schema\Schema|LevelOneClass
+     * @return \Swaggest\JsonSchema\Schema|LevelOneClass
      */
     protected function deepSchema()
     {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Yaoi\Schema\Structure;
+namespace Swaggest\JsonSchema\Structure;
 
-use Yaoi\Schema\Constraint\Properties;
-use Yaoi\Schema\Schema;
+use Swaggest\JsonSchema\Constraint\Properties;
+use Swaggest\JsonSchema\Schema;
 
 interface ClassStructureContract
 {

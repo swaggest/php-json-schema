@@ -1,10 +1,10 @@
 <?php
 
-namespace Yaoi\Schema\Tests\PHPUnit\Spec;
+namespace Swaggest\JsonSchema\Tests\PHPUnit\Spec;
 
-use Yaoi\Schema\InvalidValue;
-use Yaoi\Schema\RemoteRef\Preloaded;
-use Yaoi\Schema\SchemaLoader;
+use Swaggest\JsonSchema\InvalidValue;
+use Swaggest\JsonSchema\RemoteRef\Preloaded;
+use Swaggest\JsonSchema\SchemaLoader;
 
 class SpecTest extends \PHPUnit_Framework_TestCase
 {

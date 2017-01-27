@@ -1,12 +1,12 @@
 <?php
 
-namespace Yaoi\Schema\Tests\Helper;
+namespace Swaggest\JsonSchema\Tests\Helper;
 
 
-use Yaoi\Schema\Schema;
-use Yaoi\Schema\Constraint\Properties;
-use Yaoi\Schema\Structure\ClassStructure;
-use Yaoi\Schema\Types\IntegerType;
+use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\Constraint\Properties;
+use Swaggest\JsonSchema\Structure\ClassStructure;
+use Swaggest\JsonSchema\Types\IntegerType;
 
 class LevelThreeClass extends ClassStructure
 {

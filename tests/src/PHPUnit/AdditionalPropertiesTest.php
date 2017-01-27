@@ -1,10 +1,10 @@
 <?php
 
-namespace Yaoi\Schema\Tests\PHPUnit;
+namespace Swaggest\JsonSchema\Tests\PHPUnit;
 
 
-use Yaoi\Schema\SchemaLoader;
-use Yaoi\Schema\OldSchema;
+use Swaggest\JsonSchema\SchemaLoader;
+use Swaggest\JsonSchema\OldSchema;
 
 class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
 {

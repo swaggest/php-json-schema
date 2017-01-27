@@ -1,11 +1,11 @@
 <?php
 
-namespace Yaoi\Schema\Tests\PHPUnit\Schema;
+namespace Swaggest\JsonSchema\Tests\PHPUnit\Schema;
 
-use Yaoi\Schema\Constraint\Ref;
-use Yaoi\Schema\Constraint\Type;
-use Yaoi\Schema\Constraint\Properties;
-use Yaoi\Schema\Schema;
+use Swaggest\JsonSchema\Constraint\Ref;
+use Swaggest\JsonSchema\Constraint\Type;
+use Swaggest\JsonSchema\Constraint\Properties;
+use Swaggest\JsonSchema\Schema;
 
 class CreateTest extends \PHPUnit_Framework_TestCase
 {

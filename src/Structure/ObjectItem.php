@@ -1,9 +1,9 @@
 <?php
 
-namespace Yaoi\Schema\Structure;
+namespace Swaggest\JsonSchema\Structure;
 
 
-use Yaoi\Schema\MagicMap;
+use Swaggest\JsonSchema\MagicMap;
 
 class ObjectItem extends MagicMap
 {

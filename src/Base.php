@@ -1,6 +1,6 @@
 <?php
 
-namespace Yaoi\Schema;
+namespace Swaggest\JsonSchema;
 
 
 class Base

@@ -1,9 +1,9 @@
 <?php
 
-namespace Yaoi\Schema\Tests\PHPUnit;
+namespace Swaggest\JsonSchema\Tests\PHPUnit;
 
 
-use Yaoi\Schema\SchemaLoader;
+use Swaggest\JsonSchema\SchemaLoader;
 
 class RefTest extends \PHPUnit_Framework_TestCase
 {

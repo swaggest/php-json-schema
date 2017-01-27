@@ -1,9 +1,9 @@
 <?php
 
-namespace Yaoi\Schema\Tests\Naive;
+namespace Swaggest\JsonSchema\Tests\Naive;
 
 
-use Yaoi\Schema\SchemaLoader;
+use Swaggest\JsonSchema\SchemaLoader;
 
 class PropertiesTest extends \PHPUnit_Framework_TestCase
 {

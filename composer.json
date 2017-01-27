@@ -1,5 +1,5 @@
 {
-  "name": "yaoi/schema",
+  "name": "swaggest/json-schema",
   "description": "PHP Schema",
   "type": "library",
   "require": {
@@ -25,13 +25,12 @@
   "prefer-stable": true,
   "autoload": {
     "psr-4": {
-      "Yaoi\\Schema\\": "src/",
-      "Yaoi\\Schema\\Tests\\": "tests/src/"
+      "Swaggest\\JsonSchema\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Yaoi\\Schema\\Tests\\": "tests/src/"
+      "Swaggest\\JsonSchema\\Tests\\": "tests/src/"
     }
   },
   "scripts": {

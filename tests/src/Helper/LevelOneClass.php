@@ -1,10 +1,10 @@
 <?php
 
-namespace Yaoi\Schema\Tests\Helper;
+namespace Swaggest\JsonSchema\Tests\Helper;
 
-use Yaoi\Schema\Constraint\Properties;
-use Yaoi\Schema\Schema;
-use Yaoi\Schema\Structure\ClassStructure;
+use Swaggest\JsonSchema\Constraint\Properties;
+use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\Structure\ClassStructure;
 
 class LevelOneClass extends ClassStructure
 {

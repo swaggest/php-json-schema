@@ -1,10 +1,10 @@
 <?php
 
-namespace Yaoi\Schema\Tests\PHPUnit\Constraint;
+namespace Swaggest\JsonSchema\Tests\PHPUnit\Constraint;
 
 
-use Yaoi\Schema\InvalidValue;
-use Yaoi\Schema\SchemaLoader;
+use Swaggest\JsonSchema\InvalidValue;
+use Swaggest\JsonSchema\SchemaLoader;
 
 class AdditionalItemsTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Yaoi\Schema;
+namespace Swaggest\JsonSchema;
 
 use PhpLang\ScopeExit;
-use Yaoi\Schema\Constraint\Properties;
-use Yaoi\Schema\Constraint\Ref;
-use Yaoi\Schema\Constraint\Type;
-use Yaoi\Schema\RemoteRef\BasicFetcher;
+use Swaggest\JsonSchema\Constraint\Properties;
+use Swaggest\JsonSchema\Constraint\Ref;
+use Swaggest\JsonSchema\Constraint\Type;
+use Swaggest\JsonSchema\RemoteRef\BasicFetcher;
 
 class SchemaLoader extends Base
 {

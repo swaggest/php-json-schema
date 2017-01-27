@@ -1,10 +1,10 @@
 <?php
 
-namespace Yaoi\Schema\Tests\Naive;
+namespace Swaggest\JsonSchema\Tests\Naive;
 
 
-use Yaoi\Schema\Exception\TypeException;
-use Yaoi\Schema\SchemaLoader;
+use Swaggest\JsonSchema\Exception\TypeException;
+use Swaggest\JsonSchema\SchemaLoader;
 
 class TypeObjectTest extends \PHPUnit_Framework_TestCase
 {

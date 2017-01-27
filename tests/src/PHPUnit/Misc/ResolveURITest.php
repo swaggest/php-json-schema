@@ -1,9 +1,9 @@
 <?php
 
-namespace Yaoi\Schema\Tests\PHPUnit\Misc;
+namespace Swaggest\JsonSchema\Tests\PHPUnit\Misc;
 
 
-use Yaoi\Schema\Helper;
+use Swaggest\JsonSchema\Helper;
 
 class ResolveURITest extends \PHPUnit_Framework_TestCase
 {

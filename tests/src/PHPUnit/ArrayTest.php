@@ -1,8 +1,8 @@
 <?php
 
-namespace Yaoi\Schema\Tests\PHPUnit;
+namespace Swaggest\JsonSchema\Tests\PHPUnit;
 
-use Yaoi\Schema\Schema;
+use Swaggest\JsonSchema\Schema;
 
 class ArrayTest extends \PHPUnit_Framework_TestCase
 {

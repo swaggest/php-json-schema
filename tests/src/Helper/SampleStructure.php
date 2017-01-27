@@ -1,9 +1,9 @@
 <?php
 
-namespace Yaoi\Schema\Tests\Helper;
+namespace Swaggest\JsonSchema\Tests\Helper;
 
-use Yaoi\Schema\Schema;
-use Yaoi\Schema\Structure\ClassStructure;
+use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\Structure\ClassStructure;
 
 /**
  * @property $propOne
@@ -13,7 +13,7 @@ use Yaoi\Schema\Structure\ClassStructure;
 class SampleStructure extends ClassStructure
 {
     /**
-     * @param \Yaoi\Schema\Constraint\Properties|static $properties
+     * @param \Swaggest\JsonSchema\Constraint\Properties|static $properties
      * @param Schema $schema
      */
     public static function setUpProperties($properties, Schema $schema)

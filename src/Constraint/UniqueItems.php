@@ -1,6 +1,6 @@
 <?php
 
-namespace Yaoi\Schema\Constraint;
+namespace Swaggest\JsonSchema\Constraint;
 
 
 class UniqueItems

@@ -1,11 +1,11 @@
 <?php
 
-namespace Yaoi\Schema\Tests\PHPUnit;
+namespace Swaggest\JsonSchema\Tests\PHPUnit;
 
 
-use Yaoi\Schema\InvalidValue;
-use Yaoi\Schema\Schema;
-use Yaoi\Schema\Types\StringType;
+use Swaggest\JsonSchema\InvalidValue;
+use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\Types\StringType;
 
 class StringTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Yaoi\Schema\Tests\Naive;
+namespace Swaggest\JsonSchema\Tests\Naive;
 
 
-use Yaoi\Schema\Exception\TypeException;
-use Yaoi\Schema\InvalidValue;
-use Yaoi\Schema\SchemaLoader;
-use Yaoi\Schema\OldSchema;
+use Swaggest\JsonSchema\Exception\TypeException;
+use Swaggest\JsonSchema\InvalidValue;
+use Swaggest\JsonSchema\SchemaLoader;
+use Swaggest\JsonSchema\OldSchema;
 
 class TypeStringTest extends \PHPUnit_Framework_TestCase
 {
