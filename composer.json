@@ -31,8 +31,5 @@
     "psr-4": {
       "Swaggest\\JsonSchema\\Tests\\": "tests/src/"
     }
-  },
-  "scripts": {
-    "test": "php -dxdebug.coverage_enable=1 ./vendor/bin/phpunit --coverage-text"
   }
 }
