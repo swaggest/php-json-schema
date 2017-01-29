@@ -3,7 +3,7 @@
   "description": "PHP Schema",
   "type": "library",
   "require": {
-    "php": ">=5.3",
+    "php": ">=5.4",
     "phplang/scope-exit": "^1.0"
   },
   "require-dev": {
