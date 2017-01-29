@@ -190,12 +190,12 @@ class Schema extends MagicMap
 
         if (is_string($data)) {
             if ($this->minLength !== null) {
-                if (mb_strlen($data) < $this->minLength) {
+                if (mb_strlen($data, 'UTF-8') < $this->minLength) {
                     $this->fail(new StringException('String is too short', StringException::TOO_SHORT), $path);
                 }
             }
             if ($this->maxLength !== null) {
-                if (mb_strlen($data) > $this->maxLength) {
+                if (mb_strlen($data, 'UTF-8') > $this->maxLength) {
                     $this->fail(new StringException('String is too long', StringException::TOO_LONG), $path);
                 }
             }
