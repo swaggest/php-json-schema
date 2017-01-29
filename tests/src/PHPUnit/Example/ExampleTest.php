@@ -100,7 +100,7 @@ JSON
         $example->name = 'John Doe';
 
         $order = new Order();
-        $order->dateTime = (new \DateTime())->format(DATE_RFC3339);
+        $order->dateTime = '2015-10-28T07:28:00Z';
         $example->orders[] = $order;
 
         Example::export($example); // Exception: Required property missing: id at #->properties:orders->items[0]
