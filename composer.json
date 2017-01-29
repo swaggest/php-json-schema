@@ -1,6 +1,6 @@
 {
   "name": "swaggest/json-schema",
-  "description": "PHP Schema",
+  "description": "High definition PHP structures with JSON-schema based validation",
   "type": "library",
   "require": {
     "php": ">=5.4",
