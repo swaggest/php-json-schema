@@ -54,7 +54,7 @@ class ParentTest extends \PHPUnit_Framework_TestCase
     {
         $schema = $this->deepSchema();
         $this->setExpectedException(get_class(new TypeException()),
-            'Integer required at #->properties:level1->properties:level2->properties:level3');
+            'Integer expected, "abc" received at #->properties:level1->properties:level2->properties:level3');
         try {
             $object = $schema->import((object)array(
                 'level1'=> (object)array(
@@ -65,7 +65,7 @@ class ParentTest extends \PHPUnit_Framework_TestCase
             ));
         }
         catch (InvalidValue $exception) {
-            $this->assertSame('Integer required at #->properties:level1->properties:level2->properties:level3',
+            $this->assertSame('Integer expected, "abc" received at #->properties:level1->properties:level2->properties:level3',
                 $exception->getMessage());
             throw $exception;
         }

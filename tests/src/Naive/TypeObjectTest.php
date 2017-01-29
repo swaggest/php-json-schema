@@ -29,7 +29,7 @@ class TypeObjectTest extends \PHPUnit_Framework_TestCase
     {
 //        $this->markTestSkipped('additionalProperties or generic object required, not implemented');
 
-        $this->setExpectedException(get_class(new TypeException()), 'Object required');
+        $this->setExpectedException(get_class(new TypeException()), 'Object expected, 123 received');
         $schema = SchemaLoader::create()->readSchema(array('type' => 'object'));
         $this->assertSame(123, $schema->import(123));
     }

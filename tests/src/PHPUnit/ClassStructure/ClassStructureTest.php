@@ -11,8 +11,8 @@ class ClassStructureTest extends \PHPUnit_Framework_TestCase
 {
     public function testSample()
     {
-        $schema = SampleStructure::makeSchema();
-        //print_r($schema);
+        $schema = SampleStructure::schema();
+
         $object = $schema->import((object)array(
             'propOne' => '1',
             'propTwo' => 2,
@@ -21,6 +21,8 @@ class ClassStructureTest extends \PHPUnit_Framework_TestCase
                 'propTwo' => 22,
             )
         ));
+
+        $this->assertInstanceOf(get_class(new SampleStructure()), $object);
 
         $this->assertSame('1', $object->propOne);
         $this->assertSame(2, $object->propTwo);
@@ -32,8 +34,8 @@ class ClassStructureTest extends \PHPUnit_Framework_TestCase
 
     public function testSampleInvalid()
     {
-        $schema = SampleStructure::makeSchema();
-        $this->setExpectedException(get_class(new TypeException()), 'String required at #->properties:recursion->properties:propOne');
+        $schema = SampleStructure::schema();
+        $this->setExpectedException(get_class(new TypeException()), 'String expected, 11 received at #->properties:recursion->properties:propOne');
         $schema->import((object)array(
             'propOne' => '1',
             'propTwo' => 2,

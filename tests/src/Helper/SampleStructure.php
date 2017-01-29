@@ -12,12 +12,15 @@ use Swaggest\JsonSchema\Structure\ClassStructure;
  */
 class SampleStructure extends ClassStructure
 {
+    public $native;
+
     /**
      * @param \Swaggest\JsonSchema\Constraint\Properties|static $properties
      * @param Schema $schema
      */
     public static function setUpProperties($properties, Schema $schema)
     {
+        $properties->native = Schema::boolean();
         $properties->propOne = Schema::string();
         $properties->propTwo = Schema::integer();
         $properties->recursion = $schema;

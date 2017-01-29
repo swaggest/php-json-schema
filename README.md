@@ -1,14 +1,16 @@
-# yaoi schema
+# Swaggest JSON-schema implementation for PHP
 
-JSON-schema inspired PHP versatile structures.
+High definition PHP structures with JSON-schema based validation.
+
+## Usage
+
+### Validating JSON data against given schema
+
+```php
 
 ```
-Schema:
-    Ref
-    Type
-    Properties
-    Items
-```
+
+### Validated PHP classes
 
 ```php
 $schema = new Schema();

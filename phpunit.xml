@@ -12,7 +12,7 @@
          bootstrap="vendor/autoload.php"
         >
     <testsuites>
-        <testsuite name="Yaoi PHP Schema Test Suite">
+        <testsuite name="Swaggest PHP Schema Test Suite">
             <directory>./tests/src/PHPUnit/</directory>
         </testsuite>
     </testsuites>

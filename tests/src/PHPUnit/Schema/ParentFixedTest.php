@@ -12,7 +12,7 @@ class ParentFixedTest extends ParentTest
      */
     protected function deepSchema()
     {
-        $schema = LevelOneClass::makeSchema();
+        $schema = LevelOneClass::schema();
         return $schema;
     }
 

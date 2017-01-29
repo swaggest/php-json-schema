@@ -22,7 +22,7 @@ class Schema extends MagicMap
     public $type;
 
     // Object
-    /** @var Properties */
+    /** @var Properties|Schema[] */
     public $properties;
     /** @var Schema|bool */
     public $additionalProperties;
@@ -77,6 +77,10 @@ class Schema extends MagicMap
     public $minLength;
     /** @var int */
     public $maxLength;
+    /** @var string */
+    public $format;
+
+    const FORMAT_DATE_TIME = 'date-time'; // todo implement
 
 
     /** @var Schema[] */
@@ -87,6 +91,8 @@ class Schema extends MagicMap
     public $anyOf;
     /** @var Schema[] */
     public $oneOf;
+
+    public $objectItemClass;
 
     public function import($data)
     {
@@ -111,7 +117,7 @@ class Schema extends MagicMap
 
         if ($this->type !== null) {
             if (!$this->type->isValid($data)) {
-                $this->fail(new TypeException(ucfirst(implode(', ', $this->type->types) . ' required')), $path);
+                $this->fail(new TypeException(ucfirst(implode(', ', $this->type->types) . ' expected, ' . json_encode($data) . ' received')), $path);
             }
         }
 
@@ -244,7 +250,11 @@ class Schema extends MagicMap
             }
 
             if ($import && !$result instanceof ObjectItem) {
-                $result = new ObjectItem();
+                if (null === $this->objectItemClass) {
+                    $result = new ObjectItem();
+                } else {
+                    $result = new $this->objectItemClass;
+                }
             }
 
             if ($this->properties !== null) {
@@ -354,7 +364,9 @@ class Schema extends MagicMap
 
     private function fail(InvalidValue $exception, $path)
     {
-        $exception->addPath($path);
+        if ($path !== '#') {
+            $exception->addPath($path);
+        }
         throw $exception;
     }
 
@@ -376,6 +388,13 @@ class Schema extends MagicMap
     {
         $schema = new Schema();
         $schema->type = new Type(Type::STRING);
+        return $schema;
+    }
+
+    public static function boolean()
+    {
+        $schema = new Schema();
+        $schema->type = new Type(Type::BOOLEAN);
         return $schema;
     }
 

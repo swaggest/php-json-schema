@@ -19,7 +19,7 @@ class LevelOneClass extends ClassStructure
      */
     public static function setUpProperties($properties, Schema $ownerSchema)
     {
-        $properties->level1 = LevelTwoClass::makeSchema();
+        $properties->level1 = LevelTwoClass::schema();
     }
 
 

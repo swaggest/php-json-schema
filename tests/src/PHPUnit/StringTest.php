@@ -5,7 +5,6 @@ namespace Swaggest\JsonSchema\Tests\PHPUnit;
 
 use Swaggest\JsonSchema\InvalidValue;
 use Swaggest\JsonSchema\Schema;
-use Swaggest\JsonSchema\Types\StringType;
 
 class StringTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,7 +17,7 @@ class StringTest extends \PHPUnit_Framework_TestCase
     public function testStringSchemaException()
     {
         $schema = Schema::string();
-        $this->setExpectedException(get_class(new InvalidValue), 'String required');
+        $this->setExpectedException(get_class(new InvalidValue), 'String expected, 123 received');
         $schema->import(123);
     }
 
