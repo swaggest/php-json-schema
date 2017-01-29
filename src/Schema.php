@@ -3,6 +3,7 @@
 namespace Swaggest\JsonSchema;
 
 
+use PhpLang\ScopeExit;
 use Swaggest\JsonSchema\Constraint\Properties;
 use Swaggest\JsonSchema\Constraint\Ref;
 use Swaggest\JsonSchema\Constraint\Type;
@@ -14,6 +15,7 @@ use Swaggest\JsonSchema\Exception\NumericException;
 use Swaggest\JsonSchema\Exception\ObjectException;
 use Swaggest\JsonSchema\Exception\StringException;
 use Swaggest\JsonSchema\Exception\TypeException;
+use Swaggest\JsonSchema\Structure\ClassStructure;
 use Swaggest\JsonSchema\Structure\ObjectItem;
 
 class Schema extends MagicMap
@@ -216,11 +218,15 @@ class Schema extends MagicMap
             if ($this->maximum !== null) {
                 if ($this->exclusiveMaximum === true) {
                     if ($data >= $this->maximum) {
-                        $this->fail(new NumericException('Maximum value exceeded', NumericException::MAXIMUM), $path);
+                        $this->fail(new NumericException(
+                            'Value less or equal than ' . $this->minimum . ' expected, ' . $data . ' received',
+                            NumericException::MAXIMUM), $path);
                     }
                 } else {
                     if ($data > $this->maximum) {
-                        $this->fail(new NumericException('Maximum value exceeded', NumericException::MAXIMUM), $path);
+                        $this->fail(new NumericException(
+                            'Value less than ' . $this->minimum . ' expected, ' . $data . ' received',
+                            NumericException::MAXIMUM), $path);
                     }
                 }
             }
@@ -228,11 +234,15 @@ class Schema extends MagicMap
             if ($this->minimum !== null) {
                 if ($this->exclusiveMinimum === true) {
                     if ($data <= $this->minimum) {
-                        $this->fail(new NumericException('Minimum value exceeded', NumericException::MINIMUM), $path);
+                        $this->fail(new NumericException(
+                            'Value more or equal than ' . $this->minimum . ' expected, ' . $data . ' received',
+                            NumericException::MINIMUM), $path);
                     }
                 } else {
                     if ($data < $this->minimum) {
-                        $this->fail(new NumericException('Minimum value exceeded', NumericException::MINIMUM), $path);
+                        $this->fail(new NumericException(
+                            'Value more than ' . $this->minimum . ' expected, ' . $data . ' received',
+                            NumericException::MINIMUM), $path);
                     }
                 }
             }
@@ -254,6 +264,15 @@ class Schema extends MagicMap
                     $result = new ObjectItem();
                 } else {
                     $result = new $this->objectItemClass;
+                }
+
+                if ($result instanceof ClassStructure) {
+                    if ($result->__validateOnSet) {
+                        $result->__validateOnSet = false;
+                        $validateOnSetHandler = new ScopeExit(function()use($result){
+                            $result->__validateOnSet = true;
+                        });
+                    }
                 }
             }
 
@@ -341,7 +360,8 @@ class Schema extends MagicMap
                         $value = $items[$index]->process($value, $import, $path . '->items:' . $index);
                     } else {
                         if ($additionalItems instanceof Schema) {
-                            $value = $additionalItems->process($value, $import, $path . '->' . $pathItems);
+                            $value = $additionalItems->process($value, $import, $path . '->' . $pathItems
+                                . '[' . $index . ']');
                         } elseif ($additionalItems === false) {
                             $this->fail(new ArrayException('Unexpected array item'), $path);
                         }

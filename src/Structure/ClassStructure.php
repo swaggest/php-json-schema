@@ -14,12 +14,19 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
      */
     public static function schema()
     {
-        $schema = new Schema();
-        $schema->type = new Type(Type::OBJECT);
-        $properties = new Properties();
-        $schema->properties = $properties;
-        $schema->objectItemClass = get_called_class();
-        static::setUpProperties($properties, $schema);
+        static $schemas = array();
+        $className = get_called_class();
+        $schema = &$schemas[$className];
+
+        if (null === $schema) {
+            $schema = new Schema();
+            $schema->type = new Type(Type::OBJECT);
+            $properties = new Properties();
+            $schema->properties = $properties;
+            $schema->objectItemClass = get_called_class();
+            static::setUpProperties($properties, $schema);
+        }
+
         return $schema;
     }
 
@@ -53,7 +60,7 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
     }
 
     protected $__hasNativeProperties = true;
-    protected $__validateOnSet = true;
+    protected $__validateOnSet = true; // todo skip validation during import
 
     public function jsonSerialize()
     {
@@ -61,7 +68,7 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
             $result = new \stdClass();
             foreach (static::schema()->properties->toArray() as $name => $schema) {
                 $value = $this->$name;
-                if (null !== $value || array_key_exists($name, $this->_arrayOfData)) {
+                if ((null !== $value) || array_key_exists($name, $this->_arrayOfData)) {
                     $result->$name = $value;
                 }
             }
@@ -94,6 +101,4 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
         $this->_arrayOfData[$name] = $column;
         return $this;
     }
-
-
 }

@@ -14,7 +14,12 @@ class MagicMap implements \ArrayAccess, \JsonSerializable
 
     public function &__get($name)
     {
-        return $this->_arrayOfData[$name];
+        if (isset($this->_arrayOfData[$name])) {
+            return $this->_arrayOfData[$name];
+        } else {
+            $tmp = null;
+            return $tmp;
+        }
     }
 
     public function offsetExists($offset)
@@ -24,7 +29,12 @@ class MagicMap implements \ArrayAccess, \JsonSerializable
 
     public function &offsetGet($offset)
     {
-        return $this->_arrayOfData[$offset];
+        if (isset($this->_arrayOfData[$offset])) {
+            return $this->_arrayOfData[$offset];
+        } else {
+            $tmp = null;
+            return $tmp;
+        }
     }
 
     public function offsetSet($offset, $value)
