@@ -52,7 +52,7 @@ class MagicMap implements \ArrayAccess, \JsonSerializable
         return $this->_arrayOfData;
     }
 
-    function jsonSerialize()
+    public function jsonSerialize()
     {
         return (object)$this->_arrayOfData;
     }

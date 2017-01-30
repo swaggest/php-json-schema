@@ -1,7 +1,7 @@
 # Swaggest JSON-schema implementation for PHP
 
 [![Build Status](https://travis-ci.org/swaggest/php-json-schema.svg?branch=master)](https://travis-ci.org/swaggest/php-json-schema)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/swaggest/php-json-schema/badges/quality-score.png?b=spec-compliance)](https://scrutinizer-ci.com/g/swaggest/php-json-schema/?branch=spec-compliance)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/swaggest/php-json-schema/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/swaggest/php-json-schema/?branch=master)
 [![Code Climate](https://codeclimate.com/github/swaggest/php-json-schema/badges/gpa.svg)](https://codeclimate.com/github/swaggest/php-json-schema)
 [![Test Coverage](https://codeclimate.com/github/swaggest/php-json-schema/badges/coverage.svg)](https://codeclimate.com/github/swaggest/php-json-schema/coverage)
 

@@ -4,3 +4,4 @@
 * process string formats
 * test against optional json-schema cases
 * all-errors at once mode (apart of throw Exception)
+* add general purpose mixins

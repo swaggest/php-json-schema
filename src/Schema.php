@@ -141,6 +141,7 @@ class Schema extends MagicMap
             try {
                 $this->not->process($data, $import, $path . '->not');
             } catch (InvalidValue $exception) {
+                // Expected exception
             }
             if ($exception === false) {
                 $this->fail(new LogicException('Failed due to logical constraint: not'), $path);
@@ -157,6 +158,7 @@ class Schema extends MagicMap
                         break;
                     }
                 } catch (InvalidValue $exception) {
+                    // Expected exception
                 }
             }
             if ($successes !== 1) {
@@ -174,6 +176,7 @@ class Schema extends MagicMap
                         break;
                     }
                 } catch (InvalidValue $exception) {
+                    // Expected exception
                 }
             }
             if (!$successes) {
@@ -269,6 +272,7 @@ class Schema extends MagicMap
                 if ($result instanceof ClassStructure) {
                     if ($result->__validateOnSet) {
                         $result->__validateOnSet = false;
+                        /** @noinspection PhpUnusedLocalVariableInspection */
                         $validateOnSetHandler = new ScopeExit(function()use($result){
                             $result->__validateOnSet = true;
                         });
@@ -352,7 +356,7 @@ class Schema extends MagicMap
                 $pathItems = 'additionalItems';
             }
 
-            if ($items || $additionalItems !== null) {
+            if ($items !== null || $additionalItems !== null) {
                 $itemsLen = is_array($items) ? count($items) : 0;
                 $index = 0;
                 foreach ($data as &$value) {

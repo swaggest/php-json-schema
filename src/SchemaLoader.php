@@ -82,7 +82,7 @@ class SchemaLoader
 
     private $resolutionScope;
 
-    protected function readSchemaDeeper($schemaArray, Schema $parentSchema = null)
+    protected function readSchemaDeeper($schemaArray)
     {
         $schema = new Schema();
         if (null === $this->rootSchema) {
@@ -97,6 +97,7 @@ class SchemaLoader
         if (isset($schemaArray[self::ID])) {
             $parentScope = $this->resolutionScope;
             $this->resolutionScope = Helper::resolveURI($parentScope, $schemaArray[self::ID]);
+            /** @noinspection PhpUnusedLocalVariableInspection */
             $defer = new ScopeExit(function () use ($parentScope) {
                 $this->resolutionScope = $parentScope;
             });
@@ -270,7 +271,7 @@ class SchemaLoader
                 } else {
                     $path = explode('/', trim($referencePath, '#/'));
                     $branch = &$this->rootData;
-                    while ($path) {
+                    while (!empty($path)) {
                         $folder = array_shift($path);
 
                         // unescaping special characters
@@ -309,7 +310,7 @@ class SchemaLoader
     /**
      * @return static
      */
-    static function create()
+    public static function create()
     {
         return new static;
     }

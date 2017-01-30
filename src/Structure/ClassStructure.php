@@ -37,7 +37,6 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
      */
     public static function import($data)
     {
-        //static $schemas = array();
         return static::schema()->import($data);
     }
 
@@ -54,7 +53,7 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
     /**
      * @return static
      */
-    static function create()
+    public static function create()
     {
         return new static;
     }

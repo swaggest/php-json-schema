@@ -45,7 +45,6 @@ class Helper
             if (false !== $pos = strpos($parent, '#')) {
                 $result = substr($parent, 0, $pos) . $current;
             }
-        } elseif ($current[0] === '/') {
         } else {
             if (false !== $pos = strrpos($parent, '/')) {
                 $result = substr($parent, 0, $pos + 1) . $current;
