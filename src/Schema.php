@@ -455,4 +455,20 @@ class Schema extends MagicMap
         return $this;
     }
 
+    /** @var Meta[] */
+    private $metaItems = array();
+    public function meta(Meta $meta)
+    {
+        $this->metaItems[get_class($meta)] = $meta;
+        return $this;
+    }
+
+    public function getMeta($className)
+    {
+        if (isset($this->metaItems[$className])) {
+            return $this->metaItems[$className];
+        }
+        return null;
+    }
+
 }
