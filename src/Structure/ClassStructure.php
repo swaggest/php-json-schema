@@ -61,16 +61,18 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
     protected $__hasNativeProperties = true;
     protected $__validateOnSet = true; // todo skip validation during import
 
-    public function jsonSerialize()
+    public function jsonSerialize() // todo process nested structures here
     {
         if ($this->__hasNativeProperties) {
             $result = new \stdClass();
-            foreach (static::schema()->properties->toArray() as $name => $schema) {
+            $properties = static::schema()->properties;
+            foreach ($properties->toArray() as $name => $schema) {
                 $value = $this->$name;
-                if ((null !== $value) || array_key_exists($name, $this->_arrayOfData)) {
+                if ((null !== $value) || array_key_exists($name, $this->__arrayOfData)) {
                     $result->$name = $value;
                 }
             }
+//            foreach ($properties->addNested())
         } else {
             $result = parent::jsonSerialize();
         }
@@ -90,14 +92,14 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
         return $nameflector;
     }
 
-    public function __set($name, $column)
+    public function __set($name, $column) // todo nested schemas
     {
         if ($this->__validateOnSet) {
             if ($property = static::schema()->properties[$name]) {
                 $property->export($column);
             }
         }
-        $this->_arrayOfData[$name] = $column;
+        $this->__arrayOfData[$name] = $column;
         return $this;
     }
 }

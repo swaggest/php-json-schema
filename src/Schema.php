@@ -16,6 +16,7 @@ use Swaggest\JsonSchema\Exception\ObjectException;
 use Swaggest\JsonSchema\Exception\StringException;
 use Swaggest\JsonSchema\Exception\TypeException;
 use Swaggest\JsonSchema\Structure\ClassStructure;
+use Swaggest\JsonSchema\Structure\Egg;
 use Swaggest\JsonSchema\Structure\ObjectItem;
 
 class Schema extends MagicMap
@@ -126,7 +127,7 @@ class Schema extends MagicMap
         if ($this->enum !== null) {
             $enumOk = false;
             foreach ($this->enum as $item) {
-                if ($item === $data) {
+                if ($item === $data) { // todo support complex structures here
                     $enumOk = true;
                     break;
                 }
@@ -263,11 +264,7 @@ class Schema extends MagicMap
             }
 
             if ($import && !$result instanceof ObjectItem) {
-                if (null === $this->objectItemClass) {
-                    $result = new ObjectItem();
-                } else {
-                    $result = new $this->objectItemClass;
-                }
+                $result = $this->makeObjectItem();
 
                 if ($result instanceof ClassStructure) {
                     if ($result->__validateOnSet) {
@@ -282,7 +279,8 @@ class Schema extends MagicMap
 
             if ($this->properties !== null) {
                 /** @var Schema[] $properties */
-                $properties = &$this->properties->toArray();
+                $properties = &$this->properties->toArray(); // TODO check performance of pointer
+                $nestedProperties = $this->properties->getNestedProperties();
             }
 
             $array = (array)$data;
@@ -301,7 +299,8 @@ class Schema extends MagicMap
                     } else {
                         foreach ($dependencies as $item) {
                             if (!property_exists($data, $item)) {
-                                $this->fail(new ObjectException('Dependency property missing: ' . $item, ObjectException::DEPENDENCY_MISSING), $path);
+                                $this->fail(new ObjectException('Dependency property missing: ' . $item,
+                                    ObjectException::DEPENDENCY_MISSING), $path);
                             }
                         }
                     }
@@ -312,11 +311,22 @@ class Schema extends MagicMap
                     $value = $properties[$key]->process($value, $import, $path . '->properties:' . $key);
                 }
 
+                /** @var Egg $nestedEgg */
+                $nestedEgg = null;
+                if (!$found && isset($nestedProperties[$key])) {
+                    $found = true;
+                    $nestedEgg = $nestedProperties[$key];
+                    $value = $nestedEgg->propertySchema->process($value, $import, $path . '->nestedProperties:' . $key);
+                }
+
                 if ($this->patternProperties !== null) {
                     foreach ($this->patternProperties as $pattern => $propertySchema) {
                         if (preg_match($pattern, $key)) {
                             $found = true;
                             $value = $propertySchema->process($value, $import, $path . '->patternProperties:' . $pattern);
+                            if ($import) {
+                                $result->addPatternPropertyName($pattern, $key);
+                            }
                             //break; // todo manage multiple import data properly (pattern accessor)
                         }
                     }
@@ -327,8 +337,18 @@ class Schema extends MagicMap
                     }
 
                     $value = $this->additionalProperties->process($value, $import, $path . '->additionalProperties');
+                    if ($import) {
+                        $result->addAdditionalPropertyName($key);
+                    }
                 }
-                $result->$key = $value;
+
+                if ($nestedEgg) {
+                    $result->setNestedProperty($key, $value, $nestedEgg);
+
+                } else {
+                    $result->$key = $value;
+                }
+
             }
 
         }
@@ -471,4 +491,15 @@ class Schema extends MagicMap
         return null;
     }
 
+    /**
+     * @return ObjectItem
+     */
+    public function makeObjectItem()
+    {
+        if (null === $this->objectItemClass) {
+            return new ObjectItem();
+        } else {
+            return new $this->objectItemClass;
+        }
+    }
 }

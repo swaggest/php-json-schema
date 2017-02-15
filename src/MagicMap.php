@@ -4,18 +4,18 @@ namespace Swaggest\JsonSchema;
 
 class MagicMap implements \ArrayAccess, \JsonSerializable
 {
-    protected $_arrayOfData = array();
+    protected $__arrayOfData = array();
 
     public function __set($name, $column)
     {
-        $this->_arrayOfData[$name] = $column;
+        $this->__arrayOfData[$name] = $column;
         return $this;
     }
 
     public function &__get($name)
     {
-        if (isset($this->_arrayOfData[$name])) {
-            return $this->_arrayOfData[$name];
+        if (isset($this->__arrayOfData[$name])) {
+            return $this->__arrayOfData[$name];
         } else {
             $tmp = null;
             return $tmp;
@@ -24,13 +24,13 @@ class MagicMap implements \ArrayAccess, \JsonSerializable
 
     public function offsetExists($offset)
     {
-        return array_key_exists($offset, $this->_arrayOfData);
+        return array_key_exists($offset, $this->__arrayOfData);
     }
 
     public function &offsetGet($offset)
     {
-        if (isset($this->_arrayOfData[$offset])) {
-            return $this->_arrayOfData[$offset];
+        if (isset($this->__arrayOfData[$offset])) {
+            return $this->__arrayOfData[$offset];
         } else {
             $tmp = null;
             return $tmp;
@@ -44,17 +44,17 @@ class MagicMap implements \ArrayAccess, \JsonSerializable
 
     public function offsetUnset($offset)
     {
-        unset($this->_arrayOfData[$offset]);
+        unset($this->__arrayOfData[$offset]);
     }
 
     public function &toArray()
     {
-        return $this->_arrayOfData;
+        return $this->__arrayOfData;
     }
 
     public function jsonSerialize()
     {
-        return (object)$this->_arrayOfData;
+        return (object)$this->__arrayOfData;
     }
 
 
