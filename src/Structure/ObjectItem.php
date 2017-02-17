@@ -18,6 +18,14 @@ class ObjectItem extends MagicMap
         $nested->$propertyName = $value;
     }
 
+    public function getNested($name)
+    {
+        if (isset($this->__nestedObjects[$name])) {
+            return $this->__nestedObjects[$name];
+        }
+        return null;
+    }
+
     protected $__additionalPropertyNames;
     public function addAdditionalPropertyName($name)
     {

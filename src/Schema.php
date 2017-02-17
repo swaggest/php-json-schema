@@ -344,7 +344,6 @@ class Schema extends MagicMap
 
                 if ($nestedEgg) {
                     $result->setNestedProperty($key, $value, $nestedEgg);
-
                 } else {
                     $result->$key = $value;
                 }
