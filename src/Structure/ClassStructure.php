@@ -70,29 +70,24 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
         return new static;
     }
 
-    protected $__hasNativeProperties = true;
     protected $__validateOnSet = true; // todo skip validation during import
 
-    public function jsonSerialize() // todo process nested structures here
+    public function jsonSerialize()
     {
-        if ($this->__hasNativeProperties) {
-            $result = new \stdClass();
-            $properties = static::schema()->properties;
-            foreach ($properties->toArray() as $name => $schema) {
-                $value = $this->$name;
-                if ((null !== $value) || array_key_exists($name, $this->__arrayOfData)) {
-                    $result->$name = $value;
-                }
+        $result = new \stdClass();
+        $properties = static::schema()->properties;
+        foreach ($properties->toArray() as $name => $schema) {
+            $value = $this->$name;
+            if ((null !== $value) || array_key_exists($name, $this->__arrayOfData)) {
+                $result->$name = $value;
             }
-            foreach ($properties->nestedPropertyNames as $name) {
-                /** @var ObjectItem $nested */
-                $nested = $this->$name;
-                foreach ((array)$nested->jsonSerialize() as $key => $value) {
-                    $result->$key = $value;
-                }
+        }
+        foreach ($properties->nestedPropertyNames as $name) {
+            /** @var ObjectItem $nested */
+            $nested = $this->$name;
+            foreach ((array)$nested->jsonSerialize() as $key => $value) {
+                $result->$key = $value;
             }
-        } else {
-            $result = parent::jsonSerialize();
         }
 
         return $result;
