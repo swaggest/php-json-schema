@@ -270,7 +270,7 @@ class Schema extends MagicMap
                     if ($result->__validateOnSet) {
                         $result->__validateOnSet = false;
                         /** @noinspection PhpUnusedLocalVariableInspection */
-                        $validateOnSetHandler = new ScopeExit(function()use($result){
+                        $validateOnSetHandler = new ScopeExit(function () use ($result) {
                             $result->__validateOnSet = true;
                         });
                     }
@@ -342,7 +342,7 @@ class Schema extends MagicMap
                     }
                 }
 
-                if ($nestedEgg) {
+                if ($nestedEgg && $import) {
                     $result->setNestedProperty($key, $value, $nestedEgg);
                 } else {
                     $result->$key = $value;

@@ -4,26 +4,26 @@ namespace Swaggest\JsonSchema\Structure;
 
 
 use Swaggest\JsonSchema\MagicMap;
+use Swaggest\JsonSchema\Schema;
 
 class ObjectItem extends MagicMap
 {
+    /** @var ObjectItem[] */
     protected $__nestedObjects;
 
     public function setNestedProperty($propertyName, $value, Egg $nestedEgg)
     {
-        $nested = &$this->__nestedObjects[$nestedEgg->name];
+        $nestedName = $nestedEgg->name;
+        $nested = &$this->__nestedObjects[$nestedName];
         if (null === $nested) {
             $nested = $nestedEgg->classSchema->makeObjectItem();
+            $this->__nestedObjects[$nestedName] = $nested;
+            if ($nestedName !== $nestedEgg->classSchema->objectItemClass) {
+                $this->$nestedName = $nested;
+            }
         }
         $nested->$propertyName = $value;
-    }
-
-    public function getNested($name)
-    {
-        if (isset($this->__nestedObjects[$name])) {
-            return $this->__nestedObjects[$name];
-        }
-        return null;
+        $this->__arrayOfData[$propertyName] = &$nested->$propertyName;
     }
 
     protected $__additionalPropertyNames;
@@ -63,6 +63,13 @@ class ObjectItem extends MagicMap
     public function jsonSerialize()
     {
         if ($this->__nestedObjects) {
+            $result = $this->__arrayOfData;
+            foreach ($this->__nestedObjects as $object) {
+                foreach ($object->__arrayOfData as $key => $value) {
+                    $result[$key] = $value;
+                }
+            }
+            return (object)$result;
         } else {
             return (object)$this->__arrayOfData;
         }

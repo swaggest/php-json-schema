@@ -9,10 +9,13 @@ use Swaggest\JsonSchema\Structure\ClassStructure;
 
 /**
  * @property $ownMagicInt
+ * @method static|SampleStructure import($data)
  */
 class NestedStructure extends ClassStructure
 {
     public $ownString;
+    /** @var SampleStructure */
+    public $sampleNested;
 
     /**
      * @param Properties|static $properties
@@ -22,7 +25,6 @@ class NestedStructure extends ClassStructure
     {
         $properties->ownMagicInt = Schema::integer();
         $properties->ownString = Schema::string();
-
-        $properties->addNested(SampleStructure::schema());
+        $properties->sampleNested = SampleStructure::schema()->nested();
     }
 }
