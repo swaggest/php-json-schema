@@ -2,7 +2,7 @@
 
 namespace Swaggest\JsonSchema;
 
-class InvalidValue extends \Exception
+class InvalidValue extends Exception
 {
     public function addPath($path)
     {

@@ -6,8 +6,8 @@ use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 /**
- * @property $propOne
- * @property $propTwo
+ * @property string $propOne
+ * @property int $propTwo
  * @property $recursion
  */
 class SampleStructure extends ClassStructure

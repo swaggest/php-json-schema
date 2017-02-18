@@ -32,5 +32,5 @@ script:
 after_script:
  - wget https://scrutinizer-ci.com/ocular.phar
  - php ocular.phar code-coverage:upload --format=php-clover build/logs/coverage.clover
- - if [[ $(phpenv version-name) =~ 7.0 ]] ; then php vendor/bin/coveralls -v; fi
- - if [[ $(phpenv version-name) =~ 7.0 ]] ; then ./vendor/bin/test-reporter; fi
+ - if [[ $(phpenv version-name) =~ 7.1 ]] ; then php vendor/bin/coveralls -v; fi
+ - if [[ $(phpenv version-name) =~ 7.1 ]] ; then ./vendor/bin/test-reporter; fi

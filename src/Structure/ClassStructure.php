@@ -5,12 +5,11 @@ namespace Swaggest\JsonSchema\Structure;
 use Swaggest\JsonSchema\Constraint\Properties;
 use Swaggest\JsonSchema\Constraint\Type;
 use Swaggest\JsonSchema\NameMirror;
-use Swaggest\JsonSchema\Schema;
 
 abstract class ClassStructure extends ObjectItem implements ClassStructureContract
 {
     /**
-     * @return Schema
+     * @return ClassSchema
      */
     public static function schema()
     {
@@ -19,7 +18,7 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
         $schema = &$schemas[$className];
 
         if (null === $schema) {
-            $schema = new Schema();
+            $schema = new ClassSchema();
             $schema->type = new Type(Type::OBJECT);
             $properties = new Properties();
             $schema->properties = $properties;
@@ -51,6 +50,19 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
     }
 
     /**
+     * @param ObjectItem $objectItem
+     * @return static
+     */
+    public static function pick(ObjectItem $objectItem)
+    {
+        $className = get_called_class();
+        if (isset($objectItem->__nestedObjects[$className])) {
+            return $objectItem->__nestedObjects[$className];
+        }
+        return null;
+    }
+
+    /**
      * @return static
      */
     public static function create()
@@ -58,21 +70,24 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
         return new static;
     }
 
-    protected $__hasNativeProperties = true;
     protected $__validateOnSet = true; // todo skip validation during import
 
     public function jsonSerialize()
     {
-        if ($this->__hasNativeProperties) {
-            $result = new \stdClass();
-            foreach (static::schema()->properties->toArray() as $name => $schema) {
-                $value = $this->$name;
-                if ((null !== $value) || array_key_exists($name, $this->_arrayOfData)) {
-                    $result->$name = $value;
-                }
+        $result = new \stdClass();
+        $properties = static::schema()->properties;
+        foreach ($properties->toArray() as $name => $schema) {
+            $value = $this->$name;
+            if ((null !== $value) || array_key_exists($name, $this->__arrayOfData)) {
+                $result->$name = $value;
             }
-        } else {
-            $result = parent::jsonSerialize();
+        }
+        foreach ($properties->nestedPropertyNames as $name) {
+            /** @var ObjectItem $nested */
+            $nested = $this->$name;
+            foreach ((array)$nested->jsonSerialize() as $key => $value) {
+                $result->$key = $value;
+            }
         }
 
         return $result;
@@ -90,14 +105,14 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
         return $nameflector;
     }
 
-    public function __set($name, $column)
+    public function __set($name, $column) // todo nested schemas
     {
         if ($this->__validateOnSet) {
             if ($property = static::schema()->properties[$name]) {
                 $property->export($column);
             }
         }
-        $this->_arrayOfData[$name] = $column;
+        $this->__arrayOfData[$name] = $column;
         return $this;
     }
 }
