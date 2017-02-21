@@ -97,25 +97,29 @@ class Schema extends MagicMap
 
     public $objectItemClass;
 
-    public function import($data)
+    public function import($data, DataPreProcessor $preProcessor = null)
     {
-        return $this->process($data, true);
+        return $this->process($data, true, $preProcessor);
     }
 
-    public function export($data)
+    public function export($data, DataPreProcessor $preProcessor = null)
     {
-        return $this->process($data, false);
+        return $this->process($data, false, $preProcessor);
     }
 
-    private function process($data, $import = true, $path = '#')
+    private function process($data, $import = true, DataPreProcessor $preProcessor = null, $path = '#')
     {
         if (!$import && $data instanceof ObjectItem) {
             $data = $data->jsonSerialize();
         }
+        if (null !== $preProcessor) {
+            $data = $preProcessor->process($data, $this, $import);
+        }
+
         $result = $data;
         if ($this->ref !== null) {
             // https://github.com/json-schema-org/JSON-Schema-Test-Suite/pull/129
-            return $this->ref->getSchema()->process($data, $import, $path . '->' . $this->ref->ref);
+            return $this->ref->getSchema()->process($data, $import, $preProcessor, $path . '->' . $this->ref->ref);
         }
 
         if ($this->type !== null) {
@@ -140,7 +144,7 @@ class Schema extends MagicMap
         if ($this->not !== null) {
             $exception = false;
             try {
-                $this->not->process($data, $import, $path . '->not');
+                $this->not->process($data, $import, $preProcessor, $path . '->not');
             } catch (InvalidValue $exception) {
                 // Expected exception
             }
@@ -153,7 +157,7 @@ class Schema extends MagicMap
             $successes = 0;
             foreach ($this->oneOf as $index => $item) {
                 try {
-                    $result = $item->process($data, $import, $path . '->oneOf:' . $index);
+                    $result = $item->process($data, $import, $preProcessor, $path . '->oneOf:' . $index);
                     $successes++;
                     if ($successes > 1) {
                         break;
@@ -171,7 +175,7 @@ class Schema extends MagicMap
             $successes = 0;
             foreach ($this->anyOf as $index => $item) {
                 try {
-                    $result = $item->process($data, $import, $path . '->anyOf:' . $index);
+                    $result = $item->process($data, $import, $preProcessor, $path . '->anyOf:' . $index);
                     $successes++;
                     if ($successes) {
                         break;
@@ -187,7 +191,7 @@ class Schema extends MagicMap
 
         if ($this->allOf !== null) {
             foreach ($this->allOf as $index => $item) {
-                $result = $item->process($data, $import, $path . '->allOf' . $index);
+                $result = $item->process($data, $import, $preProcessor, $path . '->allOf' . $index);
             }
         }
 
@@ -277,9 +281,16 @@ class Schema extends MagicMap
                 }
             }
 
+            $propertyMap = null;
             if ($this->properties !== null) {
                 /** @var Schema[] $properties */
                 $properties = &$this->properties->toArray(); // TODO check performance of pointer
+                if ($import) {
+                    $propertyMap = $this->properties->getDataToPropertyMap(); // TODO check performance of pointer
+                } else {
+                    $propertyMap = $this->properties->getPropertyToDataMap(); // TODO check performance of pointer
+                }
+
                 $nestedProperties = $this->properties->getNestedProperties();
             }
 
@@ -295,7 +306,7 @@ class Schema extends MagicMap
                 if (isset($this->dependencies[$key])) {
                     $dependencies = $this->dependencies[$key];
                     if ($dependencies instanceof Schema) {
-                        $dependencies->process($data, $import, $path . '->dependencies:' . $key);
+                        $dependencies->process($data, $import, $preProcessor, $path . '->dependencies:' . $key);
                     } else {
                         foreach ($dependencies as $item) {
                             if (!property_exists($data, $item)) {
@@ -307,8 +318,13 @@ class Schema extends MagicMap
                 }
 
                 if (isset($properties[$key])) {
+                    if (null !== $propertyMap) {
+
+
+                    }
+
                     $found = true;
-                    $value = $properties[$key]->process($value, $import, $path . '->properties:' . $key);
+                    $value = $properties[$key]->process($value, $import, $preProcessor, $path . '->properties:' . $key);
                 }
 
                 /** @var Egg $nestedEgg */
@@ -316,14 +332,14 @@ class Schema extends MagicMap
                 if (!$found && isset($nestedProperties[$key])) {
                     $found = true;
                     $nestedEgg = $nestedProperties[$key];
-                    $value = $nestedEgg->propertySchema->process($value, $import, $path . '->nestedProperties:' . $key);
+                    $value = $nestedEgg->propertySchema->process($value, $import, $preProcessor, $path . '->nestedProperties:' . $key);
                 }
 
                 if ($this->patternProperties !== null) {
                     foreach ($this->patternProperties as $pattern => $propertySchema) {
                         if (preg_match($pattern, $key)) {
                             $found = true;
-                            $value = $propertySchema->process($value, $import, $path . '->patternProperties:' . $pattern);
+                            $value = $propertySchema->process($value, $import, $preProcessor, $path . '->patternProperties:' . $pattern);
                             if ($import) {
                                 $result->addPatternPropertyName($pattern, $key);
                             }
@@ -336,7 +352,7 @@ class Schema extends MagicMap
                         $this->fail(new ObjectException('Additional properties not allowed'), $path);
                     }
 
-                    $value = $this->additionalProperties->process($value, $import, $path . '->additionalProperties');
+                    $value = $this->additionalProperties->process($value, $import, $preProcessor, $path . '->additionalProperties');
                     if ($import) {
                         $result->addAdditionalPropertyName($key);
                     }
@@ -378,12 +394,12 @@ class Schema extends MagicMap
             if ($items !== null || $additionalItems !== null) {
                 $itemsLen = is_array($items) ? count($items) : 0;
                 $index = 0;
-                foreach ($data as &$value) {
+                foreach ($data as $key => $value) {
                     if ($index < $itemsLen) {
-                        $value = $items[$index]->process($value, $import, $path . '->items:' . $index);
+                        $data[$key] = $items[$index]->process($value, $import, $preProcessor, $path . '->items:' . $index);
                     } else {
                         if ($additionalItems instanceof Schema) {
-                            $value = $additionalItems->process($value, $import, $path . '->' . $pathItems
+                            $data[$key] = $additionalItems->process($value, $import, $preProcessor, $path . '->' . $pathItems
                                 . '[' . $index . ']');
                         } elseif ($additionalItems === false) {
                             $this->fail(new ArrayException('Unexpected array item'), $path);
@@ -398,6 +414,8 @@ class Schema extends MagicMap
                     $this->fail(new ArrayException('Array is not unique'), $path);
                 }
             }
+
+            $result = $data;
         }
 
 

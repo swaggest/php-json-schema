@@ -5,7 +5,9 @@ namespace Swaggest\JsonSchema\Tests\PHPUnit\ClassStructure;
 
 use Swaggest\JsonSchema\Exception\TypeException;
 use Swaggest\JsonSchema\InvalidValue;
+use Swaggest\JsonSchema\Tests\Helper\LevelThreeClass;
 use Swaggest\JsonSchema\Tests\Helper\SampleStructure;
+use Swaggest\JsonSchema\Tests\Helper\StructureWithItems;
 
 class ClassStructureTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,6 +31,47 @@ class ClassStructureTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame('11', $object->recursion->propOne);
         $this->assertSame(22, $object->recursion->propTwo);
+
+        $exported = $schema->export($object);
+        $this->assertSame('{"propOne":"1","propTwo":2,"recursion":{"propOne":"11","propTwo":22}}', json_encode($exported));
+    }
+
+
+    public function testItems()
+    {
+        $json = '{"list":[{"level3":1},{"level3":2},{"level3":3}]}';
+        $data = json_decode($json);
+        $imported = StructureWithItems::import($data);
+        $this->assertSame(1, $imported->list[0]->level3);
+        $this->assertSame(2, $imported->list[1]->level3);
+        $this->assertSame(3, $imported->list[2]->level3);
+
+        $exported = StructureWithItems::export($imported);
+        $this->assertSame($json, json_encode($exported));
+    }
+
+    public function testItems2()
+    {
+        $object = new StructureWithItems();
+
+        $l = new LevelThreeClass();
+        $l->level3 = 1;
+        $object->list[] = $l;
+
+        $l = new LevelThreeClass();
+        $l->level3 = 2;
+        $object->list[] = $l;
+
+        $l = new LevelThreeClass();
+        $l->level3 = 3;
+        $object->list[] = $l;
+
+        $json = '{"list":[{"level3":1},{"level3":2},{"level3":3}]}';
+        $exported = StructureWithItems::export($object);
+        $this->assertTrue($exported->list[0] instanceof \stdClass, 'Exported item is not \stdClass');
+        $this->assertTrue($exported->list[1] instanceof \stdClass, 'Exported item is not \stdClass');
+        $this->assertTrue($exported->list[2] instanceof \stdClass, 'Exported item is not \stdClass');
+        $this->assertSame($json, json_encode($exported));
     }
 
 

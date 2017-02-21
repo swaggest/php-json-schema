@@ -7,7 +7,7 @@ abstract class Meta
 {
     /**
      * @param Schema $schema
-     * @return null|static
+     * @return static
      */
     public static function get(Schema $schema)
     {

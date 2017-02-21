@@ -5,9 +5,14 @@ namespace Swaggest\JsonSchema\Tests\PHPUnit\Example;
 
 use Swaggest\JsonSchema\Exception\NumericException;
 use Swaggest\JsonSchema\Exception\ObjectException;
+use Swaggest\JsonSchema\Meta\FieldName;
+use Swaggest\JsonSchema\PreProcessor\NameMapper;
+use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\SchemaLoader;
-use Swaggest\JsonSchema\Tests\Helper\Example;
+use Swaggest\JsonSchema\Structure\Composition;
+use Swaggest\JsonSchema\Tests\Helper\User;
 use Swaggest\JsonSchema\Tests\Helper\Order;
+use Swaggest\JsonSchema\Tests\Helper\UserInfo;
 
 class ExampleTest extends \PHPUnit_Framework_TestCase
 {
@@ -78,7 +83,7 @@ JSON
     public function testEarlyValidation()
     {
         $this->setExpectedException(get_class(new NumericException()), 'Value more than 0 expected, -1 received', NumericException::MINIMUM);
-        $example = new Example();
+        $example = new User();
         $example->quantity = -1; // Exception: Value more than 0 expected, -1 received
     }
 
@@ -86,16 +91,16 @@ JSON
     {
         $this->setExpectedException(get_class(new ObjectException()), 'Required property missing: id');
 
-        $example = new Example();
+        $example = new User();
         $example->quantity = 10;
-        Example::export($example); // Exception: Required property missing: id
+        User::export($example); // Exception: Required property missing: id
     }
 
     public function testExample()
     {
         $this->setExpectedException(get_class(new ObjectException()), 'Required property missing: id at #->properties:orders->items[0]');
 
-        $example = new Example();
+        $example = new User();
         $example->id = 1;
         $example->name = 'John Doe';
 
@@ -103,7 +108,92 @@ JSON
         $order->dateTime = '2015-10-28T07:28:00Z';
         $example->orders[] = $order;
 
-        Example::export($example); // Exception: Required property missing: id at #->properties:orders->items[0]
+        User::export($example); // Exception: Required property missing: id at #->properties:orders->items[0]
     }
 
+    public function testNameMapper()
+    {
+        $mapper = new NameMapper();
+
+        $order = new Order();
+        $order->id = 1;
+        $order->dateTime = '2015-10-28T07:28:00Z';
+        $exported = Order::export($order, $mapper);
+        $json = <<<JSON
+{
+    "id": 1,
+    "date_time": "2015-10-28T07:28:00Z"
+}
+JSON;
+        $this->assertSame($json, json_encode($exported, JSON_PRETTY_PRINT));
+
+        $imported = Order::import(json_decode($json), $mapper);
+        $this->assertSame('2015-10-28T07:28:00Z', $imported->dateTime);
+    }
+
+
+    public function testNestedStructure()
+    {
+        $user = new User();
+        $user->id = 1;
+
+        $info = new UserInfo();
+        $info->firstName = 'John';
+        $info->lastName = 'Doe';
+        $info->birthDay = '1970-01-01';
+        $user->info = $info;
+
+        $json = <<<JSON
+{
+    "id": 1,
+    "firstName": "John",
+    "lastName": "Doe",
+    "birthDay": "1970-01-01"
+}
+JSON;
+        $exported = User::export($user);
+        $this->assertSame($json, json_encode($exported, JSON_PRETTY_PRINT));
+
+        $imported = User::import(json_decode($json));
+        $this->assertSame('John', $imported->info->firstName);
+        $this->assertSame('Doe', $imported->info->lastName);
+    }
+
+    public function testNestedComposition()
+    {
+        $schema = new Composition(UserInfo::schema(), Order::schema());
+        $json = <<<JSON
+{
+    "id": 1,
+    "firstName": "John",
+    "lastName": "Doe",
+    "price": 2.66
+}
+JSON;
+        $object = $schema->import(json_decode($json));
+
+        // Get particular object with `pick` accessor
+        $info = UserInfo::pick($object);
+        $order = Order::pick($object);
+
+        // Data is imported objects of according classes
+        $this->assertTrue($order instanceof Order);
+        $this->assertTrue($info instanceof UserInfo);
+
+        $this->assertSame(1, $order->id);
+        $this->assertSame('John', $info->firstName);
+        $this->assertSame('Doe', $info->lastName);
+        $this->assertSame(2.66, $order->price);
+    }
+
+    public function testMeta()
+    {
+        $schema = new Schema();
+        // Setting meta
+        $schema->meta(new FieldName('my-value'));
+
+        // Retrieving meta
+        $myMeta = FieldName::get($schema);
+        $this->assertSame('my-value', $myMeta->name);
+    }
 }
