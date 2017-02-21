@@ -4,6 +4,7 @@ namespace Swaggest\JsonSchema\Structure;
 
 use Swaggest\JsonSchema\Constraint\Properties;
 use Swaggest\JsonSchema\Constraint\Type;
+use Swaggest\JsonSchema\DataPreProcessor;
 use Swaggest\JsonSchema\NameMirror;
 
 abstract class ClassStructure extends ObjectItem implements ClassStructureContract
@@ -31,22 +32,24 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
 
     /**
      * @param $data
+     * @param DataPreProcessor $preProcessor
      * @return static
      * @throws \Swaggest\JsonSchema\InvalidValue
      */
-    public static function import($data)
+    public static function import($data, DataPreProcessor $preProcessor = null)
     {
-        return static::schema()->import($data);
+        return static::schema()->import($data, $preProcessor);
     }
 
     /**
      * @param $data
+     * @param DataPreProcessor $preProcessor
      * @return mixed
      * @throws \Swaggest\JsonSchema\InvalidValue
      */
-    public static function export($data)
+    public static function export($data, DataPreProcessor $preProcessor = null)
     {
-        return static::schema()->export($data);
+        return static::schema()->export($data, $preProcessor);
     }
 
     /**
@@ -85,8 +88,10 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
         foreach ($properties->nestedPropertyNames as $name) {
             /** @var ObjectItem $nested */
             $nested = $this->$name;
-            foreach ((array)$nested->jsonSerialize() as $key => $value) {
-                $result->$key = $value;
+            if (null !== $nested) {
+                foreach ((array)$nested->jsonSerialize() as $key => $value) {
+                    $result->$key = $value;
+                }
             }
         }
 

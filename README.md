@@ -92,7 +92,7 @@ JSON
 /**
  * @property int $quantity PHPDoc defined dynamic properties will be validated on every set
  */
-class Example extends ClassStructure
+class User extends ClassStructure
 {
     /* Native (public) properties will be validated only on import and export of structure data */
 
@@ -102,20 +102,27 @@ class Example extends ClassStructure
     /** @var Order[] */
     public $orders;
 
+    /** @var UserInfo */
+    public $info;
+
     /**
-     * Define your properties 
-     *
      * @param Properties|static $properties
      * @param Schema $ownerSchema
      */
     public static function setUpProperties($properties, Schema $ownerSchema)
     {
+        // Setup property schemas
         $properties->id = Schema::integer();
         $properties->name = Schema::string();
 
+        // You can embed structures to main level with nested schemas
+        $properties->info = UserInfo::schema()->nested();
+
+        // Dynamic (phpdoc-defined) properties can be used as well
         $properties->quantity = Schema::integer();
         $properties->quantity->minimum = 0;
 
+        // Property can be any complex structure
         $properties->orders = Schema::create();
         $properties->orders->items = Order::schema();
 
@@ -123,9 +130,25 @@ class Example extends ClassStructure
     }
 }
 
-/**
- * 
- */
+
+class UserInfo extends ClassStructure {
+    public $firstName;
+    public $lastName;
+    public $birthDay;
+
+    /**
+     * @param Properties|static $properties
+     * @param Schema $ownerSchema
+     */
+    public static function setUpProperties($properties, Schema $ownerSchema)
+    {
+        $properties->firstName = Schema::string();
+        $properties->lastName = Schema::string();
+        $properties->birthDay = Schema::string();
+    }
+}
+
+
 class Order extends ClassStructure
 {
     public $id;
@@ -139,7 +162,7 @@ class Order extends ClassStructure
     public static function setUpProperties($properties, Schema $ownerSchema)
     {
         $properties->id = Schema::integer();
-        $properties->dateTime = Schema::string();
+        $properties->dateTime = Schema::string()->meta(new FieldName('date_time'));
         $properties->dateTime->format = Schema::FORMAT_DATE_TIME;
         $properties->price = Schema::number();
 
@@ -152,26 +175,134 @@ Validation of dynamic properties is performed on set,
 this can help to find source of invalid data at cost of 
 some performance drop
 ```php
-$example = new Example();
-$example->quantity = -1; // Exception: Value more than 0 expected, -1 received
+$user = new User();
+$user->quantity = -1; // Exception: Value more than 0 expected, -1 received
 ```
 
 Validation of native properties is performed only on import/export
 ```php
-$example = new Example();
-$example->quantity = 10;
-Example::export($example); // Exception: Required property missing: id
+$user = new User();
+$user->quantity = 10;
+User::export($user); // Exception: Required property missing: id
 ```
 
 Error messages provide a path to invalid data
 ```php
-$example = new Example();
-$example->id = 1;
-$example->name = 'John Doe';
+$user = new User();
+$user->id = 1;
+$user->name = 'John Doe';
 
 $order = new Order();
 $order->dateTime = (new \DateTime())->format(DATE_RFC3339);
-$example->orders[] = $order;
+$user->orders[] = $order;
 
-Example::export($example); // Exception: Required property missing: id at #->properties:orders->items[0]
+User::export($user); // Exception: Required property missing: id at #->properties:orders->items[0]
+```
+
+#### Nested structures
+
+Nested structures allow you to make composition: flatten several objects in one and separate back.
+
+```php
+$user = new User();
+$user->id = 1;
+
+$info = new UserInfo();
+$info->firstName = 'John';
+$info->lastName = 'Doe';
+$info->birthDay = '1970-01-01';
+$user->info = $info;
+
+$json = <<<JSON
+{
+    "id": 1,
+    "firstName": "John",
+    "lastName": "Doe",
+    "birthDay": "1970-01-01"
+}
+JSON;
+$exported = User::export($user);
+$this->assertSame($json, json_encode($exported, JSON_PRETTY_PRINT));
+
+$imported = User::import(json_decode($json));
+$this->assertSame('John', $imported->info->firstName);
+$this->assertSame('Doe', $imported->info->lastName);
+```
+
+You can also use `\Swaggest\JsonSchema\Structure\Composition` to dynamically create schema compositions.
+This can be helpful to deal with results of database query on joined data.
+
+```php
+$schema = new Composition(UserInfo::schema(), Order::schema());
+$json = <<<JSON
+{
+    "id": 1,
+    "firstName": "John",
+    "lastName": "Doe",
+    "price": 2.66
+}
+JSON;
+$object = $schema->import(json_decode($json));
+
+// Get particular object with `pick` accessor
+$info = UserInfo::pick($object);
+$order = Order::pick($object);
+
+// Data is imported objects of according classes
+$this->assertTrue($order instanceof Order);
+$this->assertTrue($info instanceof UserInfo);
+
+$this->assertSame(1, $order->id);
+$this->assertSame('John', $info->firstName);
+$this->assertSame('Doe', $info->lastName);
+$this->assertSame(2.66, $order->price);
+```
+
+#### Keys mapping
+
+If property names of PHP objects should be different from raw data you 
+can apply `\Swaggest\JsonSchema\PreProcessor\NameMapper` during processing.
+It takes `Swaggest\JsonSchema\Meta\FieldName` as source of raw name.
+
+```php
+$properties->dateTime = Schema::string()->meta(new FieldName('date_time'));
+```
+
+```php
+$mapper = new NameMapper();
+
+$order = new Order();
+$order->id = 1;
+$order->dateTime = '2015-10-28T07:28:00Z';
+$exported = Order::export($order, $mapper);
+$json = <<<JSON
+{
+    "id": 1,
+    "date_time": "2015-10-28T07:28:00Z"
+}
+JSON;
+$this->assertSame($json, json_encode($exported, JSON_PRETTY_PRINT));
+
+$imported = Order::import(json_decode($json), $mapper);
+$this->assertSame('2015-10-28T07:28:00Z', $imported->dateTime);
+```
+
+You can create your own pre-processor implementing `Swaggest\JsonSchema\DataPreProcessor`.
+
+#### Meta
+
+`Meta` is a way to complement `Schema` with your own data. You can keep and retrieve it.
+
+You can store it.
+```php
+$schema = new Schema();
+// Setting meta
+$schema->meta(new FieldName('my-value'));
+```
+
+And get back.
+```php
+// Retrieving meta
+$myMeta = FieldName::get($schema);
+$this->assertSame('my-value', $myMeta->name);
 ```

@@ -2,9 +2,8 @@
 
 namespace Swaggest\JsonSchema\Structure;
 
-
+use Swaggest\JsonSchema\Constraint\Properties;
 use Swaggest\JsonSchema\MagicMap;
-use Swaggest\JsonSchema\Schema;
 
 class ObjectItem extends MagicMap
 {
