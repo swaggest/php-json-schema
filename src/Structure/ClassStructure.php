@@ -31,6 +31,14 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
     }
 
     /**
+     * @return Properties|static
+     */
+    public static function properties()
+    {
+        return static::schema()->properties;
+    }
+
+    /**
      * @param $data
      * @param DataPreProcessor $preProcessor
      * @return static

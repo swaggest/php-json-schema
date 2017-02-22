@@ -281,16 +281,9 @@ class Schema extends MagicMap
                 }
             }
 
-            $propertyMap = null;
             if ($this->properties !== null) {
                 /** @var Schema[] $properties */
                 $properties = &$this->properties->toArray(); // TODO check performance of pointer
-                if ($import) {
-                    $propertyMap = $this->properties->getDataToPropertyMap(); // TODO check performance of pointer
-                } else {
-                    $propertyMap = $this->properties->getPropertyToDataMap(); // TODO check performance of pointer
-                }
-
                 $nestedProperties = $this->properties->getNestedProperties();
             }
 
@@ -317,22 +310,20 @@ class Schema extends MagicMap
                     }
                 }
 
+                $propertyFound = false;
                 if (isset($properties[$key])) {
-                    if (null !== $propertyMap) {
-
-
-                    }
-
+                    $propertyFound = true;
                     $found = true;
                     $value = $properties[$key]->process($value, $import, $preProcessor, $path . '->properties:' . $key);
                 }
 
-                /** @var Egg $nestedEgg */
-                $nestedEgg = null;
-                if (!$found && isset($nestedProperties[$key])) {
+                /** @var Egg[] $nestedEggs */
+                $nestedEggs = null;
+                if (isset($nestedProperties[$key])) {
                     $found = true;
-                    $nestedEgg = $nestedProperties[$key];
-                    $value = $nestedEgg->propertySchema->process($value, $import, $preProcessor, $path . '->nestedProperties:' . $key);
+                    $nestedEggs = $nestedProperties[$key];
+                    // todo iterate all nested props?
+                    $value = $nestedEggs[0]->propertySchema->process($value, $import, $preProcessor, $path . '->nestedProperties:' . $key);
                 }
 
                 if ($this->patternProperties !== null) {
@@ -358,8 +349,13 @@ class Schema extends MagicMap
                     }
                 }
 
-                if ($nestedEgg && $import) {
-                    $result->setNestedProperty($key, $value, $nestedEgg);
+                if ($nestedEggs && $import) {
+                    foreach ($nestedEggs as $nestedEgg) {
+                        $result->setNestedProperty($key, $value, $nestedEgg);
+                    }
+                    if ($propertyFound) {
+                        $result->$key = $value;
+                    }
                 } else {
                     $result->$key = $value;
                 }

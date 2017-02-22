@@ -44,7 +44,7 @@ class Properties extends MagicMap implements Constraint
     }
 
 
-    /** @var Egg[] */
+    /** @var Egg[][] */
     private $nestedProperties = array();
 
     /** @var Schema[] */
@@ -57,7 +57,7 @@ class Properties extends MagicMap implements Constraint
         }
         $this->nestedPropertyNames[$name] = $name;
         foreach ($nested->properties->toArray() as $propertyName => $property) {
-            $this->nestedProperties[$propertyName] = new Egg($nested, $name, $property);
+            $this->nestedProperties[$propertyName][] = new Egg($nested, $name, $property);
         }
         return $this;
     }

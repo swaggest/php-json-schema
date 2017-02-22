@@ -56,37 +56,4 @@ class MagicMap implements \ArrayAccess, \JsonSerializable
     {
         return (object)$this->__arrayOfData;
     }
-
-    private $__propertyToDataMap;
-    public function setPropertyToDataMap($map)
-    {
-        $this->__propertyToDataMap = $map;
-        return $this;
-    }
-
-    public function getPropertyToDataMap()
-    {
-        return $this->__propertyToDataMap;
-    }
-
-    private $__dataToPropertyMap;
-
-    /**
-     * @return mixed
-     */
-    public function getDataToPropertyMap()
-    {
-        return $this->__dataToPropertyMap;
-    }
-
-    /**
-     * @param mixed $_dataToPropertyMap
-     * @return MagicMap
-     */
-    public function setDataToPropertyMap($_dataToPropertyMap)
-    {
-        $this->__dataToPropertyMap = $_dataToPropertyMap;
-        return $this;
-    }
-
 }
