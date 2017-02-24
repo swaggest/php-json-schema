@@ -155,6 +155,9 @@ JSON;
         $this->assertSame($json, json_encode($exported, JSON_PRETTY_PRINT));
 
         $imported = User::import(json_decode($json));
+        $this->assertSame(1, $imported->id);
+
+        $this->assertSame(1, $imported->info->id);
         $this->assertSame('John', $imported->info->firstName);
         $this->assertSame('Doe', $imported->info->lastName);
     }

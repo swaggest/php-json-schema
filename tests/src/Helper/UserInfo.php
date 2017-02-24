@@ -9,6 +9,7 @@ use Swaggest\JsonSchema\Structure\ClassStructure;
 
 class UserInfo extends ClassStructure
 {
+    public $id;
     public $firstName;
     public $lastName;
     public $birthDay;
@@ -19,9 +20,12 @@ class UserInfo extends ClassStructure
      */
     public static function setUpProperties($properties, Schema $ownerSchema)
     {
+        $properties->id = User::properties()->id;
         $properties->firstName = Schema::string();
         $properties->lastName = Schema::string();
         $properties->birthDay = Schema::string();
         $properties->birthDay->format = Schema::FORMAT_DATE_TIME;
+
+        $ownerSchema->required[] = self::names()->id;
     }
 }
