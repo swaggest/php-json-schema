@@ -418,6 +418,26 @@ class Schema extends MagicMap
         return $result;
     }
 
+    /**
+     * @param bool|Schema $additionalProperties
+     * @return Schema
+     */
+    public function setAdditionalProperties($additionalProperties)
+    {
+        $this->additionalProperties = $additionalProperties;
+        return $this;
+    }
+
+    /**
+     * @param Schema|Schema[] $items
+     * @return Schema
+     */
+    public function setItems($items)
+    {
+        $this->items = $items;
+        return $this;
+    }
+
 
     private function fail(InvalidValue $exception, $path)
     {
