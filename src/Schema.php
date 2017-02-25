@@ -96,6 +96,7 @@ class Schema extends MagicMap
     public $oneOf;
 
     public $objectItemClass;
+    private $useObjectAsArray = false;
 
     public function import($data, DataPreProcessor $preProcessor = null)
     {
@@ -112,6 +113,10 @@ class Schema extends MagicMap
         if (!$import && $data instanceof ObjectItem) {
             $data = $data->jsonSerialize();
         }
+        if (!$import && is_array($data) && $this->useObjectAsArray) {
+            $data = (object)$data;
+        }
+
         if (null !== $preProcessor) {
             $data = $preProcessor->process($data, $this, $import);
         }
@@ -254,8 +259,6 @@ class Schema extends MagicMap
                     }
                 }
             }
-
-
         }
 
         if ($data instanceof \stdClass) {
@@ -267,16 +270,21 @@ class Schema extends MagicMap
                 }
             }
 
-            if ($import && !$result instanceof ObjectItem) {
-                $result = $this->makeObjectItem();
 
-                if ($result instanceof ClassStructure) {
-                    if ($result->__validateOnSet) {
-                        $result->__validateOnSet = false;
-                        /** @noinspection PhpUnusedLocalVariableInspection */
-                        $validateOnSetHandler = new ScopeExit(function () use ($result) {
-                            $result->__validateOnSet = true;
-                        });
+            if ($import) {
+                if ($this->useObjectAsArray) {
+                    $result = array();
+                } elseif (!$result instanceof ObjectItem) {
+                    $result = $this->makeObjectItem();
+
+                    if ($result instanceof ClassStructure) {
+                        if ($result->__validateOnSet) {
+                            $result->__validateOnSet = false;
+                            /** @noinspection PhpUnusedLocalVariableInspection */
+                            $validateOnSetHandler = new ScopeExit(function () use ($result) {
+                                $result->__validateOnSet = true;
+                            });
+                        }
                     }
                 }
             }
@@ -344,7 +352,7 @@ class Schema extends MagicMap
                     }
 
                     $value = $this->additionalProperties->process($value, $import, $preProcessor, $path . '->additionalProperties');
-                    if ($import) {
+                    if ($import && !$this->useObjectAsArray) {
                         $result->addAdditionalPropertyName($key);
                     }
                 }
@@ -357,7 +365,11 @@ class Schema extends MagicMap
                         $result->$key = $value;
                     }
                 } else {
-                    $result->$key = $value;
+                    if ($this->useObjectAsArray && $import) {
+                        $result[$key] = $value;
+                    } else {
+                        $result->$key = $value;
+                    }
                 }
 
             }
@@ -416,6 +428,16 @@ class Schema extends MagicMap
 
 
         return $result;
+    }
+
+    /**
+     * @param boolean $useObjectAsArray
+     * @return Schema
+     */
+    public function setUseObjectAsArray($useObjectAsArray)
+    {
+        $this->useObjectAsArray = $useObjectAsArray;
+        return $this;
     }
 
     /**
