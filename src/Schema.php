@@ -303,6 +303,10 @@ class Schema extends MagicMap
                 $this->fail(new ObjectException("Too many properties", ObjectException::TOO_MANY), $path);
             }
             foreach ($array as $key => $value) {
+                if ($key === '' && PHP_VERSION_ID < 71000) {
+                    $this->fail(new InvalidValue('Empty property name'), $path);
+                }
+
                 $found = false;
                 if (isset($this->dependencies[$key])) {
                     $dependencies = $this->dependencies[$key];
