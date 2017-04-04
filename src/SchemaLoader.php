@@ -80,6 +80,61 @@ class SchemaLoader
         return $this->readSchemaDeeper($schemaData);
     }
 
+    /** @var \SplObjectStorage */
+    private $circularReferences;
+    public function dumpSchema(Schema $schema)
+    {
+        $this->circularReferences = new \SplObjectStorage();
+        $this->dumpDefinitions = array();
+        $this->dumpDefIndex = 0;
+        $contents = $this->dumpSchemaDeeper($schema, '#');
+        return $contents;
+    }
+
+    public function dumpSchemaDeeper(Schema $schema, $path)
+    {
+        $result = new \stdClass();
+
+        if ($this->circularReferences->contains($schema)) {
+            $path = $this->circularReferences[$schema];
+            $result->{self::REF} = $path;
+            return $result;
+        }
+        $this->circularReferences->attach($schema, $path);
+
+        $data = get_object_vars($schema);
+        foreach ($data as $key => $value) {
+            if ($value === null) {
+                continue;
+            }
+
+            if ($value instanceof Schema) {
+                $value = $this->dumpSchemaDeeper($value, $path . '/' . $key);
+            }
+
+            if (is_array($value)) {
+                foreach ($value as $k => $v) {
+                    if ($v instanceof Schema) {
+                        $value[$k] = $this->dumpSchemaDeeper($v, $path . '/' . $key . '/' . $k);
+                    }
+                }
+            }
+
+            if ($key === self::PROPERTIES) {
+                /** @var Properties $properties */
+                $properties = $value;
+                $value = array();
+                foreach ($properties->toArray() as $propertyName => $property) {
+                    $value[$propertyName] = $this->dumpSchemaDeeper($property, $path . '/' . $key . '/' . $propertyName);
+                }
+            }
+
+
+            $result->$key = $value;
+        }
+        return $result;
+    }
+
     private $resolutionScope;
 
     protected function readSchemaDeeper($schemaArray)
@@ -104,7 +159,7 @@ class SchemaLoader
         }
 
         if (isset($schemaArray[self::TYPE])) {
-            $schema->type = new Type($schemaArray[self::TYPE]);
+            $schema->type = $schemaArray[self::TYPE];
         }
 
 

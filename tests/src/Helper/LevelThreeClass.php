@@ -6,7 +6,6 @@ namespace Swaggest\JsonSchema\Tests\Helper;
 use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\Constraint\Properties;
 use Swaggest\JsonSchema\Structure\ClassStructure;
-use Swaggest\JsonSchema\Types\IntegerType;
 
 class LevelThreeClass extends ClassStructure
 {

@@ -20,7 +20,7 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
 
         if (null === $schema) {
             $schema = new ClassSchema();
-            $schema->type = new Type(Type::OBJECT);
+            $schema->type = Type::OBJECT;
             $properties = new Properties();
             $schema->properties = $properties;
             $schema->objectItemClass = get_called_class();
@@ -127,5 +127,9 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
         }
         $this->__arrayOfData[$name] = $column;
         return $this;
+    }
+
+    public static function className() {
+        return get_called_class();
     }
 }

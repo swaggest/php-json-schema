@@ -476,37 +476,52 @@ class Schema extends MagicMap
     public static function integer()
     {
         $schema = new Schema();
-        $schema->type = new Type(Type::INTEGER);
+        $schema->type = Type::INTEGER;
         return $schema;
     }
 
     public static function number()
     {
         $schema = new Schema();
-        $schema->type = new Type(Type::NUMBER);
+        $schema->type = Type::NUMBER;
         return $schema;
     }
 
     public static function string()
     {
         $schema = new Schema();
-        $schema->type = new Type(Type::STRING);
+        $schema->type = Type::STRING;
         return $schema;
     }
 
     public static function boolean()
     {
         $schema = new Schema();
-        $schema->type = new Type(Type::BOOLEAN);
+        $schema->type = Type::BOOLEAN;
         return $schema;
     }
 
     public static function object()
     {
         $schema = new Schema();
-        $schema->type = new Type(Type::OBJECT);
+        $schema->type = Type::OBJECT;
         return $schema;
     }
+
+    public static function arr()
+    {
+        $schema = new Schema();
+        $schema->type = Type::ARR;
+        return $schema;
+    }
+
+    public static function null()
+    {
+        $schema = new Schema();
+        $schema->type = Type::NULL;
+        return $schema;
+    }
+
 
     public static function create()
     {

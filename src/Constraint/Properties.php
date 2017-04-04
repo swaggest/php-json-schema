@@ -10,6 +10,7 @@ use Swaggest\JsonSchema\Structure\Nested;
 
 /**
  * @method Schema __get($key)
+ * @method Schema[] toArray()
  */
 class Properties extends MagicMap implements Constraint
 {
