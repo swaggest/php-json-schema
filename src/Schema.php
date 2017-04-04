@@ -128,8 +128,11 @@ class Schema extends MagicMap
         }
 
         if ($this->type !== null) {
-            if (!$this->type->isValid($data)) {
-                $this->fail(new TypeException(ucfirst(implode(', ', $this->type->types) . ' expected, ' . json_encode($data) . ' received')), $path);
+            if (!Type::isValid($this->type, $data)) {
+                $this->fail(new TypeException(ucfirst(
+                    implode(', ', is_array($this->type) ? $this->type : array($this->type))
+                    . ' expected, ' . json_encode($data) . ' received')
+                ), $path);
             }
         }
 

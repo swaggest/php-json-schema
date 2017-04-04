@@ -12,8 +12,6 @@ class Type implements Constraint
     const BOOLEAN = 'boolean';
     const NULL = 'null';
 
-    public $types;
-
     public static function isValid($types, $data)
     {
         if (!is_array($types)) {
