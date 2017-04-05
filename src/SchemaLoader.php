@@ -91,7 +91,7 @@ class SchemaLoader
         return $contents;
     }
 
-    public function dumpSchemaDeeper(Schema $schema, $path)
+    private function dumpSchemaDeeper(Schema $schema, $path)
     {
         $result = new \stdClass();
 
@@ -324,6 +324,7 @@ class SchemaLoader
                 if ($referencePath === '#') {
                     $ref = new Ref($referencePath, $this->rootSchema);
                 } else {
+                    $ref = new Ref($referencePath);
                     $path = explode('/', trim($referencePath, '#/'));
                     $branch = &$this->rootData;
                     while (!empty($path)) {
@@ -342,7 +343,7 @@ class SchemaLoader
                             throw new \Exception('Could not resolve ' . $referencePath . ': ' . $folder);
                         }
                     }
-                    $ref = new Ref($referencePath, $this->readSchema($branch));
+                    $ref->setSchema($this->readSchema($branch));
                 }
             } else {
                 $refParts = explode('#', $referencePath);

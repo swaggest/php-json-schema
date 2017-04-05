@@ -7,7 +7,7 @@ use Swaggest\JsonSchema\Schema;
 class Ref implements Constraint
 {
     public $ref;
-    public function __construct($ref, Schema $schema)
+    public function __construct($ref, Schema $schema = null)
     {
         $this->ref = $ref;
         $this->schema = $schema;
@@ -16,6 +16,15 @@ class Ref implements Constraint
     /** @var Schema */
     private $schema;
 
+    /**
+     * @param Schema $schema
+     * @return Ref
+     */
+    public function setSchema($schema)
+    {
+        $this->schema = $schema;
+        return $this;
+    }
 
     /**
      * @return Schema
