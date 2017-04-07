@@ -98,6 +98,16 @@ class Schema extends MagicMap
     public $objectItemClass;
     private $useObjectAsArray = false;
 
+    private $__dataToProperty = array();
+    private $__propertyToData = array();
+
+    public function addPropertyMapping($dataName, $propertyName)
+    {
+        $this->__dataToProperty[$dataName] = $propertyName;
+        $this->__propertyToData[$propertyName] = $dataName;
+        return $this;
+    }
+
     public function import($data, DataPreProcessor $preProcessor = null)
     {
         return $this->process($data, true, $preProcessor);
@@ -216,7 +226,7 @@ class Schema extends MagicMap
                 }
             }
             if ($this->pattern !== null) {
-                if (0 === preg_match($this->pattern, $data)) {
+                if (0 === preg_match(Helper::toPregPattern($this->pattern), $data)) {
                     $this->fail(new StringException('Does not match to '
                         . $this->pattern, StringException::PATTERN_MISMATCH), $path);
                 }
@@ -298,7 +308,24 @@ class Schema extends MagicMap
                 $nestedProperties = $this->properties->getNestedProperties();
             }
 
-            $array = (array)$data;
+            $array = array();
+            if (!empty($this->__dataToProperty)) {
+                foreach ((array)$data as $key => $value) {
+                    if ($import) {
+                        if (isset($this->__dataToProperty[$key])) {
+                            $key = $this->__dataToProperty[$key];
+                        }
+                    } else {
+                        if (isset($this->__propertyToData[$key])) {
+                            $key = $this->__propertyToData[$key];
+                        }
+                    }
+                    $array[$key] = $value;
+                }
+            } else {
+                $array = (array)$data;
+            }
+
             if ($this->minProperties !== null && count($array) < $this->minProperties) {
                 $this->fail(new ObjectException("Not enough properties", ObjectException::TOO_FEW), $path);
             }
@@ -343,7 +370,7 @@ class Schema extends MagicMap
 
                 if ($this->patternProperties !== null) {
                     foreach ($this->patternProperties as $pattern => $propertySchema) {
-                        if (preg_match($pattern, $key)) {
+                        if (preg_match(Helper::toPregPattern($pattern), $key)) {
                             $found = true;
                             $value = $propertySchema->process($value, $import, $preProcessor, $path . '->patternProperties:' . $pattern);
                             if ($import) {

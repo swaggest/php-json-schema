@@ -174,7 +174,7 @@ class SchemaLoader
 
         if (isset($schemaArray[self::PATTERN_PROPERTIES])) {
             foreach ($schemaArray[self::PATTERN_PROPERTIES] as $name => $data) {
-                $schema->patternProperties[Helper::toPregPattern($name)] = $this->readSchemaDeeper($data);
+                $schema->patternProperties[$name] = $this->readSchemaDeeper($data);
             }
         }
 
@@ -267,7 +267,8 @@ class SchemaLoader
 
         // String
         if (isset($schemaArray[self::PATTERN])) {
-            $schema->pattern = Helper::toPregPattern($schemaArray[self::PATTERN]);
+            $schema->pattern = $schemaArray[self::PATTERN];
+
         }
         if (isset($schemaArray[self::MIN_LENGTH])) {
             $schema->minLength = $schemaArray[self::MIN_LENGTH];

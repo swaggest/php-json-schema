@@ -20,7 +20,6 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
 
         if (null === $schema) {
             $schema = new ClassSchema();
-            $schema->type = Type::OBJECT;
             $properties = new Properties();
             $schema->properties = $properties;
             $schema->objectItemClass = get_called_class();
