@@ -134,7 +134,7 @@ class Schema extends MagicMap
         $result = $data;
         if ($this->ref !== null) {
             // https://github.com/json-schema-org/JSON-Schema-Test-Suite/pull/129
-            return $this->ref->getSchema()->process($data, $import, $preProcessor, $path . '->' . $this->ref->ref);
+            return $this->ref->getData()->process($data, $import, $preProcessor, $path . '->' . $this->ref->ref);
         }
 
         if ($this->type !== null) {
@@ -372,7 +372,8 @@ class Schema extends MagicMap
                     foreach ($this->patternProperties as $pattern => $propertySchema) {
                         if (preg_match(Helper::toPregPattern($pattern), $key)) {
                             $found = true;
-                            $value = $propertySchema->process($value, $import, $preProcessor, $path . '->patternProperties:' . $pattern);
+                            $value = $propertySchema->process($value, $import, $preProcessor,
+                                $path . '->patternProperties:' . $pattern . '(' . $key . ')');
                             if ($import) {
                                 $result->addPatternPropertyName($pattern, $key);
                             }
@@ -382,7 +383,7 @@ class Schema extends MagicMap
                 }
                 if (!$found && $this->additionalProperties !== null) {
                     if ($this->additionalProperties === false) {
-                        $this->fail(new ObjectException('Additional properties not allowed'), $path);
+                        $this->fail(new ObjectException('Additional properties not allowed'), $path . ':' . $key);
                     }
 
                     $value = $this->additionalProperties->process($value, $import, $preProcessor, $path . '->additionalProperties');

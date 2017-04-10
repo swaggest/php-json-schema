@@ -344,7 +344,7 @@ class SchemaLoader
                             throw new \Exception('Could not resolve ' . $referencePath . ': ' . $folder);
                         }
                     }
-                    $ref->setSchema($this->readSchema($branch));
+                    $ref->setData($this->readSchema($branch));
                 }
             } else {
                 $refParts = explode('#', $referencePath);

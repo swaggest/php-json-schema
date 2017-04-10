@@ -43,7 +43,7 @@ class ObjectItem extends MagicMap
 
     public function addPatternPropertyName($pattern, $name)
     {
-        $this->__additionalPropertyNames[$pattern][] = $name;
+        $this->__patternPropertyNames[$pattern][] = $name;
     }
 
     /**

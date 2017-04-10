@@ -2,36 +2,34 @@
 
 namespace Swaggest\JsonSchema\Constraint;
 
-use Swaggest\JsonSchema\Schema;
-
 class Ref implements Constraint
 {
     public $ref;
-    public function __construct($ref, Schema $schema = null)
+    public function __construct($ref, $data = null)
     {
         $this->ref = $ref;
-        $this->schema = $schema;
+        $this->data = $data;
     }
 
-    /** @var Schema */
-    private $schema;
+    /** @var mixed */
+    private $data;
 
     /**
-     * @param Schema $schema
+     * @param mixed $data
      * @return Ref
      */
-    public function setSchema($schema)
+    public function setData($data)
     {
-        $this->schema = $schema;
+        $this->data = $data;
         return $this;
     }
 
     /**
-     * @return Schema
+     * @return mixed
      * @throws \Exception
      */
-    public function getSchema()
+    public function getData()
     {
-        return $this->schema;
+        return $this->data;
     }
 }

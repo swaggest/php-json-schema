@@ -29,22 +29,22 @@ class SwaggerSchema extends ClassStructure {
 	/** @var string[]|array */
 	public $produces;
 
-	/** @var PathItem[]|object */
+	/** @var PathItem[] */
 	public $paths;
 
-	/** @var Schema[]|object */
+	/** @var Schema[] */
 	public $definitions;
 
-	/** @var BodyParameter|object[]|object */
+	/** @var BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[] */
 	public $parameters;
 
-	/** @var Response[]|object */
+	/** @var Response[] */
 	public $responses;
 
-	/** @var string[][]|array[]|object[]|array */
+	/** @var string[][]|array[][]|array */
 	public $security;
 
-	/** @var BasicAuthenticationSecurity[]|ApiKeySecurity[]|Oauth2ImplicitSecurity[]|Oauth2PasswordSecurity[]|Oauth2ApplicationSecurity[]|Oauth2AccessCodeSecurity[]|object */
+	/** @var BasicAuthenticationSecurity[]|ApiKeySecurity[]|Oauth2ImplicitSecurity[]|Oauth2PasswordSecurity[]|Oauth2ApplicationSecurity[]|Oauth2AccessCodeSecurity[] */
 	public $securityDefinitions;
 
 	/** @var Tag[]|array */
@@ -77,12 +77,14 @@ class SwaggerSchema extends ClassStructure {
 		  3 => 'wss',
 		);
 		$properties->schemes->uniqueItems = true;
-		$properties->consumes = Schema1::arr();
-		$properties->consumes->items = Schema1::string();
-		$properties->consumes->uniqueItems = true;
-		$properties->produces = Schema1::arr();
-		$properties->produces->items = Schema1::string();
-		$properties->produces->uniqueItems = true;
+		$properties->consumes = new Schema1();
+		$properties->consumes->allOf[0] = Schema1::arr();
+		$properties->consumes->allOf[0]->items = Schema1::string();
+		$properties->consumes->allOf[0]->uniqueItems = true;
+		$properties->produces = new Schema1();
+		$properties->produces->allOf[0] = Schema1::arr();
+		$properties->produces->allOf[0]->items = Schema1::string();
+		$properties->produces->allOf[0]->uniqueItems = true;
 		$properties->paths = Schema1::object();
 		$properties->paths->additionalProperties = false;
 		$properties->paths->patternProperties['^x-'] = new Schema1();
@@ -259,7 +261,7 @@ class SwaggerSchema extends ClassStructure {
 	}
 
 	/**
-	 * @return PathItem[]|object
+	 * @return PathItem[]
 	 */
 	public function getPaths()
 	{
@@ -267,7 +269,7 @@ class SwaggerSchema extends ClassStructure {
 	}
 
 	/**
-	 * @param PathItem[]|object $paths
+	 * @param PathItem[] $paths
 	 * @return $this
 	 */
 	public function setPaths($paths)
@@ -277,7 +279,7 @@ class SwaggerSchema extends ClassStructure {
 	}
 
 	/**
-	 * @return Schema[]|object
+	 * @return Schema[]
 	 */
 	public function getDefinitions()
 	{
@@ -285,7 +287,7 @@ class SwaggerSchema extends ClassStructure {
 	}
 
 	/**
-	 * @param Schema[]|object $definitions
+	 * @param Schema[] $definitions
 	 * @return $this
 	 */
 	public function setDefinitions($definitions)
@@ -295,7 +297,7 @@ class SwaggerSchema extends ClassStructure {
 	}
 
 	/**
-	 * @return BodyParameter|object[]|object
+	 * @return BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[]
 	 */
 	public function getParameters()
 	{
@@ -303,7 +305,7 @@ class SwaggerSchema extends ClassStructure {
 	}
 
 	/**
-	 * @param BodyParameter|object[]|object $parameters
+	 * @param BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[] $parameters
 	 * @return $this
 	 */
 	public function setParameters($parameters)
@@ -313,7 +315,7 @@ class SwaggerSchema extends ClassStructure {
 	}
 
 	/**
-	 * @return Response[]|object
+	 * @return Response[]
 	 */
 	public function getResponses()
 	{
@@ -321,7 +323,7 @@ class SwaggerSchema extends ClassStructure {
 	}
 
 	/**
-	 * @param Response[]|object $responses
+	 * @param Response[] $responses
 	 * @return $this
 	 */
 	public function setResponses($responses)
@@ -331,7 +333,7 @@ class SwaggerSchema extends ClassStructure {
 	}
 
 	/**
-	 * @return string[][]|array[]|object[]|array
+	 * @return string[][]|array[][]|array
 	 */
 	public function getSecurity()
 	{
@@ -339,7 +341,7 @@ class SwaggerSchema extends ClassStructure {
 	}
 
 	/**
-	 * @param string[][]|array[]|object[]|array $security
+	 * @param string[][]|array[][]|array $security
 	 * @return $this
 	 */
 	public function setSecurity($security)
@@ -349,7 +351,7 @@ class SwaggerSchema extends ClassStructure {
 	}
 
 	/**
-	 * @return BasicAuthenticationSecurity[]|ApiKeySecurity[]|Oauth2ImplicitSecurity[]|Oauth2PasswordSecurity[]|Oauth2ApplicationSecurity[]|Oauth2AccessCodeSecurity[]|object
+	 * @return BasicAuthenticationSecurity[]|ApiKeySecurity[]|Oauth2ImplicitSecurity[]|Oauth2PasswordSecurity[]|Oauth2ApplicationSecurity[]|Oauth2AccessCodeSecurity[]
 	 */
 	public function getSecurityDefinitions()
 	{
@@ -357,7 +359,7 @@ class SwaggerSchema extends ClassStructure {
 	}
 
 	/**
-	 * @param BasicAuthenticationSecurity[]|ApiKeySecurity[]|Oauth2ImplicitSecurity[]|Oauth2PasswordSecurity[]|Oauth2ApplicationSecurity[]|Oauth2AccessCodeSecurity[]|object $securityDefinitions
+	 * @param BasicAuthenticationSecurity[]|ApiKeySecurity[]|Oauth2ImplicitSecurity[]|Oauth2PasswordSecurity[]|Oauth2ApplicationSecurity[]|Oauth2AccessCodeSecurity[] $securityDefinitions
 	 * @return $this
 	 */
 	public function setSecurityDefinitions($securityDefinitions)
@@ -716,7 +718,7 @@ class PathItem extends ClassStructure {
 	/** @var Operation */
 	public $patch;
 
-	/** @var BodyParameter|object[]|JsonReference[]|array */
+	/** @var BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[]|JsonReference[]|array */
 	public $parameters;
 
 	/**
@@ -900,7 +902,7 @@ class PathItem extends ClassStructure {
 	}
 
 	/**
-	 * @return BodyParameter|object[]|JsonReference[]|array
+	 * @return BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[]|JsonReference[]|array
 	 */
 	public function getParameters()
 	{
@@ -908,7 +910,7 @@ class PathItem extends ClassStructure {
 	}
 
 	/**
-	 * @param BodyParameter|object[]|JsonReference[]|array $parameters
+	 * @param BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[]|JsonReference[]|array $parameters
 	 * @return $this
 	 */
 	public function setParameters($parameters)
@@ -940,10 +942,10 @@ class Operation extends ClassStructure {
 	/** @var string[]|array */
 	public $consumes;
 
-	/** @var BodyParameter|object[]|JsonReference[]|array */
+	/** @var BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[]|JsonReference[]|array */
 	public $parameters;
 
-	/** @var Response|JsonReference[]|object */
+	/** @var Response[]|JsonReference[] */
 	public $responses;
 
 	/** @var string[]|array */
@@ -952,7 +954,7 @@ class Operation extends ClassStructure {
 	/** @var bool */
 	public $deprecated;
 
-	/** @var string[][]|array[]|object[]|array */
+	/** @var string[][]|array[][]|array */
 	public $security;
 
 	/**
@@ -968,12 +970,14 @@ class Operation extends ClassStructure {
 		$properties->description = Schema1::string();
 		$properties->externalDocs = ExternalDocs::schema();
 		$properties->operationId = Schema1::string();
-		$properties->produces = Schema1::arr();
-		$properties->produces->items = Schema1::string();
-		$properties->produces->uniqueItems = true;
-		$properties->consumes = Schema1::arr();
-		$properties->consumes->items = Schema1::string();
-		$properties->consumes->uniqueItems = true;
+		$properties->produces = new Schema1();
+		$properties->produces->allOf[0] = Schema1::arr();
+		$properties->produces->allOf[0]->items = Schema1::string();
+		$properties->produces->allOf[0]->uniqueItems = true;
+		$properties->consumes = new Schema1();
+		$properties->consumes->allOf[0] = Schema1::arr();
+		$properties->consumes->allOf[0]->items = Schema1::string();
+		$properties->consumes->allOf[0]->uniqueItems = true;
 		$properties->parameters = Schema1::arr();
 		$properties->parameters->items = new Schema1();
 		$properties->parameters->items->oneOf[0] = new Schema1();
@@ -1151,7 +1155,7 @@ class Operation extends ClassStructure {
 	}
 
 	/**
-	 * @return BodyParameter|object[]|JsonReference[]|array
+	 * @return BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[]|JsonReference[]|array
 	 */
 	public function getParameters()
 	{
@@ -1159,7 +1163,7 @@ class Operation extends ClassStructure {
 	}
 
 	/**
-	 * @param BodyParameter|object[]|JsonReference[]|array $parameters
+	 * @param BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[]|JsonReference[]|array $parameters
 	 * @return $this
 	 */
 	public function setParameters($parameters)
@@ -1169,7 +1173,7 @@ class Operation extends ClassStructure {
 	}
 
 	/**
-	 * @return Response|JsonReference[]|object
+	 * @return Response[]|JsonReference[]
 	 */
 	public function getResponses()
 	{
@@ -1177,7 +1181,7 @@ class Operation extends ClassStructure {
 	}
 
 	/**
-	 * @param Response|JsonReference[]|object $responses
+	 * @param Response[]|JsonReference[] $responses
 	 * @return $this
 	 */
 	public function setResponses($responses)
@@ -1223,7 +1227,7 @@ class Operation extends ClassStructure {
 	}
 
 	/**
-	 * @return string[][]|array[]|object[]|array
+	 * @return string[][]|array[][]|array
 	 */
 	public function getSecurity()
 	{
@@ -1231,7 +1235,7 @@ class Operation extends ClassStructure {
 	}
 
 	/**
-	 * @param string[][]|array[]|object[]|array $security
+	 * @param string[][]|array[][]|array $security
 	 * @return $this
 	 */
 	public function setSecurity($security)
@@ -1504,7 +1508,7 @@ class Schema extends ClassStructure {
 	/** @var Schema[]|array */
 	public $allOf;
 
-	/** @var Schema[]|object */
+	/** @var Schema[] */
 	public $properties;
 
 	/** @var string */
@@ -2044,7 +2048,7 @@ class Schema extends ClassStructure {
 	}
 
 	/**
-	 * @return Schema[]|object
+	 * @return Schema[]
 	 */
 	public function getProperties()
 	{
@@ -2052,7 +2056,7 @@ class Schema extends ClassStructure {
 	}
 
 	/**
-	 * @param Schema[]|object $properties
+	 * @param Schema[] $properties
 	 * @return $this
 	 */
 	public function setProperties($properties)
@@ -2268,44 +2272,6 @@ class Xml extends ClassStructure {
 	public function setWrapped($wrapped)
 	{
 		$this->wrapped = $wrapped;
-		return $this;
-	}
-}
-
-class JsonReference extends ClassStructure {
-	/** @var string */
-	public $ref;
-
-	/**
-	 * @param Properties|static $properties
-	 * @param Schema1 $ownerSchema
-	 */
-	public static function setUpProperties($properties, Schema1 $ownerSchema)
-	{
-		$properties->ref = Schema1::string();
-		$ownerSchema->addPropertyMapping('$ref', self::names()->ref);
-		$ownerSchema->type = 'object';
-		$ownerSchema->additionalProperties = false;
-		$ownerSchema->required = array (
-		  0 => '$ref',
-		);
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getRef()
-	{
-		return $this->ref;
-	}
-
-	/**
-	 * @param string $ref
-	 * @return $this
-	 */
-	public function setRef($ref)
-	{
-		$this->ref = $ref;
 		return $this;
 	}
 }
@@ -4767,6 +4733,44 @@ class PathParameterSubSchema extends ClassStructure {
 	}
 }
 
+class JsonReference extends ClassStructure {
+	/** @var string */
+	public $ref;
+
+	/**
+	 * @param Properties|static $properties
+	 * @param Schema1 $ownerSchema
+	 */
+	public static function setUpProperties($properties, Schema1 $ownerSchema)
+	{
+		$properties->ref = Schema1::string();
+		$ownerSchema->addPropertyMapping('$ref', self::names()->ref);
+		$ownerSchema->type = 'object';
+		$ownerSchema->additionalProperties = false;
+		$ownerSchema->required = array (
+		  0 => '$ref',
+		);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRef()
+	{
+		return $this->ref;
+	}
+
+	/**
+	 * @param string $ref
+	 * @return $this
+	 */
+	public function setRef($ref)
+	{
+		$this->ref = $ref;
+		return $this;
+	}
+}
+
 class Response extends ClassStructure {
 	/** @var string */
 	public $description;
@@ -4774,10 +4778,9 @@ class Response extends ClassStructure {
 	/** @var Schema|FileSchema */
 	public $schema;
 
-	/** @var Header[]|object */
+	/** @var Header[] */
 	public $headers;
 
-	/** @var object */
 	public $examples;
 
 	/**
@@ -4838,7 +4841,7 @@ class Response extends ClassStructure {
 	}
 
 	/**
-	 * @return Header[]|object
+	 * @return Header[]
 	 */
 	public function getHeaders()
 	{
@@ -4846,7 +4849,7 @@ class Response extends ClassStructure {
 	}
 
 	/**
-	 * @param Header[]|object $headers
+	 * @param Header[] $headers
 	 * @return $this
 	 */
 	public function setHeaders($headers)
@@ -4855,16 +4858,13 @@ class Response extends ClassStructure {
 		return $this;
 	}
 
-	/**
-	 * @return object
-	 */
 	public function getExamples()
 	{
 		return $this->examples;
 	}
 
 	/**
-	 * @param object $examples
+	 * @param $examples
 	 * @return $this
 	 */
 	public function setExamples($examples)
@@ -5702,7 +5702,7 @@ class Oauth2ImplicitSecurity extends ClassStructure {
 	/** @var string */
 	public $flow;
 
-	/** @var string[]|object */
+	/** @var string[] */
 	public $scopes;
 
 	/** @var string */
@@ -5776,7 +5776,7 @@ class Oauth2ImplicitSecurity extends ClassStructure {
 	}
 
 	/**
-	 * @return string[]|object
+	 * @return string[]
 	 */
 	public function getScopes()
 	{
@@ -5784,7 +5784,7 @@ class Oauth2ImplicitSecurity extends ClassStructure {
 	}
 
 	/**
-	 * @param string[]|object $scopes
+	 * @param string[] $scopes
 	 * @return $this
 	 */
 	public function setScopes($scopes)
@@ -5837,7 +5837,7 @@ class Oauth2PasswordSecurity extends ClassStructure {
 	/** @var string */
 	public $flow;
 
-	/** @var string[]|object */
+	/** @var string[] */
 	public $scopes;
 
 	/** @var string */
@@ -5911,7 +5911,7 @@ class Oauth2PasswordSecurity extends ClassStructure {
 	}
 
 	/**
-	 * @return string[]|object
+	 * @return string[]
 	 */
 	public function getScopes()
 	{
@@ -5919,7 +5919,7 @@ class Oauth2PasswordSecurity extends ClassStructure {
 	}
 
 	/**
-	 * @param string[]|object $scopes
+	 * @param string[] $scopes
 	 * @return $this
 	 */
 	public function setScopes($scopes)
@@ -5972,7 +5972,7 @@ class Oauth2ApplicationSecurity extends ClassStructure {
 	/** @var string */
 	public $flow;
 
-	/** @var string[]|object */
+	/** @var string[] */
 	public $scopes;
 
 	/** @var string */
@@ -6046,7 +6046,7 @@ class Oauth2ApplicationSecurity extends ClassStructure {
 	}
 
 	/**
-	 * @return string[]|object
+	 * @return string[]
 	 */
 	public function getScopes()
 	{
@@ -6054,7 +6054,7 @@ class Oauth2ApplicationSecurity extends ClassStructure {
 	}
 
 	/**
-	 * @param string[]|object $scopes
+	 * @param string[] $scopes
 	 * @return $this
 	 */
 	public function setScopes($scopes)
@@ -6107,7 +6107,7 @@ class Oauth2AccessCodeSecurity extends ClassStructure {
 	/** @var string */
 	public $flow;
 
-	/** @var string[]|object */
+	/** @var string[] */
 	public $scopes;
 
 	/** @var string */
@@ -6186,7 +6186,7 @@ class Oauth2AccessCodeSecurity extends ClassStructure {
 	}
 
 	/**
-	 * @return string[]|object
+	 * @return string[]
 	 */
 	public function getScopes()
 	{
@@ -6194,7 +6194,7 @@ class Oauth2AccessCodeSecurity extends ClassStructure {
 	}
 
 	/**
-	 * @param string[]|object $scopes
+	 * @param string[] $scopes
 	 * @return $this
 	 */
 	public function setScopes($scopes)
