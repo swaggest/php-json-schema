@@ -3,7 +3,11 @@
 namespace Swaggest\JsonSchema\Tests\PHPUnit\Spec;
 
 use Swaggest\JsonSchema\InvalidValue;
+use Swaggest\JsonSchema\JsonSchema;
+use Swaggest\JsonSchema\ProcessingOptions;
+use Swaggest\JsonSchema\RefResolver;
 use Swaggest\JsonSchema\RemoteRef\Preloaded;
+use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\SchemaLoader;
 
 class SpecTest extends \PHPUnit_Framework_TestCase
@@ -39,9 +43,13 @@ class SpecTest extends \PHPUnit_Framework_TestCase
         $actualValid = true;
         $error = '';
         try {
-            $schema = SchemaLoader::create()->setRemoteRefProvider($refProvider)->readSchema($schemaData);
+            $options = new ProcessingOptions();
+            $options->setRemoteRefProvider($refProvider);
+            $schema = JsonSchema::importToSchema($schemaData, $options);
             $res = $schema->import($data);
-            $this->assertEquals($data, $schema->export($res));
+
+            $exported = $schema->export($res);
+            $this->assertEquals($data, $exported);
         } catch (InvalidValue $exception) {
             $actualValid = false;
             $error = $exception->getMessage();
@@ -68,15 +76,21 @@ class SpecTest extends \PHPUnit_Framework_TestCase
                     if ('.json' !== substr($entry, -5)) {
                         continue;
                     }
-                    //die('!1');
+
+                    //if ($entry !== 'refRemote.json') {
+                        //continue;
+                    //}
 
                     //echo "$entry\n";
                     /** @var _SpecTest[] $tests */
                     $tests = json_decode(file_get_contents($path . '/' . $entry));
-                    ///print_r($tests);
                     foreach ($tests as $test) {
-                        //$schema = SchemaLoader::create()->readSchema($test->schema);
                         foreach ($test->tests as $case) {
+                            /*if ($case->description !== 'changed scope ref invalid') {
+                                continue;
+                            }
+                            */
+
                             $testCases[$entry . ' ' . $test->description . ': ' . $case->description] = array(
                                 'schema' => $test->schema,
                                 'data' => $case->data,

@@ -2,13 +2,28 @@
 
 namespace Swaggest\JsonSchema;
 
-use PhpLang\ScopeExit;
 use Swaggest\JsonSchema\Constraint\Ref;
 use Swaggest\JsonSchema\RemoteRef\BasicFetcher;
 
 class RefResolver
 {
-    private $resolutionScope;
+    private $resolutionScope = '';
+    private $url;
+
+    /**
+     * @param mixed $resolutionScope
+     */
+    public function setResolutionScope($resolutionScope)
+    {
+        $this->resolutionScope = $resolutionScope;
+    }
+
+    public function updateResolutionScope($id)
+    {
+        $prev = $this->resolutionScope;
+        $this->resolutionScope = Helper::resolveURI($this->resolutionScope, $id);
+        return $prev;
+    }
 
     private $rootData;
 
@@ -46,26 +61,17 @@ class RefResolver
     }
 
 
-    public function wat1()
-    {
-        if (isset($schemaArray[self::ID])) {
-            $parentScope = $this->resolutionScope;
-            $this->resolutionScope = Helper::resolveURI($parentScope, $schemaArray[self::ID]);
-            /** @noinspection PhpUnusedLocalVariableInspection */
-            $defer = new ScopeExit(function () use ($parentScope) {
-                $this->resolutionScope = $parentScope;
-            });
-        }
-    }
-
     /**
      * @param $referencePath
      * @param string $resolutionScope
      * @return Ref
      * @throws \Exception
      */
-    private function resolveReference($referencePath, $resolutionScope = '')
+    public function resolveReference($referencePath)
     {
+        if ($this->resolutionScope) {
+            $referencePath = Helper::resolveURI($this->resolutionScope, $referencePath);
+        }
         $ref = &$this->refs[$referencePath];
         if (null === $ref) {
             if ($referencePath[0] === '#') {
@@ -88,26 +94,33 @@ class RefResolver
                         } elseif (is_array($branch) && isset($branch[$folder])) {
                             $branch = &$branch[$folder];
                         } else {
-                            throw new \Exception('Could not resolve ' . $referencePath . ': ' . $folder);
+                            throw new InvalidValue('Could not resolve ' . $referencePath . '@' . $this->resolutionScope . ': ' . $folder);
                         }
                     }
                     $ref->setData($branch);
                 }
             } else {
                 $refParts = explode('#', $referencePath);
-                $url = Helper::resolveURI($resolutionScope, $refParts[0]);
+                $url = Helper::resolveURI($this->resolutionScope, $refParts[0]);
                 $url = rtrim($url, '#');
                 $refLocalPath = isset($refParts[1]) ? '#' . $refParts[1] : '#';
                 $refResolver = &$this->remoteRefResolvers[$url];
                 if (null === $refResolver) {
                     $refResolver = new RefResolver($this->getRefProvider()->getSchemaData($url));
+                    $refResolver->url = $url;
                 }
 
                 $ref = $refResolver->resolveReference($refLocalPath);
             }
         }
 
-        return $this->refs[$referencePath];
+        $refData = $ref->getData();
+        // we need to go deeper
+        if (isset($refData->{'$ref'})) {
+            return $this->resolveReference($refData->{'$ref'});
+        }
+
+        return $ref;
     }
 
 

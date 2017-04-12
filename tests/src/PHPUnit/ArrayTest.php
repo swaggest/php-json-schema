@@ -2,6 +2,8 @@
 
 namespace Swaggest\JsonSchema\Tests\PHPUnit;
 
+use Swaggest\JsonSchema\Exception;
+use Swaggest\JsonSchema\JsonSchema;
 use Swaggest\JsonSchema\Schema;
 
 class ArrayTest extends \PHPUnit_Framework_TestCase
@@ -13,6 +15,21 @@ class ArrayTest extends \PHPUnit_Framework_TestCase
         $schema->additionalItems = Schema::integer();
 
         $this->assertSame($data, $schema->import($data));
+    }
+
+    public function testStdClass()
+    {
+        $json = '{"items":[{"type":"string"},{"type":"integer"}]}';
+        $schemaData = json_decode($json);
+        $schema = JsonSchema::importToSchema($schemaData);
+        $this->assertSame($json, json_encode($schema));
+        $this->assertSame('string', $schema->items[0]->type);
+        $this->assertSame('integer', $schema->items[1]->type);
+
+        $schema->import(array("one", 2));
+
+        $this->setExpectedException(get_class(new Exception()));
+        $schema->import(array(1, "two"));
     }
 
 }

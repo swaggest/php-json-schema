@@ -8,6 +8,11 @@ use Swaggest\JsonSchema\Constraint\Ref;
 use Swaggest\JsonSchema\Constraint\Type;
 use Swaggest\JsonSchema\RemoteRef\BasicFetcher;
 
+/**
+ * Class SchemaLoader
+ * @package Swaggest\JsonSchema
+ * @deprecated
+ */
 class SchemaLoader
 {
     const ID = 'id';

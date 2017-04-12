@@ -14,6 +14,36 @@ class Ref implements Constraint
     /** @var mixed */
     private $data;
 
+    /** @var mixed */
+    private $imported;
+    /** @var boolean */
+    private $isImported = false;
+
+    /**
+     * @return mixed
+     */
+    public function getImported()
+    {
+        return $this->imported;
+    }
+
+    /**
+     * @param mixed $imported
+     */
+    public function setImported($imported)
+    {
+        $this->isImported = true;
+        $this->imported = $imported;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isImported()
+    {
+        return $this->isImported;
+    }
+
     /**
      * @param mixed $data
      * @return Ref

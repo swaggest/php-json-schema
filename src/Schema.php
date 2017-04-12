@@ -5,7 +5,6 @@ namespace Swaggest\JsonSchema;
 
 use PhpLang\ScopeExit;
 use Swaggest\JsonSchema\Constraint\Properties;
-use Swaggest\JsonSchema\Constraint\Ref;
 use Swaggest\JsonSchema\Constraint\Type;
 use Swaggest\JsonSchema\Constraint\UniqueItems;
 use Swaggest\JsonSchema\Exception\ArrayException;
@@ -19,8 +18,22 @@ use Swaggest\JsonSchema\Structure\ClassStructure;
 use Swaggest\JsonSchema\Structure\Egg;
 use Swaggest\JsonSchema\Structure\ObjectItem;
 
-class Schema extends MagicMap
+/**
+ * Class Schema
+ * @package Swaggest\JsonSchema
+ */
+class Schema extends ObjectItem
 {
+    /*
+    public $seqId;
+    public function __construct()
+    {
+        static $seq = 0;
+        $seq++;
+        $this->seqId = $seq;
+    }
+    */
+
     /** @var Type */
     public $type;
 
@@ -53,7 +66,7 @@ class Schema extends MagicMap
     public $maxItems;
 
     // Reference
-    /** @var Ref */
+    /** @var string */
     public $ref;
 
     // Enum
@@ -101,6 +114,7 @@ class Schema extends MagicMap
     private $__dataToProperty = array();
     private $__propertyToData = array();
 
+
     public function addPropertyMapping($dataName, $propertyName)
     {
         $this->__dataToProperty[$dataName] = $propertyName;
@@ -108,18 +122,35 @@ class Schema extends MagicMap
         return $this;
     }
 
-    public function import($data, DataPreProcessor $preProcessor = null)
+    public function import($data, ProcessingOptions $options = null)
     {
-        return $this->process($data, true, $preProcessor);
+        if ($options === null) {
+            $options = new ProcessingOptions();
+        }
+
+        $options->import = true;
+
+        $options->refResolver = new RefResolver($data);
+        if ($options->remoteRefProvider) {
+            $options->refResolver->setRemoteRefProvider($options->remoteRefProvider);
+        }
+        return $this->process($data, $options, '#');
     }
 
-    public function export($data, DataPreProcessor $preProcessor = null)
+    public function export($data, ProcessingOptions $options = null)
     {
-        return $this->process($data, false, $preProcessor);
+        if ($options === null) {
+            $options = new ProcessingOptions();
+        }
+
+        $options->import = false;
+        return $this->process($data, $options);
     }
 
-    private function process($data, $import = true, DataPreProcessor $preProcessor = null, $path = '#')
+    public function process($data, ProcessingOptions $options, $path = '#')
     {
+        $import = $options->import;
+
         if (!$import && $data instanceof ObjectItem) {
             $data = $data->jsonSerialize();
         }
@@ -127,21 +158,17 @@ class Schema extends MagicMap
             $data = (object)$data;
         }
 
-        if (null !== $preProcessor) {
-            $data = $preProcessor->process($data, $this, $import);
+        if (null !== $options->dataPreProcessor) {
+            $data = $options->dataPreProcessor->process($data, $this, $import);
         }
 
         $result = $data;
-        if ($this->ref !== null) {
-            // https://github.com/json-schema-org/JSON-Schema-Test-Suite/pull/129
-            return $this->ref->getData()->process($data, $import, $preProcessor, $path . '->' . $this->ref->ref);
-        }
 
         if ($this->type !== null) {
             if (!Type::isValid($this->type, $data)) {
                 $this->fail(new TypeException(ucfirst(
-                    implode(', ', is_array($this->type) ? $this->type : array($this->type))
-                    . ' expected, ' . json_encode($data) . ' received')
+                        implode(', ', is_array($this->type) ? $this->type : array($this->type))
+                        . ' expected, ' . json_encode($data) . ' received')
                 ), $path);
             }
         }
@@ -162,7 +189,7 @@ class Schema extends MagicMap
         if ($this->not !== null) {
             $exception = false;
             try {
-                $this->not->process($data, $import, $preProcessor, $path . '->not');
+                $this->not->process($data, $options, $path . '->not');
             } catch (InvalidValue $exception) {
                 // Expected exception
             }
@@ -175,7 +202,7 @@ class Schema extends MagicMap
             $successes = 0;
             foreach ($this->oneOf as $index => $item) {
                 try {
-                    $result = $item->process($data, $import, $preProcessor, $path . '->oneOf:' . $index);
+                    $result = $item->process($data, $options, $path . '->oneOf:' . $index);
                     $successes++;
                     if ($successes > 1) {
                         break;
@@ -193,7 +220,7 @@ class Schema extends MagicMap
             $successes = 0;
             foreach ($this->anyOf as $index => $item) {
                 try {
-                    $result = $item->process($data, $import, $preProcessor, $path . '->anyOf:' . $index);
+                    $result = $item->process($data, $options, $path . '->anyOf:' . $index);
                     $successes++;
                     if ($successes) {
                         break;
@@ -209,7 +236,7 @@ class Schema extends MagicMap
 
         if ($this->allOf !== null) {
             foreach ($this->allOf as $index => $item) {
-                $result = $item->process($data, $import, $preProcessor, $path . '->allOf' . $index);
+                $result = $item->process($data, $options, $path . '->allOf' . $index);
             }
         }
 
@@ -274,15 +301,8 @@ class Schema extends MagicMap
             }
         }
 
-        if ($data instanceof \stdClass) {
-            if ($this->required !== null) {
-                foreach ($this->required as $item) {
-                    if (!property_exists($data, $item)) {
-                        $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
-                    }
-                }
-            }
 
+        if ($data instanceof \stdClass) {
 
             if ($import) {
                 if ($this->useObjectAsArray) {
@@ -302,10 +322,54 @@ class Schema extends MagicMap
                 }
             }
 
+            if ($import) {
+                try {
+                    while (
+                        isset($data->{'$ref'})
+                        && is_string($data->{'$ref'})
+                        && !isset($this->properties['$ref'])
+                    ) {
+                        $refString = $data->{'$ref'};
+                        $ref = $options->refResolver->resolveReference($refString);
+                        if ($ref->isImported()) {
+                            return $ref->getImported();
+                        }
+                        $data = $ref->getData();
+                        $ref->setImported($result);
+                        $path .= '->$ref:' . $refString;
+                    }
+                } catch (InvalidValue $exception) {
+                    $this->fail($exception, $path);
+                }
+            }
+
+            // @todo better check for schema id
+            if ($import && isset($data->id) && is_string($data->id) /*&& (!isset($this->properties['id']))/* && $this->isMetaSchema($data)*/) {
+                $refResolver = $options->refResolver;
+                $parentScope = $refResolver->updateResolutionScope($data->id);
+                /** @noinspection PhpUnusedLocalVariableInspection */
+                $defer = new ScopeExit(function () use ($parentScope, $refResolver) {
+                    $refResolver->setResolutionScope($parentScope);
+                });
+            }
+
+
+            if ($this->required !== null) {
+                foreach ($this->required as $item) {
+                    if (!property_exists($data, $item)) {
+                        $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
+                    }
+                }
+            }
+
             if ($this->properties !== null) {
                 /** @var Schema[] $properties */
                 $properties = &$this->properties->toArray(); // TODO check performance of pointer
-                $nestedProperties = $this->properties->getNestedProperties();
+                if ($this->properties instanceof Properties) {
+                    $nestedProperties = $this->properties->getNestedProperties();
+                } else {
+                    $nestedProperties = array();
+                }
             }
 
             $array = array();
@@ -341,7 +405,7 @@ class Schema extends MagicMap
                 if (isset($this->dependencies[$key])) {
                     $dependencies = $this->dependencies[$key];
                     if ($dependencies instanceof Schema) {
-                        $dependencies->process($data, $import, $preProcessor, $path . '->dependencies:' . $key);
+                        $dependencies->process($data, $options, $path . '->dependencies:' . $key);
                     } else {
                         foreach ($dependencies as $item) {
                             if (!property_exists($data, $item)) {
@@ -354,9 +418,10 @@ class Schema extends MagicMap
 
                 $propertyFound = false;
                 if (isset($properties[$key])) {
+                    $prop = $properties[$key];
                     $propertyFound = true;
                     $found = true;
-                    $value = $properties[$key]->process($value, $import, $preProcessor, $path . '->properties:' . $key);
+                    $value = $prop->process($value, $options, $path . '->properties:' . $key);
                 }
 
                 /** @var Egg[] $nestedEggs */
@@ -365,14 +430,14 @@ class Schema extends MagicMap
                     $found = true;
                     $nestedEggs = $nestedProperties[$key];
                     // todo iterate all nested props?
-                    $value = $nestedEggs[0]->propertySchema->process($value, $import, $preProcessor, $path . '->nestedProperties:' . $key);
+                    $value = $nestedEggs[0]->propertySchema->process($value, $options, $path . '->nestedProperties:' . $key);
                 }
 
                 if ($this->patternProperties !== null) {
                     foreach ($this->patternProperties as $pattern => $propertySchema) {
                         if (preg_match(Helper::toPregPattern($pattern), $key)) {
                             $found = true;
-                            $value = $propertySchema->process($value, $import, $preProcessor,
+                            $value = $propertySchema->process($value, $options,
                                 $path . '->patternProperties:' . $pattern . '(' . $key . ')');
                             if ($import) {
                                 $result->addPatternPropertyName($pattern, $key);
@@ -386,7 +451,7 @@ class Schema extends MagicMap
                         $this->fail(new ObjectException('Additional properties not allowed'), $path . ':' . $key);
                     }
 
-                    $value = $this->additionalProperties->process($value, $import, $preProcessor, $path . '->additionalProperties');
+                    $value = $this->additionalProperties->process($value, $options, $path . '->additionalProperties');
                     if ($import && !$this->useObjectAsArray) {
                         $result->addAdditionalPropertyName($key);
                     }
@@ -403,10 +468,12 @@ class Schema extends MagicMap
                     if ($this->useObjectAsArray && $import) {
                         $result[$key] = $value;
                     } else {
-                        $result->$key = $value;
+                        $resultValue = $result->$key;
+                        if (!$import || !($resultValue instanceof ObjectItem && $value instanceof \stdClass)) {
+                            $result->$key = $value;
+                        }
                     }
                 }
-
             }
 
         }
@@ -437,12 +504,12 @@ class Schema extends MagicMap
             if ($items !== null || $additionalItems !== null) {
                 $itemsLen = is_array($items) ? count($items) : 0;
                 $index = 0;
-                foreach ($data as $key => $value) {
+                foreach ($result as $key => $value) {
                     if ($index < $itemsLen) {
-                        $data[$key] = $items[$index]->process($value, $import, $preProcessor, $path . '->items:' . $index);
+                        $result[$key] = $items[$index]->process($value, $options, $path . '->items:' . $index);
                     } else {
                         if ($additionalItems instanceof Schema) {
-                            $data[$key] = $additionalItems->process($value, $import, $preProcessor, $path . '->' . $pathItems
+                            $result[$key] = $additionalItems->process($value, $options, $path . '->' . $pathItems
                                 . '[' . $index . ']');
                         } elseif ($additionalItems === false) {
                             $this->fail(new ArrayException('Unexpected array item'), $path);
@@ -457,8 +524,6 @@ class Schema extends MagicMap
                     $this->fail(new ArrayException('Array is not unique'), $path);
                 }
             }
-
-            $result = $data;
         }
 
 
@@ -506,49 +571,49 @@ class Schema extends MagicMap
 
     public static function integer()
     {
-        $schema = new Schema();
+        $schema = new static();
         $schema->type = Type::INTEGER;
         return $schema;
     }
 
     public static function number()
     {
-        $schema = new Schema();
+        $schema = new static();
         $schema->type = Type::NUMBER;
         return $schema;
     }
 
     public static function string()
     {
-        $schema = new Schema();
+        $schema = new static();
         $schema->type = Type::STRING;
         return $schema;
     }
 
     public static function boolean()
     {
-        $schema = new Schema();
+        $schema = new static();
         $schema->type = Type::BOOLEAN;
         return $schema;
     }
 
     public static function object()
     {
-        $schema = new Schema();
+        $schema = new static();
         $schema->type = Type::OBJECT;
         return $schema;
     }
 
     public static function arr()
     {
-        $schema = new Schema();
+        $schema = new static();
         $schema->type = Type::ARR;
         return $schema;
     }
 
     public static function null()
     {
-        $schema = new Schema();
+        $schema = new static();
         $schema->type = Type::NULL;
         return $schema;
     }
@@ -556,7 +621,7 @@ class Schema extends MagicMap
 
     public static function create()
     {
-        $schema = new Schema();
+        $schema = new static();
         return $schema;
     }
 
@@ -582,6 +647,7 @@ class Schema extends MagicMap
 
     /** @var Meta[] */
     private $metaItems = array();
+
     public function meta(Meta $meta)
     {
         $this->metaItems[get_class($meta)] = $meta;
