@@ -2,6 +2,8 @@
 
 namespace Swaggest\JsonSchema\Constraint;
 
+use Swaggest\JsonSchema\RefResolver;
+
 class Ref implements Constraint
 {
     public $ref;
@@ -13,6 +15,9 @@ class Ref implements Constraint
 
     /** @var mixed */
     private $data;
+
+    /** @var RefResolver */
+    public $resolver;
 
     /** @var mixed */
     private $imported;

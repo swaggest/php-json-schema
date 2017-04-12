@@ -24,13 +24,17 @@ use Swaggest\JsonSchema\Structure\ObjectItem;
  */
 class Schema extends ObjectItem
 {
+    public $fromRef;
+    public $originPath;
+
     /*
-    public $seqId;
+    public $__seqId;
+
     public function __construct()
     {
         static $seq = 0;
         $seq++;
-        $this->seqId = $seq;
+        $this->__seqId = $seq;
     }
     */
 
@@ -150,6 +154,7 @@ class Schema extends ObjectItem
     public function process($data, ProcessingOptions $options, $path = '#')
     {
         $import = $options->import;
+        //$pathTrace = explode('->', $path);
 
         if (!$import && $data instanceof ObjectItem) {
             $data = $data->jsonSerialize();
@@ -200,6 +205,7 @@ class Schema extends ObjectItem
 
         if ($this->oneOf !== null) {
             $successes = 0;
+            $failures = '';
             foreach ($this->oneOf as $index => $item) {
                 try {
                     $result = $item->process($data, $options, $path . '->oneOf:' . $index);
@@ -208,16 +214,21 @@ class Schema extends ObjectItem
                         break;
                     }
                 } catch (InvalidValue $exception) {
+                    $failures .= ' ' . $index . ': ' . $exception->getMessage() . "\n";
                     // Expected exception
                 }
             }
-            if ($successes !== 1) {
-                $this->fail(new LogicException('Failed due to logical constraint: oneOf'), $path);
+            if ($successes === 0) {
+                $this->fail(new LogicException('Failed due to logical constraint: no valid results for oneOf {' . "\n" . substr($failures, 0, -1) . "\n}"), $path);
+            } elseif ($successes > 1) {
+                $this->fail(new LogicException('Failed due to logical constraint: '
+                    . $successes . '/' . count($this->oneOf) . ' valid results for oneOf'), $path);
             }
         }
 
         if ($this->anyOf !== null) {
             $successes = 0;
+            $failures = '';
             foreach ($this->anyOf as $index => $item) {
                 try {
                     $result = $item->process($data, $options, $path . '->anyOf:' . $index);
@@ -226,11 +237,12 @@ class Schema extends ObjectItem
                         break;
                     }
                 } catch (InvalidValue $exception) {
+                    $failures .= ' ' . $index . ': ' . $exception->getMessage() . "\n";
                     // Expected exception
                 }
             }
             if (!$successes) {
-                $this->fail(new LogicException('Failed due to logical constraint: anyOf'), $path);
+                $this->fail(new LogicException('Failed due to logical constraint: no valid results for anyOf {' . "\n" . substr($failures, 0, -1) . "\n}"), $path);
             }
         }
 
@@ -319,6 +331,10 @@ class Schema extends ObjectItem
                             });
                         }
                     }
+
+                    if ($result instanceof Schema) {
+                        $result->originPath = $path;
+                    }
                 }
             }
 
@@ -335,8 +351,23 @@ class Schema extends ObjectItem
                             return $ref->getImported();
                         }
                         $data = $ref->getData();
+                        if ($result instanceof Schema) {
+                            $result->fromRef = $refString;
+
+                        }
+                        $result->fromPath = $refString;
                         $ref->setImported($result);
                         $path .= '->$ref:' . $refString;
+
+                        if ($ref->resolver !== $options->refResolver) {
+                            $prevResolver = $options->refResolver;
+                            $options->refResolver = $ref->resolver;
+                            /** @noinspection PhpUnusedLocalVariableInspection */
+                            $deferResolver = new ScopeExit(function () use ($prevResolver, $options) {
+                                $options->refResolver = $prevResolver;
+                            });
+
+                        }
                     }
                 } catch (InvalidValue $exception) {
                     $this->fail($exception, $path);
@@ -438,7 +469,7 @@ class Schema extends ObjectItem
                         if (preg_match(Helper::toPregPattern($pattern), $key)) {
                             $found = true;
                             $value = $propertySchema->process($value, $options,
-                                $path . '->patternProperties:' . $pattern . '(' . $key . ')');
+                                $path . '->patternProperties[' . $pattern . ']:' . $key);
                             if ($import) {
                                 $result->addPatternPropertyName($pattern, $key);
                             }
@@ -468,8 +499,9 @@ class Schema extends ObjectItem
                     if ($this->useObjectAsArray && $import) {
                         $result[$key] = $value;
                     } else {
-                        $resultValue = $result->$key;
-                        if (!$import || !($resultValue instanceof ObjectItem && $value instanceof \stdClass)) {
+                        if ($found || !$import) {
+                            $result->$key = $value;
+                        } elseif (!isset($result->$key)) {
                             $result->$key = $value;
                         }
                     }

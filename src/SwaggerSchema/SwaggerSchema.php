@@ -60,13 +60,16 @@ class SwaggerSchema extends ClassStructure {
 	public static function setUpProperties($properties, Schema1 $ownerSchema)
 	{
 		$properties->swagger = Schema1::string();
+		$properties->swagger->description = 'The Swagger version of this document.';
 		$properties->swagger->enum = array (
 		  0 => '2.0',
 		);
 		$properties->info = Info::schema();
 		$properties->host = Schema1::string();
+		$properties->host->description = 'The host (name or ip) of the API. Example: \'swagger.io\'';
 		$properties->host->pattern = '^[^{}/ :\\\\]+(?::\\d+)?$';
 		$properties->basePath = Schema1::string();
+		$properties->basePath->description = 'The base path to the API. Example: \'/api\'.';
 		$properties->basePath->pattern = '^/';
 		$properties->schemes = Schema1::arr();
 		$properties->schemes->items = Schema1::string();
@@ -76,21 +79,29 @@ class SwaggerSchema extends ClassStructure {
 		  2 => 'ws',
 		  3 => 'wss',
 		);
+		$properties->schemes->description = 'The transfer protocol of the API.';
 		$properties->schemes->uniqueItems = true;
 		$properties->consumes = new Schema1();
 		$properties->consumes->allOf[0] = Schema1::arr();
 		$properties->consumes->allOf[0]->items = Schema1::string();
+		$properties->consumes->allOf[0]->items->description = 'The MIME type of the HTTP message.';
 		$properties->consumes->allOf[0]->uniqueItems = true;
+		$properties->consumes->description = 'A list of MIME types accepted by the API.';
 		$properties->produces = new Schema1();
 		$properties->produces->allOf[0] = Schema1::arr();
 		$properties->produces->allOf[0]->items = Schema1::string();
+		$properties->produces->allOf[0]->items->description = 'The MIME type of the HTTP message.';
 		$properties->produces->allOf[0]->uniqueItems = true;
+		$properties->produces->description = 'A list of MIME types the API can produce.';
 		$properties->paths = Schema1::object();
 		$properties->paths->additionalProperties = false;
 		$properties->paths->patternProperties['^x-'] = new Schema1();
+		$properties->paths->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$properties->paths->patternProperties['^/'] = PathItem::schema();
+		$properties->paths->description = 'Relative paths to the individual endpoints. They must be relative to the \'basePath\'.';
 		$properties->definitions = Schema1::object();
 		$properties->definitions->additionalProperties = Schema::schema();
+		$properties->definitions->description = 'One or more JSON objects describing the schemas being consumed and produced by the API.';
 		$properties->parameters = Schema1::object();
 		$properties->parameters->additionalProperties = new Schema1();
 		$properties->parameters->additionalProperties->oneOf[0] = BodyParameter::schema();
@@ -104,8 +115,10 @@ class SwaggerSchema extends ClassStructure {
 		  1 => 'in',
 		  2 => 'type',
 		);
+		$properties->parameters->description = 'One or more JSON representations for parameters';
 		$properties->responses = Schema1::object();
 		$properties->responses->additionalProperties = Response::schema();
+		$properties->responses->description = 'One or more JSON representations for parameters';
 		$properties->security = Schema1::arr();
 		$properties->security->items = Schema1::object();
 		$properties->security->items->additionalProperties = Schema1::arr();
@@ -127,6 +140,10 @@ class SwaggerSchema extends ClassStructure {
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
+		$ownerSchema->id = 'http://swagger.io/v2/schema.json#';
+		$ownerSchema->schema = 'http://json-schema.org/draft-04/schema#';
+		$ownerSchema->title = 'A JSON Schema for Swagger 2.0 API.';
 		$ownerSchema->required = array (
 		  0 => 'swagger',
 		  1 => 'info',
@@ -431,14 +448,20 @@ class Info extends ClassStructure {
 	public static function setUpProperties($properties, Schema1 $ownerSchema)
 	{
 		$properties->title = Schema1::string();
+		$properties->title->description = 'A unique and precise title of the API.';
 		$properties->version = Schema1::string();
+		$properties->version->description = 'A semantic version number of the API.';
 		$properties->description = Schema1::string();
+		$properties->description->description = 'A longer description of the API. Should be different from the title.  GitHub Flavored Markdown is allowed.';
 		$properties->termsOfService = Schema1::string();
+		$properties->termsOfService->description = 'The terms of service for the API.';
 		$properties->contact = Contact::schema();
 		$properties->license = License::schema();
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
+		$ownerSchema->description = 'General information about the API.';
 		$ownerSchema->required = array (
 		  0 => 'version',
 		  1 => 'title',
@@ -571,11 +594,18 @@ class Contact extends ClassStructure {
 	public static function setUpProperties($properties, Schema1 $ownerSchema)
 	{
 		$properties->name = Schema1::string();
+		$properties->name->description = 'The identifying name of the contact person/organization.';
 		$properties->url = Schema1::string();
+		$properties->url->description = 'The URL pointing to the contact information.';
+		$properties->url->format = 'uri';
 		$properties->email = Schema1::string();
+		$properties->email->description = 'The email address of the contact person/organization.';
+		$properties->email->format = 'email';
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
+		$ownerSchema->description = 'Contact information for the owners of the API.';
 	}
 
 	/**
@@ -647,10 +677,14 @@ class License extends ClassStructure {
 	public static function setUpProperties($properties, Schema1 $ownerSchema)
 	{
 		$properties->name = Schema1::string();
+		$properties->name->description = 'The name of the license type. It\'s encouraged to use an OSI compatible license.';
 		$properties->url = Schema1::string();
+		$properties->url->description = 'The URL pointing to the license.';
+		$properties->url->format = 'uri';
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->required = array (
 		  0 => 'name',
 		);
@@ -751,10 +785,12 @@ class PathItem extends ClassStructure {
 		  2 => 'type',
 		);
 		$properties->parameters->items->oneOf[1] = JsonReference::schema();
+		$properties->parameters->description = 'The parameters needed to send a valid API call.';
 		$properties->parameters->uniqueItems = true;
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 	}
 
 	/**
@@ -967,17 +1003,24 @@ class Operation extends ClassStructure {
 		$properties->tags->items = Schema1::string();
 		$properties->tags->uniqueItems = true;
 		$properties->summary = Schema1::string();
+		$properties->summary->description = 'A brief summary of the operation.';
 		$properties->description = Schema1::string();
+		$properties->description->description = 'A longer description of the operation, GitHub Flavored Markdown is allowed.';
 		$properties->externalDocs = ExternalDocs::schema();
 		$properties->operationId = Schema1::string();
+		$properties->operationId->description = 'A unique identifier of the operation.';
 		$properties->produces = new Schema1();
 		$properties->produces->allOf[0] = Schema1::arr();
 		$properties->produces->allOf[0]->items = Schema1::string();
+		$properties->produces->allOf[0]->items->description = 'The MIME type of the HTTP message.';
 		$properties->produces->allOf[0]->uniqueItems = true;
+		$properties->produces->description = 'A list of MIME types the API can produce.';
 		$properties->consumes = new Schema1();
 		$properties->consumes->allOf[0] = Schema1::arr();
 		$properties->consumes->allOf[0]->items = Schema1::string();
+		$properties->consumes->allOf[0]->items->description = 'The MIME type of the HTTP message.';
 		$properties->consumes->allOf[0]->uniqueItems = true;
+		$properties->consumes->description = 'A list of MIME types the API can consume.';
 		$properties->parameters = Schema1::arr();
 		$properties->parameters->items = new Schema1();
 		$properties->parameters->items->oneOf[0] = new Schema1();
@@ -993,6 +1036,7 @@ class Operation extends ClassStructure {
 		  2 => 'type',
 		);
 		$properties->parameters->items->oneOf[1] = JsonReference::schema();
+		$properties->parameters->description = 'The parameters needed to send a valid API call.';
 		$properties->parameters->uniqueItems = true;
 		$properties->responses = Schema1::object();
 		$properties->responses->additionalProperties = false;
@@ -1000,9 +1044,12 @@ class Operation extends ClassStructure {
 		$properties->responses->patternProperties['^([0-9]{3})$|^(default)$']->oneOf[0] = Response::schema();
 		$properties->responses->patternProperties['^([0-9]{3})$|^(default)$']->oneOf[1] = JsonReference::schema();
 		$properties->responses->patternProperties['^x-'] = new Schema1();
+		$properties->responses->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$properties->responses->not = Schema1::object();
 		$properties->responses->not->additionalProperties = false;
 		$properties->responses->not->patternProperties['^x-'] = new Schema1();
+		$properties->responses->not->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
+		$properties->responses->description = 'Response objects names can either be any valid HTTP status code or \'default\'.';
 		$properties->responses->minProperties = 1;
 		$properties->schemes = Schema1::arr();
 		$properties->schemes->items = Schema1::string();
@@ -1012,8 +1059,10 @@ class Operation extends ClassStructure {
 		  2 => 'ws',
 		  3 => 'wss',
 		);
+		$properties->schemes->description = 'The transfer protocol of the API.';
 		$properties->schemes->uniqueItems = true;
 		$properties->deprecated = Schema1::boolean();
+		$properties->deprecated->default = false;
 		$properties->security = Schema1::arr();
 		$properties->security->items = Schema1::object();
 		$properties->security->items->additionalProperties = Schema1::arr();
@@ -1023,6 +1072,7 @@ class Operation extends ClassStructure {
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->required = array (
 		  0 => 'responses',
 		);
@@ -1260,9 +1310,12 @@ class ExternalDocs extends ClassStructure {
 	{
 		$properties->description = Schema1::string();
 		$properties->url = Schema1::string();
+		$properties->url->format = 'uri';
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
+		$ownerSchema->description = 'information about external documentation';
 		$ownerSchema->required = array (
 		  0 => 'url',
 		);
@@ -1328,16 +1381,22 @@ class BodyParameter extends ClassStructure {
 	public static function setUpProperties($properties, Schema1 $ownerSchema)
 	{
 		$properties->description = Schema1::string();
+		$properties->description->description = 'A brief description of the parameter. This could contain examples of use.  GitHub Flavored Markdown is allowed.';
 		$properties->name = Schema1::string();
+		$properties->name->description = 'The name of the parameter.';
 		$properties->in = Schema1::string();
+		$properties->in->description = 'Determines the location of the parameter.';
 		$properties->in->enum = array (
 		  0 => 'body',
 		);
 		$properties->required = Schema1::boolean();
+		$properties->required->description = 'Determines whether or not this parameter is required or optional.';
+		$properties->required->default = false;
 		$properties->schema = Schema::schema();
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->required = array (
 		  0 => 'name',
 		  1 => 'in',
@@ -1542,38 +1601,47 @@ class Schema extends ClassStructure {
 		$properties->multipleOf->exclusiveMinimum = true;
 		$properties->maximum = Schema1::number();
 		$properties->exclusiveMaximum = Schema1::boolean();
+		$properties->exclusiveMaximum->default = false;
 		$properties->minimum = Schema1::number();
 		$properties->exclusiveMinimum = Schema1::boolean();
+		$properties->exclusiveMinimum->default = false;
 		$properties->maxLength = Schema1::integer();
 		$properties->maxLength->minimum = 0;
 		$properties->minLength = new Schema1();
 		$properties->minLength->allOf[0] = Schema1::integer();
 		$properties->minLength->allOf[0]->minimum = 0;
 		$properties->minLength->allOf[1] = new Schema1();
+		$properties->minLength->allOf[1]->default = 0;
 		$properties->pattern = Schema1::string();
+		$properties->pattern->format = 'regex';
 		$properties->maxItems = Schema1::integer();
 		$properties->maxItems->minimum = 0;
 		$properties->minItems = new Schema1();
 		$properties->minItems->allOf[0] = Schema1::integer();
 		$properties->minItems->allOf[0]->minimum = 0;
 		$properties->minItems->allOf[1] = new Schema1();
+		$properties->minItems->allOf[1]->default = 0;
 		$properties->uniqueItems = Schema1::boolean();
+		$properties->uniqueItems->default = false;
 		$properties->maxProperties = Schema1::integer();
 		$properties->maxProperties->minimum = 0;
 		$properties->minProperties = new Schema1();
 		$properties->minProperties->allOf[0] = Schema1::integer();
 		$properties->minProperties->allOf[0]->minimum = 0;
 		$properties->minProperties->allOf[1] = new Schema1();
+		$properties->minProperties->allOf[1]->default = 0;
 		$properties->required = Schema1::arr();
 		$properties->required->items = Schema1::string();
-		$properties->required->uniqueItems = true;
 		$properties->required->minItems = 1;
+		$properties->required->uniqueItems = true;
 		$properties->enum = Schema1::arr();
-		$properties->enum->uniqueItems = true;
 		$properties->enum->minItems = 1;
+		$properties->enum->uniqueItems = true;
 		$properties->additionalProperties = new Schema1();
 		$properties->additionalProperties->anyOf[0] = Schema::schema();
 		$properties->additionalProperties->anyOf[1] = Schema1::boolean();
+		$properties->additionalProperties->default = stdClass::__set_state(array(
+		));
 		$properties->type = new Schema1();
 		$properties->type->anyOf[0] = new Schema1();
 		$properties->type->anyOf[0]->enum = array (
@@ -1596,26 +1664,33 @@ class Schema extends ClassStructure {
 		  5 => 'object',
 		  6 => 'string',
 		);
-		$properties->type->anyOf[1]->uniqueItems = true;
 		$properties->type->anyOf[1]->minItems = 1;
+		$properties->type->anyOf[1]->uniqueItems = true;
 		$properties->items = new Schema1();
 		$properties->items->anyOf[0] = Schema::schema();
 		$properties->items->anyOf[1] = Schema1::arr();
 		$properties->items->anyOf[1]->items = Schema::schema();
 		$properties->items->anyOf[1]->minItems = 1;
+		$properties->items->default = stdClass::__set_state(array(
+		));
 		$properties->allOf = Schema1::arr();
 		$properties->allOf->items = Schema::schema();
 		$properties->allOf->minItems = 1;
 		$properties->properties = Schema1::object();
 		$properties->properties->additionalProperties = Schema::schema();
+		$properties->properties->default = stdClass::__set_state(array(
+		));
 		$properties->discriminator = Schema1::string();
 		$properties->readOnly = Schema1::boolean();
+		$properties->readOnly->default = false;
 		$properties->xml = Xml::schema();
 		$properties->externalDocs = ExternalDocs::schema();
 		$properties->example = new Schema1();
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
+		$ownerSchema->description = 'A deterministic version of a JSON Schema object.';
 	}
 
 	/**
@@ -2179,10 +2254,13 @@ class Xml extends ClassStructure {
 		$properties->namespace = Schema1::string();
 		$properties->prefix = Schema1::string();
 		$properties->attribute = Schema1::boolean();
+		$properties->attribute->default = false;
 		$properties->wrapped = Schema1::boolean();
+		$properties->wrapped->default = false;
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 	}
 
 	/**
@@ -2346,12 +2424,17 @@ class HeaderParameterSubSchema extends ClassStructure {
 	public static function setUpProperties($properties, Schema1 $ownerSchema)
 	{
 		$properties->required = Schema1::boolean();
+		$properties->required->description = 'Determines whether or not this parameter is required or optional.';
+		$properties->required->default = false;
 		$properties->in = Schema1::string();
+		$properties->in->description = 'Determines the location of the parameter.';
 		$properties->in->enum = array (
 		  0 => 'header',
 		);
 		$properties->description = Schema1::string();
+		$properties->description->description = 'A brief description of the parameter. This could contain examples of use.  GitHub Flavored Markdown is allowed.';
 		$properties->name = Schema1::string();
+		$properties->name->description = 'The name of the parameter.';
 		$properties->type = Schema1::string();
 		$properties->type->enum = array (
 		  0 => 'string',
@@ -2363,6 +2446,7 @@ class HeaderParameterSubSchema extends ClassStructure {
 		$properties->format = Schema1::string();
 		$properties->items = PrimitivesItems::schema();
 		$properties->collectionFormat = Schema1::string();
+		$properties->collectionFormat->default = 'csv';
 		$properties->collectionFormat->enum = array (
 		  0 => 'csv',
 		  1 => 'ssv',
@@ -2372,31 +2456,38 @@ class HeaderParameterSubSchema extends ClassStructure {
 		$properties->default = new Schema1();
 		$properties->maximum = Schema1::number();
 		$properties->exclusiveMaximum = Schema1::boolean();
+		$properties->exclusiveMaximum->default = false;
 		$properties->minimum = Schema1::number();
 		$properties->exclusiveMinimum = Schema1::boolean();
+		$properties->exclusiveMinimum->default = false;
 		$properties->maxLength = Schema1::integer();
 		$properties->maxLength->minimum = 0;
 		$properties->minLength = new Schema1();
 		$properties->minLength->allOf[0] = Schema1::integer();
 		$properties->minLength->allOf[0]->minimum = 0;
 		$properties->minLength->allOf[1] = new Schema1();
+		$properties->minLength->allOf[1]->default = 0;
 		$properties->pattern = Schema1::string();
+		$properties->pattern->format = 'regex';
 		$properties->maxItems = Schema1::integer();
 		$properties->maxItems->minimum = 0;
 		$properties->minItems = new Schema1();
 		$properties->minItems->allOf[0] = Schema1::integer();
 		$properties->minItems->allOf[0]->minimum = 0;
 		$properties->minItems->allOf[1] = new Schema1();
+		$properties->minItems->allOf[1]->default = 0;
 		$properties->uniqueItems = Schema1::boolean();
+		$properties->uniqueItems->default = false;
 		$properties->enum = Schema1::arr();
-		$properties->enum->uniqueItems = true;
 		$properties->enum->minItems = 1;
+		$properties->enum->uniqueItems = true;
 		$properties->multipleOf = Schema1::number();
 		$properties->multipleOf->minimum = 0;
 		$properties->multipleOf->exclusiveMinimum = true;
 		$ownerSchema = new Schema1();
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 	}
 
 	/**
@@ -2843,6 +2934,7 @@ class PrimitivesItems extends ClassStructure {
 		$properties->format = Schema1::string();
 		$properties->items = PrimitivesItems::schema();
 		$properties->collectionFormat = Schema1::string();
+		$properties->collectionFormat->default = 'csv';
 		$properties->collectionFormat->enum = array (
 		  0 => 'csv',
 		  1 => 'ssv',
@@ -2852,31 +2944,38 @@ class PrimitivesItems extends ClassStructure {
 		$properties->default = new Schema1();
 		$properties->maximum = Schema1::number();
 		$properties->exclusiveMaximum = Schema1::boolean();
+		$properties->exclusiveMaximum->default = false;
 		$properties->minimum = Schema1::number();
 		$properties->exclusiveMinimum = Schema1::boolean();
+		$properties->exclusiveMinimum->default = false;
 		$properties->maxLength = Schema1::integer();
 		$properties->maxLength->minimum = 0;
 		$properties->minLength = new Schema1();
 		$properties->minLength->allOf[0] = Schema1::integer();
 		$properties->minLength->allOf[0]->minimum = 0;
 		$properties->minLength->allOf[1] = new Schema1();
+		$properties->minLength->allOf[1]->default = 0;
 		$properties->pattern = Schema1::string();
+		$properties->pattern->format = 'regex';
 		$properties->maxItems = Schema1::integer();
 		$properties->maxItems->minimum = 0;
 		$properties->minItems = new Schema1();
 		$properties->minItems->allOf[0] = Schema1::integer();
 		$properties->minItems->allOf[0]->minimum = 0;
 		$properties->minItems->allOf[1] = new Schema1();
+		$properties->minItems->allOf[1]->default = 0;
 		$properties->uniqueItems = Schema1::boolean();
+		$properties->uniqueItems->default = false;
 		$properties->enum = Schema1::arr();
-		$properties->enum->uniqueItems = true;
 		$properties->enum->minItems = 1;
+		$properties->enum->uniqueItems = true;
 		$properties->multipleOf = Schema1::number();
 		$properties->multipleOf->minimum = 0;
 		$properties->multipleOf->exclusiveMinimum = true;
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 	}
 
 	/**
@@ -3256,13 +3355,20 @@ class FormDataParameterSubSchema extends ClassStructure {
 	public static function setUpProperties($properties, Schema1 $ownerSchema)
 	{
 		$properties->required = Schema1::boolean();
+		$properties->required->description = 'Determines whether or not this parameter is required or optional.';
+		$properties->required->default = false;
 		$properties->in = Schema1::string();
+		$properties->in->description = 'Determines the location of the parameter.';
 		$properties->in->enum = array (
 		  0 => 'formData',
 		);
 		$properties->description = Schema1::string();
+		$properties->description->description = 'A brief description of the parameter. This could contain examples of use.  GitHub Flavored Markdown is allowed.';
 		$properties->name = Schema1::string();
+		$properties->name->description = 'The name of the parameter.';
 		$properties->allowEmptyValue = Schema1::boolean();
+		$properties->allowEmptyValue->description = 'allows sending a parameter by name only or with an empty value.';
+		$properties->allowEmptyValue->default = false;
 		$properties->type = Schema1::string();
 		$properties->type->enum = array (
 		  0 => 'string',
@@ -3275,6 +3381,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$properties->format = Schema1::string();
 		$properties->items = PrimitivesItems::schema();
 		$properties->collectionFormat = Schema1::string();
+		$properties->collectionFormat->default = 'csv';
 		$properties->collectionFormat->enum = array (
 		  0 => 'csv',
 		  1 => 'ssv',
@@ -3285,31 +3392,38 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$properties->default = new Schema1();
 		$properties->maximum = Schema1::number();
 		$properties->exclusiveMaximum = Schema1::boolean();
+		$properties->exclusiveMaximum->default = false;
 		$properties->minimum = Schema1::number();
 		$properties->exclusiveMinimum = Schema1::boolean();
+		$properties->exclusiveMinimum->default = false;
 		$properties->maxLength = Schema1::integer();
 		$properties->maxLength->minimum = 0;
 		$properties->minLength = new Schema1();
 		$properties->minLength->allOf[0] = Schema1::integer();
 		$properties->minLength->allOf[0]->minimum = 0;
 		$properties->minLength->allOf[1] = new Schema1();
+		$properties->minLength->allOf[1]->default = 0;
 		$properties->pattern = Schema1::string();
+		$properties->pattern->format = 'regex';
 		$properties->maxItems = Schema1::integer();
 		$properties->maxItems->minimum = 0;
 		$properties->minItems = new Schema1();
 		$properties->minItems->allOf[0] = Schema1::integer();
 		$properties->minItems->allOf[0]->minimum = 0;
 		$properties->minItems->allOf[1] = new Schema1();
+		$properties->minItems->allOf[1]->default = 0;
 		$properties->uniqueItems = Schema1::boolean();
+		$properties->uniqueItems->default = false;
 		$properties->enum = Schema1::arr();
-		$properties->enum->uniqueItems = true;
 		$properties->enum->minItems = 1;
+		$properties->enum->uniqueItems = true;
 		$properties->multipleOf = Schema1::number();
 		$properties->multipleOf->minimum = 0;
 		$properties->multipleOf->exclusiveMinimum = true;
 		$ownerSchema = new Schema1();
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 	}
 
 	/**
@@ -3779,13 +3893,20 @@ class QueryParameterSubSchema extends ClassStructure {
 	public static function setUpProperties($properties, Schema1 $ownerSchema)
 	{
 		$properties->required = Schema1::boolean();
+		$properties->required->description = 'Determines whether or not this parameter is required or optional.';
+		$properties->required->default = false;
 		$properties->in = Schema1::string();
+		$properties->in->description = 'Determines the location of the parameter.';
 		$properties->in->enum = array (
 		  0 => 'query',
 		);
 		$properties->description = Schema1::string();
+		$properties->description->description = 'A brief description of the parameter. This could contain examples of use.  GitHub Flavored Markdown is allowed.';
 		$properties->name = Schema1::string();
+		$properties->name->description = 'The name of the parameter.';
 		$properties->allowEmptyValue = Schema1::boolean();
+		$properties->allowEmptyValue->description = 'allows sending a parameter by name only or with an empty value.';
+		$properties->allowEmptyValue->default = false;
 		$properties->type = Schema1::string();
 		$properties->type->enum = array (
 		  0 => 'string',
@@ -3797,6 +3918,7 @@ class QueryParameterSubSchema extends ClassStructure {
 		$properties->format = Schema1::string();
 		$properties->items = PrimitivesItems::schema();
 		$properties->collectionFormat = Schema1::string();
+		$properties->collectionFormat->default = 'csv';
 		$properties->collectionFormat->enum = array (
 		  0 => 'csv',
 		  1 => 'ssv',
@@ -3807,31 +3929,38 @@ class QueryParameterSubSchema extends ClassStructure {
 		$properties->default = new Schema1();
 		$properties->maximum = Schema1::number();
 		$properties->exclusiveMaximum = Schema1::boolean();
+		$properties->exclusiveMaximum->default = false;
 		$properties->minimum = Schema1::number();
 		$properties->exclusiveMinimum = Schema1::boolean();
+		$properties->exclusiveMinimum->default = false;
 		$properties->maxLength = Schema1::integer();
 		$properties->maxLength->minimum = 0;
 		$properties->minLength = new Schema1();
 		$properties->minLength->allOf[0] = Schema1::integer();
 		$properties->minLength->allOf[0]->minimum = 0;
 		$properties->minLength->allOf[1] = new Schema1();
+		$properties->minLength->allOf[1]->default = 0;
 		$properties->pattern = Schema1::string();
+		$properties->pattern->format = 'regex';
 		$properties->maxItems = Schema1::integer();
 		$properties->maxItems->minimum = 0;
 		$properties->minItems = new Schema1();
 		$properties->minItems->allOf[0] = Schema1::integer();
 		$properties->minItems->allOf[0]->minimum = 0;
 		$properties->minItems->allOf[1] = new Schema1();
+		$properties->minItems->allOf[1]->default = 0;
 		$properties->uniqueItems = Schema1::boolean();
+		$properties->uniqueItems->default = false;
 		$properties->enum = Schema1::arr();
-		$properties->enum->uniqueItems = true;
 		$properties->enum->minItems = 1;
+		$properties->enum->uniqueItems = true;
 		$properties->multipleOf = Schema1::number();
 		$properties->multipleOf->minimum = 0;
 		$properties->multipleOf->exclusiveMinimum = true;
 		$ownerSchema = new Schema1();
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 	}
 
 	/**
@@ -4298,15 +4427,19 @@ class PathParameterSubSchema extends ClassStructure {
 	public static function setUpProperties($properties, Schema1 $ownerSchema)
 	{
 		$properties->required = Schema1::boolean();
+		$properties->required->description = 'Determines whether or not this parameter is required or optional.';
 		$properties->required->enum = array (
 		  0 => true,
 		);
 		$properties->in = Schema1::string();
+		$properties->in->description = 'Determines the location of the parameter.';
 		$properties->in->enum = array (
 		  0 => 'path',
 		);
 		$properties->description = Schema1::string();
+		$properties->description->description = 'A brief description of the parameter. This could contain examples of use.  GitHub Flavored Markdown is allowed.';
 		$properties->name = Schema1::string();
+		$properties->name->description = 'The name of the parameter.';
 		$properties->type = Schema1::string();
 		$properties->type->enum = array (
 		  0 => 'string',
@@ -4318,6 +4451,7 @@ class PathParameterSubSchema extends ClassStructure {
 		$properties->format = Schema1::string();
 		$properties->items = PrimitivesItems::schema();
 		$properties->collectionFormat = Schema1::string();
+		$properties->collectionFormat->default = 'csv';
 		$properties->collectionFormat->enum = array (
 		  0 => 'csv',
 		  1 => 'ssv',
@@ -4327,31 +4461,38 @@ class PathParameterSubSchema extends ClassStructure {
 		$properties->default = new Schema1();
 		$properties->maximum = Schema1::number();
 		$properties->exclusiveMaximum = Schema1::boolean();
+		$properties->exclusiveMaximum->default = false;
 		$properties->minimum = Schema1::number();
 		$properties->exclusiveMinimum = Schema1::boolean();
+		$properties->exclusiveMinimum->default = false;
 		$properties->maxLength = Schema1::integer();
 		$properties->maxLength->minimum = 0;
 		$properties->minLength = new Schema1();
 		$properties->minLength->allOf[0] = Schema1::integer();
 		$properties->minLength->allOf[0]->minimum = 0;
 		$properties->minLength->allOf[1] = new Schema1();
+		$properties->minLength->allOf[1]->default = 0;
 		$properties->pattern = Schema1::string();
+		$properties->pattern->format = 'regex';
 		$properties->maxItems = Schema1::integer();
 		$properties->maxItems->minimum = 0;
 		$properties->minItems = new Schema1();
 		$properties->minItems->allOf[0] = Schema1::integer();
 		$properties->minItems->allOf[0]->minimum = 0;
 		$properties->minItems->allOf[1] = new Schema1();
+		$properties->minItems->allOf[1]->default = 0;
 		$properties->uniqueItems = Schema1::boolean();
+		$properties->uniqueItems->default = false;
 		$properties->enum = Schema1::arr();
-		$properties->enum->uniqueItems = true;
 		$properties->enum->minItems = 1;
+		$properties->enum->uniqueItems = true;
 		$properties->multipleOf = Schema1::number();
 		$properties->multipleOf->minimum = 0;
 		$properties->multipleOf->exclusiveMinimum = true;
 		$ownerSchema = new Schema1();
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->required = array (
 		  0 => 'required',
 		);
@@ -4799,6 +4940,7 @@ class Response extends ClassStructure {
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->required = array (
 		  0 => 'description',
 		);
@@ -4912,18 +5054,21 @@ class FileSchema extends ClassStructure {
 		$properties->default = new Schema1();
 		$properties->required = Schema1::arr();
 		$properties->required->items = Schema1::string();
-		$properties->required->uniqueItems = true;
 		$properties->required->minItems = 1;
+		$properties->required->uniqueItems = true;
 		$properties->type = Schema1::string();
 		$properties->type->enum = array (
 		  0 => 'file',
 		);
 		$properties->readOnly = Schema1::boolean();
+		$properties->readOnly->default = false;
 		$properties->externalDocs = ExternalDocs::schema();
 		$properties->example = new Schema1();
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
+		$ownerSchema->description = 'A deterministic version of a JSON Schema object.';
 		$ownerSchema->required = array (
 		  0 => 'type',
 		);
@@ -5157,6 +5302,7 @@ class Header extends ClassStructure {
 		$properties->format = Schema1::string();
 		$properties->items = PrimitivesItems::schema();
 		$properties->collectionFormat = Schema1::string();
+		$properties->collectionFormat->default = 'csv';
 		$properties->collectionFormat->enum = array (
 		  0 => 'csv',
 		  1 => 'ssv',
@@ -5166,25 +5312,31 @@ class Header extends ClassStructure {
 		$properties->default = new Schema1();
 		$properties->maximum = Schema1::number();
 		$properties->exclusiveMaximum = Schema1::boolean();
+		$properties->exclusiveMaximum->default = false;
 		$properties->minimum = Schema1::number();
 		$properties->exclusiveMinimum = Schema1::boolean();
+		$properties->exclusiveMinimum->default = false;
 		$properties->maxLength = Schema1::integer();
 		$properties->maxLength->minimum = 0;
 		$properties->minLength = new Schema1();
 		$properties->minLength->allOf[0] = Schema1::integer();
 		$properties->minLength->allOf[0]->minimum = 0;
 		$properties->minLength->allOf[1] = new Schema1();
+		$properties->minLength->allOf[1]->default = 0;
 		$properties->pattern = Schema1::string();
+		$properties->pattern->format = 'regex';
 		$properties->maxItems = Schema1::integer();
 		$properties->maxItems->minimum = 0;
 		$properties->minItems = new Schema1();
 		$properties->minItems->allOf[0] = Schema1::integer();
 		$properties->minItems->allOf[0]->minimum = 0;
 		$properties->minItems->allOf[1] = new Schema1();
+		$properties->minItems->allOf[1]->default = 0;
 		$properties->uniqueItems = Schema1::boolean();
+		$properties->uniqueItems->default = false;
 		$properties->enum = Schema1::arr();
-		$properties->enum->uniqueItems = true;
 		$properties->enum->minItems = 1;
+		$properties->enum->uniqueItems = true;
 		$properties->multipleOf = Schema1::number();
 		$properties->multipleOf->minimum = 0;
 		$properties->multipleOf->exclusiveMinimum = true;
@@ -5192,6 +5344,7 @@ class Header extends ClassStructure {
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->required = array (
 		  0 => 'type',
 		);
@@ -5540,6 +5693,7 @@ class BasicAuthenticationSecurity extends ClassStructure {
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->required = array (
 		  0 => 'type',
 		);
@@ -5615,6 +5769,7 @@ class ApiKeySecurity extends ClassStructure {
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->required = array (
 		  0 => 'type',
 		  1 => 'name',
@@ -5728,10 +5883,12 @@ class Oauth2ImplicitSecurity extends ClassStructure {
 		$properties->scopes = Schema1::object();
 		$properties->scopes->additionalProperties = Schema1::string();
 		$properties->authorizationUrl = Schema1::string();
+		$properties->authorizationUrl->format = 'uri';
 		$properties->description = Schema1::string();
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->required = array (
 		  0 => 'type',
 		  1 => 'flow',
@@ -5863,10 +6020,12 @@ class Oauth2PasswordSecurity extends ClassStructure {
 		$properties->scopes = Schema1::object();
 		$properties->scopes->additionalProperties = Schema1::string();
 		$properties->tokenUrl = Schema1::string();
+		$properties->tokenUrl->format = 'uri';
 		$properties->description = Schema1::string();
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->required = array (
 		  0 => 'type',
 		  1 => 'flow',
@@ -5998,10 +6157,12 @@ class Oauth2ApplicationSecurity extends ClassStructure {
 		$properties->scopes = Schema1::object();
 		$properties->scopes->additionalProperties = Schema1::string();
 		$properties->tokenUrl = Schema1::string();
+		$properties->tokenUrl->format = 'uri';
 		$properties->description = Schema1::string();
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->required = array (
 		  0 => 'type',
 		  1 => 'flow',
@@ -6136,11 +6297,14 @@ class Oauth2AccessCodeSecurity extends ClassStructure {
 		$properties->scopes = Schema1::object();
 		$properties->scopes->additionalProperties = Schema1::string();
 		$properties->authorizationUrl = Schema1::string();
+		$properties->authorizationUrl->format = 'uri';
 		$properties->tokenUrl = Schema1::string();
+		$properties->tokenUrl->format = 'uri';
 		$properties->description = Schema1::string();
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->required = array (
 		  0 => 'type',
 		  1 => 'flow',
@@ -6280,6 +6444,7 @@ class Tag extends ClassStructure {
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
 		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->required = array (
 		  0 => 'name',
 		);

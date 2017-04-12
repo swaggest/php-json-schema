@@ -73,12 +73,17 @@ class RefResolver
             $referencePath = Helper::resolveURI($this->resolutionScope, $referencePath);
         }
         $ref = &$this->refs[$referencePath];
+
+        $refResolver = $this;
+
         if (null === $ref) {
             if ($referencePath[0] === '#') {
                 if ($referencePath === '#') {
                     $ref = new Ref($referencePath, $this->rootData);
+                    $ref->resolver = $this;
                 } else {
                     $ref = new Ref($referencePath);
+                    $ref->resolver = $this;
                     $path = explode('/', trim($referencePath, '#/'));
                     $branch = &$this->rootData;
                     while (!empty($path)) {
@@ -106,7 +111,9 @@ class RefResolver
                 $refLocalPath = isset($refParts[1]) ? '#' . $refParts[1] : '#';
                 $refResolver = &$this->remoteRefResolvers[$url];
                 if (null === $refResolver) {
-                    $refResolver = new RefResolver($this->getRefProvider()->getSchemaData($url));
+                    $rootData = $this->getRefProvider()->getSchemaData($url);
+                    $refResolver = new RefResolver($rootData);
+                    $refResolver->refProvider = $this->refProvider;
                     $refResolver->url = $url;
                 }
 
@@ -117,7 +124,7 @@ class RefResolver
         $refData = $ref->getData();
         // we need to go deeper
         if (isset($refData->{'$ref'})) {
-            return $this->resolveReference($refData->{'$ref'});
+            return $refResolver->resolveReference($refData->{'$ref'});
         }
 
         return $ref;
