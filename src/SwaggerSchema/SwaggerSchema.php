@@ -1640,8 +1640,7 @@ class Schema extends ClassStructure {
 		$properties->additionalProperties = new Schema1();
 		$properties->additionalProperties->anyOf[0] = Schema::schema();
 		$properties->additionalProperties->anyOf[1] = Schema1::boolean();
-		$properties->additionalProperties->default = stdClass::__set_state(array(
-		));
+		$properties->additionalProperties->default = new \stdClass();
 		$properties->type = new Schema1();
 		$properties->type->anyOf[0] = new Schema1();
 		$properties->type->anyOf[0]->enum = array (
@@ -1671,15 +1670,13 @@ class Schema extends ClassStructure {
 		$properties->items->anyOf[1] = Schema1::arr();
 		$properties->items->anyOf[1]->items = Schema::schema();
 		$properties->items->anyOf[1]->minItems = 1;
-		$properties->items->default = stdClass::__set_state(array(
-		));
+		$properties->items->default = new \stdClass();
 		$properties->allOf = Schema1::arr();
 		$properties->allOf->items = Schema::schema();
 		$properties->allOf->minItems = 1;
 		$properties->properties = Schema1::object();
 		$properties->properties->additionalProperties = Schema::schema();
-		$properties->properties->default = stdClass::__set_state(array(
-		));
+		$properties->properties->default = new \stdClass();
 		$properties->discriminator = Schema1::string();
 		$properties->readOnly = Schema1::boolean();
 		$properties->readOnly->default = false;
