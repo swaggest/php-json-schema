@@ -355,7 +355,6 @@ class Schema extends ObjectItem
                             $result->fromRef = $refString;
 
                         }
-                        $result->fromPath = $refString;
                         $ref->setImported($result);
                         $path .= '->$ref:' . $refString;
 
@@ -375,6 +374,7 @@ class Schema extends ObjectItem
             }
 
             // @todo better check for schema id
+
             if ($import && isset($data->id) && is_string($data->id) /*&& (!isset($this->properties['id']))/* && $this->isMetaSchema($data)*/) {
                 $refResolver = $options->refResolver;
                 $parentScope = $refResolver->updateResolutionScope($data->id);

@@ -4,6 +4,8 @@ namespace Swaggest\JsonSchema;
 
 class ProcessingOptions extends MagicMap
 {
+
+
     protected $import = true;
     /** @var DataPreProcessor */
     public $dataPreProcessor;
@@ -15,6 +17,15 @@ class ProcessingOptions extends MagicMap
 
     /** @var string */
     public $propagateObjectItemClass;
+
+    /**
+     * ProcessingOptions constructor.
+     * @param RemoteRefProvider $remoteRefProvider
+     */
+    public function __construct(RemoteRefProvider $remoteRefProvider = null)
+    {
+        $this->remoteRefProvider = $remoteRefProvider;
+    }
 
     /**
      * @return DataPreProcessor

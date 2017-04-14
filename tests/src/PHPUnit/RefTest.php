@@ -153,6 +153,7 @@ JSON;
     public function testSimple()
     {
         $refResolver = new RefResolver('{"$ref": "http://json-schema.org/draft-04/schema#"}');
+        $refResolver->setRemoteRefProvider(new Preloaded());
         $refResolver->setResolutionScope('http://json-schema.org/draft-04/schema#');
         $ref = $refResolver->resolveReference('#/definitions/positiveInteger');
         $this->assertSame('integer', $ref->getData()->type);
