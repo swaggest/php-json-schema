@@ -6,6 +6,7 @@ namespace Swaggest\JsonSchema\Tests\PHPUnit;
 use Swaggest\JsonSchema\Exception\LogicException;
 use Swaggest\JsonSchema\Exception\ObjectException;
 use Swaggest\JsonSchema\Exception\TypeException;
+use Swaggest\JsonSchema\InvalidValue;
 use Swaggest\JsonSchema\JsonSchema;
 use Swaggest\JsonSchema\ProcessingOptions;
 use Swaggest\JsonSchema\RefResolver;
@@ -36,7 +37,6 @@ class RefTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(123, $import->one);
     }
 
-
     public function testRootResolve()
     {
         $schemaData = array(
@@ -65,10 +65,10 @@ class RefTest extends \PHPUnit_Framework_TestCase
         $schema = JsonSchema::importToSchema(json_decode(json_encode($schemaData)));
 
         $object = $schema->import((object)array(
-                'two' => (object)array(
-                    'one' => 123
-                )
+            'two' => (object)array(
+                'one' => 123
             )
+        )
         );
         $this->assertSame(123, $object->two->one);
 
@@ -183,4 +183,139 @@ JSON;
         $this->setExpectedException(get_class(new ObjectException()));
         $schema->import(json_decode($dataInvalidJson));
     }
+
+
+    public function testInvalidTree()
+    {
+        $schemaJson = <<<'JSON'
+{
+    "id": "http:\/\/localhost:1234\/tree",
+    "description": "tree of nodes",
+    "type": "object",
+    "properties": {
+        "meta": {
+            "type": "string"
+        },
+        "nodes": {
+            "type": "array",
+            "items": {
+                "$ref": "node"
+            }
+        }
+    },
+    "required": [
+        "meta",
+        "nodes"
+    ],
+    "definitions": {
+        "node": {
+            "id": "http:\/\/localhost:1234\/node",
+            "description": "node",
+            "type": "object",
+            "properties": {
+                "value": {
+                    "type": "number"
+                },
+                "subtree": {
+                    "$ref": "tree"
+                }
+            },
+            "required": [
+                "value"
+            ]
+        }
+    }
+}
+JSON;
+
+        $dataJson = <<<'JSON'
+{
+    "meta": "root",
+    "nodes": [
+        {
+            "value": 1,
+            "subtree": {
+                "meta": "child",
+                "nodes": [
+                    {
+                        "value": "string is invalid"
+                    },
+                    {
+                        "value": 1.2
+                    }
+                ]
+            }
+        },
+        {
+            "value": 2,
+            "subtree": {
+                "meta": "child",
+                "nodes": [
+                    {
+                        "value": 2.1
+                    },
+                    {
+                        "value": 2.2
+                    }
+                ]
+            }
+        }
+    ]
+}
+
+JSON;
+
+        $schema = JsonSchema::importToSchema(json_decode($schemaJson));
+
+        $this->setExpectedException(get_class(new InvalidValue()));
+        $schema->import(json_decode($dataJson));
+    }
+
+    public function testScopeChange()
+    {
+        $testData = json_decode(<<<'JSON'
+{
+    "description": "base URI change - change folder",
+    "schema": {
+        "id": "http://localhost:1234/scope_change_defs1.json",
+        "type" : "object",
+        "properties": {
+            "list": {"$ref": "#/definitions/baz"}
+        },
+        "definitions": {
+            "baz": {
+                "id": "folder/",
+                "type": "array",
+                "items": {"$ref": "folderInteger.json"}
+            }
+        }
+    },
+    "tests": [
+        {
+            "description": "number is valid",
+            "data": {"list": [1]},
+            "valid": true
+        },
+        {
+            "description": "string is invalid",
+            "data": {"list": ["a"]},
+            "valid": false
+        }
+    ]
+}
+JSON
+        );
+
+        $options = new ProcessingOptions();
+        $options->remoteRefProvider = (new Preloaded())
+            ->setSchemaData('http://localhost:1234/folder/folderInteger.json', json_decode(file_get_contents(
+                __DIR__ . '/../../../spec/JSON-Schema-Test-Suite/remotes/folder/folderInteger.json'
+            )));
+        $schema = JsonSchema::importToSchema($testData->schema, $options);
+
+        $schema->import($testData->tests[0]->data);
+        $this->setExpectedException(get_class(new InvalidValue()));
+        $schema->import($testData->tests[1]->data);
+    }
+
 }

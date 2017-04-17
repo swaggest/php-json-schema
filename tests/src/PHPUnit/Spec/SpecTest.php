@@ -35,6 +35,10 @@ class SpecTest extends \PHPUnit_Framework_TestCase
                     json_decode(file_get_contents(__DIR__
                         . '/../../../../spec/JSON-Schema-Test-Suite/remotes/subSchemas.json')))
                 ->setSchemaData(
+                    'http://localhost:1234/name.json',
+                    json_decode(file_get_contents(__DIR__
+                        . '/../../../../spec/JSON-Schema-Test-Suite/remotes/name.json')))
+                ->setSchemaData(
                     'http://localhost:1234/folder/folderInteger.json',
                     json_decode(file_get_contents(__DIR__
                         . '/../../../../spec/JSON-Schema-Test-Suite/remotes/folder/folderInteger.json')));

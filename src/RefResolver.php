@@ -9,19 +9,50 @@ class RefResolver
 {
     private $resolutionScope = '';
     private $url;
+    /** @var RefResolver */
+    private $rootResolver;
 
     /**
      * @param mixed $resolutionScope
+     * @return string previous value
      */
     public function setResolutionScope($resolutionScope)
     {
-        $this->resolutionScope = $resolutionScope;
+        $rootResolver = $this->rootResolver ? $this->rootResolver : $this;
+        $prev = $rootResolver->resolutionScope;
+        $rootResolver->resolutionScope = $resolutionScope;
+        return $prev;
     }
 
     public function updateResolutionScope($id)
     {
-        $prev = $this->resolutionScope;
-        $this->resolutionScope = Helper::resolveURI($this->resolutionScope, $id);
+        $rootResolver = $this->rootResolver ? $this->rootResolver : $this;
+        $prev = $rootResolver->resolutionScope;
+        if (strpos($id, '://') !== false) {
+            $rootResolver->resolutionScope = $id;
+        } else {
+            $rootResolver->resolutionScope = Helper::resolveURI($rootResolver->resolutionScope, $id);
+        }
+
+        return $prev;
+    }
+
+    public function setupResolutionScope($id, $data)
+    {
+        $rootResolver = $this->rootResolver ? $this->rootResolver : $this;
+
+        $prev = $this->updateResolutionScope($id);
+
+        $refParts = explode('#', $this->resolutionScope, 2);
+        if ($refParts[0] && empty($refParts[1])) {
+            if (!isset($rootResolver->remoteRefResolvers[$refParts[0]])) {
+                $resolver = new RefResolver($data);
+                $resolver->rootResolver = $rootResolver;
+                $resolver->url = $refParts[0];
+                $this->remoteRefResolvers[$refParts[0]] = $resolver;
+            }
+        }
+
         return $prev;
     }
 
@@ -63,7 +94,6 @@ class RefResolver
 
     /**
      * @param $referencePath
-     * @param string $resolutionScope
      * @return Ref
      * @throws \Exception
      */
@@ -73,9 +103,8 @@ class RefResolver
             $referencePath = Helper::resolveURI($this->resolutionScope, $referencePath);
         }
 
-        $refParts = explode('#', $referencePath);
-        $url = Helper::resolveURI($this->resolutionScope, $refParts[0]);
-        $url = rtrim($url, '#');
+        $refParts = explode('#', $referencePath, 2);
+        $url = rtrim($refParts[0], '#');
         $refLocalPath = isset($refParts[1]) ? '#' . $refParts[1] : '#';
 
         if ($url === $this->url) {
@@ -90,10 +119,8 @@ class RefResolver
             if ($referencePath[0] === '#') {
                 if ($referencePath === '#') {
                     $ref = new Ref($referencePath, $this->rootData);
-                    $ref->resolver = $this;
                 } else {
                     $ref = new Ref($referencePath);
-                    $ref->resolver = $this;
                     $path = explode('/', trim($referencePath, '#/'));
                     $branch = &$this->rootData;
                     while (!empty($path)) {
@@ -116,10 +143,12 @@ class RefResolver
                 }
             } else {
                 if ($url !== $this->url) {
-                    $refResolver = &$this->remoteRefResolvers[$url];
+                    $rootResolver = $this->rootResolver ? $this->rootResolver : $this;
+                    $refResolver = &$rootResolver->remoteRefResolvers[$url];
                     if (null === $refResolver) {
-                        $rootData = $this->getRefProvider()->getSchemaData($url);
+                        $rootData = $rootResolver->getRefProvider()->getSchemaData($url);
                         $refResolver = new RefResolver($rootData);
+                        $refResolver->rootResolver = $rootResolver;
                         $refResolver->refProvider = $this->refProvider;
                         $refResolver->url = $url;
                     }

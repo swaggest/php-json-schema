@@ -16,9 +16,6 @@ class Ref implements Constraint
     /** @var mixed */
     private $data;
 
-    /** @var RefResolver */
-    public $resolver;
-
     /** @var mixed */
     private $imported;
     /** @var boolean */

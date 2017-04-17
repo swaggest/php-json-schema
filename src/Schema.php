@@ -24,6 +24,8 @@ use Swaggest\JsonSchema\Structure\ObjectItem;
  */
 class Schema extends ObjectItem
 {
+    const SCHEMA_DRAFT_04_URL = 'http://json-schema.org/draft-04/schema';
+
     public $fromRef;
     public $originPath;
 
@@ -126,6 +128,28 @@ class Schema extends ObjectItem
         return $this;
     }
 
+    private function preProcessReferences($data, ProcessingOptions $options = null)
+    {
+        if (is_array($data)) {
+            foreach ($data as $key => $item) {
+                $this->preProcessReferences($item, $options);
+            }
+        } elseif ($data instanceof \stdClass) {
+            /** @var JsonSchema $data */
+            if (isset($data->id) && is_string($data->id)) {
+                $prev = $options->refResolver->setupResolutionScope($data->id, $data);
+                /** @noinspection PhpUnusedLocalVariableInspection */
+                $_ = new ScopeExit(function () use ($prev, $options) {
+                    $options->refResolver->setResolutionScope($prev);
+                });
+            }
+
+            foreach ((array)$data as $key => $value) {
+                $this->preProcessReferences($value, $options);
+            }
+        }
+    }
+
     public function import($data, ProcessingOptions $options = null)
     {
         if ($options === null) {
@@ -138,6 +162,11 @@ class Schema extends ObjectItem
         if ($options->remoteRefProvider) {
             $options->refResolver->setRemoteRefProvider($options->remoteRefProvider);
         }
+
+        if ($options->import) {
+            $this->preProcessReferences($data, $options);
+        }
+
         return $this->process($data, $options, '#');
     }
 
@@ -357,16 +386,6 @@ class Schema extends ObjectItem
                         }
                         $ref->setImported($result);
                         $path .= '->$ref:' . $refString;
-
-                        if ($ref->resolver !== $options->refResolver) {
-                            $prevResolver = $options->refResolver;
-                            $options->refResolver = $ref->resolver;
-                            /** @noinspection PhpUnusedLocalVariableInspection */
-                            $deferResolver = new ScopeExit(function () use ($prevResolver, $options) {
-                                $options->refResolver = $prevResolver;
-                            });
-
-                        }
                     }
                 } catch (InvalidValue $exception) {
                     $this->fail($exception, $path);
@@ -376,8 +395,9 @@ class Schema extends ObjectItem
             // @todo better check for schema id
 
             if ($import && isset($data->id) && is_string($data->id) /*&& (!isset($this->properties['id']))/* && $this->isMetaSchema($data)*/) {
+                $id = $data->id;
                 $refResolver = $options->refResolver;
-                $parentScope = $refResolver->updateResolutionScope($data->id);
+                $parentScope = $refResolver->updateResolutionScope($id);
                 /** @noinspection PhpUnusedLocalVariableInspection */
                 $defer = new ScopeExit(function () use ($parentScope, $refResolver) {
                     $refResolver->setResolutionScope($parentScope);
@@ -557,7 +577,6 @@ class Schema extends ObjectItem
                 }
             }
         }
-
 
         return $result;
     }

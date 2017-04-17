@@ -10,7 +10,7 @@ class ProcessingOptions extends MagicMap
     /** @var DataPreProcessor */
     public $dataPreProcessor;
     /** @var RefResolver */
-    protected $refResolver;
+    public $refResolver;
 
     /** @var RemoteRefProvider */
     public $remoteRefProvider;
