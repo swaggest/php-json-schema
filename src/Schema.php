@@ -180,8 +180,9 @@ class Schema extends ObjectItem
         return $this->process($data, $options);
     }
 
-    public function process($data, ProcessingOptions $options, $path = '#')
+    public function process($data, ProcessingOptions $options, $path = '#', $result = null)
     {
+
         $import = $options->import;
         //$pathTrace = explode('->', $path);
 
@@ -196,7 +197,9 @@ class Schema extends ObjectItem
             $data = $options->dataPreProcessor->process($data, $this, $import);
         }
 
-        $result = $data;
+        if ($result === null) {
+            $result = $data;
+        }
 
         if ($this->type !== null) {
             if (!Type::isValid($this->type, $data)) {
@@ -382,10 +385,17 @@ class Schema extends ObjectItem
                         $data = $ref->getData();
                         if ($result instanceof Schema) {
                             $result->fromRef = $refString;
-
                         }
                         $ref->setImported($result);
-                        $path .= '->$ref:' . $refString;
+                        if ($ref->resolutionScope !== $options->refResolver->resolutionScope) {
+                            $parentRefScope = $options->refResolver->updateResolutionScope($ref->resolutionScope);
+                            /** @noinspection PhpUnusedLocalVariableInspection */
+                            $deferRef = new ScopeExit(function () use ($parentRefScope, $options) {
+                                $options->refResolver->setResolutionScope($parentRefScope);
+                            });
+                        }
+
+                        return $this->process($data, $options, $path . '->ref:' . $refString, $result);
                     }
                 } catch (InvalidValue $exception) {
                     $this->fail($exception, $path);

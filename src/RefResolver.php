@@ -2,13 +2,14 @@
 
 namespace Swaggest\JsonSchema;
 
+use PhpLang\ScopeExit;
 use Swaggest\JsonSchema\Constraint\Ref;
 use Swaggest\JsonSchema\RemoteRef\BasicFetcher;
 
 class RefResolver
 {
-    private $resolutionScope = '';
-    private $url;
+    public $resolutionScope = '';
+    public $url;
     /** @var RefResolver */
     private $rootResolver;
 
@@ -23,6 +24,16 @@ class RefResolver
         $rootResolver->resolutionScope = $resolutionScope;
         return $prev;
     }
+
+    /**
+     * @return string
+     */
+    public function getResolutionScope()
+    {
+        $rootResolver = $this->rootResolver ? $this->rootResolver : $this;
+        return $rootResolver->resolutionScope;
+    }
+
 
     public function updateResolutionScope($id)
     {
@@ -43,7 +54,7 @@ class RefResolver
 
         $prev = $this->updateResolutionScope($id);
 
-        $refParts = explode('#', $this->resolutionScope, 2);
+        $refParts = explode('#', $rootResolver->resolutionScope, 2);
         if ($refParts[0] && empty($refParts[1])) {
             if (!isset($rootResolver->remoteRefResolvers[$refParts[0]])) {
                 $resolver = new RefResolver($data);
@@ -118,12 +129,25 @@ class RefResolver
         if (null === $ref) {
             if ($referencePath[0] === '#') {
                 if ($referencePath === '#') {
-                    $ref = new Ref($referencePath, $this->rootData);
+                    $ref = new Ref($referencePath, $refResolver->rootData);
+                    $ref->resolutionScope = $this->getResolutionScope();
                 } else {
                     $ref = new Ref($referencePath);
                     $path = explode('/', trim($referencePath, '#/'));
-                    $branch = &$this->rootData;
+
+                    $prevResScope = $refResolver->getResolutionScope();
+                    /** @noinspection PhpUnusedLocalVariableInspection */
+                    $defer = new ScopeExit(function () use ($prevResScope, $refResolver) {
+                        $refResolver->setResolutionScope($prevResScope);
+                    });
+
+                    /** @var JsonSchema $branch */
+                    $branch = &$refResolver->rootData;
                     while (!empty($path)) {
+                        if (isset($branch->id)) {
+                            $refResolver->updateResolutionScope($branch->id);
+                        }
+
                         $folder = array_shift($path);
 
                         // unescaping special characters
@@ -140,6 +164,7 @@ class RefResolver
                         }
                     }
                     $ref->setData($branch);
+                    $ref->resolutionScope = $refResolver->getResolutionScope();
                 }
             } else {
                 if ($url !== $this->url) {
@@ -151,17 +176,12 @@ class RefResolver
                         $refResolver->rootResolver = $rootResolver;
                         $refResolver->refProvider = $this->refProvider;
                         $refResolver->url = $url;
+                        $rootResolver->setResolutionScope($url);
                     }
                 }
 
                 $ref = $refResolver->resolveReference($refLocalPath);
             }
-        }
-
-        $refData = $ref->getData();
-        // we need to go deeper
-        if (isset($refData->{'$ref'})) {
-            return $refResolver->resolveReference($refData->{'$ref'});
         }
 
         return $ref;

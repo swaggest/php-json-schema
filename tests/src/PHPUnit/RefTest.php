@@ -11,6 +11,7 @@ use Swaggest\JsonSchema\JsonSchema;
 use Swaggest\JsonSchema\ProcessingOptions;
 use Swaggest\JsonSchema\RefResolver;
 use Swaggest\JsonSchema\RemoteRef\Preloaded;
+use Swaggest\JsonSchema\Tests\PHPUnit\Spec\SpecTest;
 
 class RefTest extends \PHPUnit_Framework_TestCase
 {
@@ -307,15 +308,129 @@ JSON
         );
 
         $options = new ProcessingOptions();
-        $options->remoteRefProvider = (new Preloaded())
-            ->setSchemaData('http://localhost:1234/folder/folderInteger.json', json_decode(file_get_contents(
-                __DIR__ . '/../../../spec/JSON-Schema-Test-Suite/remotes/folder/folderInteger.json'
-            )));
+        $options->remoteRefProvider = SpecTest::getProvider();
         $schema = JsonSchema::importToSchema($testData->schema, $options);
 
         $schema->import($testData->tests[0]->data);
         $this->setExpectedException(get_class(new InvalidValue()));
         $schema->import($testData->tests[1]->data);
+    }
+
+
+    public function testScopeChangeSubschema()
+    {
+        $testData = json_decode(<<<'JSON'
+{
+    "description": "base URI change - change folder in subschema",
+    "schema": {
+        "id": "http://localhost:1234/scope_change_defs2.json",
+        "type" : "object",
+        "properties": {
+            "list": {"$ref": "#/definitions/baz/definitions/bar"}
+        },
+        "definitions": {
+            "baz": {
+                "id": "folder/",
+                "definitions": {
+                    "bar": {
+                        "type": "array",
+                        "items": {"$ref": "folderInteger.json"}
+                    }
+                }
+            }
+        }
+    },
+    "tests": [
+        {
+            "description": "number is valid",
+            "data": {"list": [1]},
+            "valid": true
+        },
+        {
+            "description": "string is invalid",
+            "data": {"list": ["a"]},
+            "valid": false
+        }
+    ]
+}
+JSON
+);
+        $options = new ProcessingOptions();
+        $options->remoteRefProvider = SpecTest::getProvider();
+        $schema = JsonSchema::importToSchema($testData->schema, $options);
+
+        $schema->import($testData->tests[0]->data);
+        $this->setExpectedException(get_class(new InvalidValue()));
+        $schema->import($testData->tests[1]->data);
+
+
+    }
+
+
+    public function testExtRef()
+    {
+        $testData = json_decode(<<<'JSON'
+    {
+        "description": "external ref within remote ref",
+        "schema": {
+            "$ref": "http://localhost:1234/subSchemas.json#/refToExternalInteger"
+        },
+        "tests": [
+            {
+                "description": "external ref within ref valid",
+                "data": 1,
+                "valid": true
+            },
+            {
+                "description": "external ref within ref invalid",
+                "data": "a",
+                "valid": false
+            }
+        ]
+    }
+JSON
+        );
+
+        $schema = JsonSchema::importToSchema($testData->schema, new ProcessingOptions(
+                SpecTest::getProvider())
+        );
+        $schema->import($testData->tests[0]->data);
+        $this->setExpectedException(get_class(new InvalidValue()));
+        $schema->import($testData->tests[1]->data);
+
+    }
+
+
+    public function testRefWithinRef()
+    {
+        $testData = json_decode(<<<'JSON'
+    {
+        "description": "ref within remote ref",
+        "schema": {
+            "$ref": "http://localhost:1234/subSchemas.json#/refToInteger"
+        },
+        "tests": [
+            {
+                "description": "ref within ref valid",
+                "data": 1,
+                "valid": true
+            },
+            {
+                "description": "ref within ref invalid",
+                "data": "a",
+                "valid": false
+            }
+        ]
+    }
+JSON
+);
+        $schema = JsonSchema::importToSchema($testData->schema, new ProcessingOptions(
+                SpecTest::getProvider())
+        );
+        $schema->import($testData->tests[0]->data);
+        $this->setExpectedException(get_class(new InvalidValue()));
+        $schema->import($testData->tests[1]->data);
+
     }
 
 }

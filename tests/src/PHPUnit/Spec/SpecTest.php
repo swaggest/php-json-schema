@@ -5,21 +5,11 @@ namespace Swaggest\JsonSchema\Tests\PHPUnit\Spec;
 use Swaggest\JsonSchema\InvalidValue;
 use Swaggest\JsonSchema\JsonSchema;
 use Swaggest\JsonSchema\ProcessingOptions;
-use Swaggest\JsonSchema\RefResolver;
 use Swaggest\JsonSchema\RemoteRef\Preloaded;
-use Swaggest\JsonSchema\Schema;
-use Swaggest\JsonSchema\SchemaLoader;
 
 class SpecTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @dataProvider provider
-     * @param $schemaData
-     * @param $data
-     * @param $isValid
-     * @throws InvalidValue
-     */
-    public function testSpecDraft4($schemaData, $data, $isValid)
+    public static function getProvider()
     {
         static $refProvider = null;
 
@@ -43,6 +33,20 @@ class SpecTest extends \PHPUnit_Framework_TestCase
                     json_decode(file_get_contents(__DIR__
                         . '/../../../../spec/JSON-Schema-Test-Suite/remotes/folder/folderInteger.json')));
         }
+
+        return $refProvider;
+    }
+
+    /**
+     * @dataProvider provider
+     * @param $schemaData
+     * @param $data
+     * @param $isValid
+     * @throws InvalidValue
+     */
+    public function testSpecDraft4($schemaData, $data, $isValid)
+    {
+        $refProvider = self::getProvider();
 
         $actualValid = true;
         $error = '';
