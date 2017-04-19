@@ -144,7 +144,7 @@ class RefResolver
                     /** @var JsonSchema $branch */
                     $branch = &$refResolver->rootData;
                     while (!empty($path)) {
-                        if (isset($branch->id)) {
+                        if (isset($branch->id) && is_string($branch->id)) {
                             $refResolver->updateResolutionScope($branch->id);
                         }
 
