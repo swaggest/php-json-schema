@@ -347,6 +347,13 @@ class Schema extends ObjectItem
 
 
         if ($data instanceof \stdClass) {
+            if ($this->required !== null) {
+                foreach ($this->required as $item) {
+                    if (!property_exists($data, $item)) {
+                        $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
+                    }
+                }
+            }
 
             if ($import) {
                 if ($this->useObjectAsArray) {
@@ -409,15 +416,6 @@ class Schema extends ObjectItem
                 $defer = new ScopeExit(function () use ($parentScope, $refResolver) {
                     $refResolver->setResolutionScope($parentScope);
                 });
-            }
-
-
-            if ($this->required !== null) {
-                foreach ($this->required as $item) {
-                    if (!property_exists($data, $item)) {
-                        $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
-                    }
-                }
             }
 
             if ($this->properties !== null) {

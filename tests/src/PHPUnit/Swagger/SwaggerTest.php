@@ -20,8 +20,10 @@ class SwaggerTest extends \PHPUnit_Framework_TestCase
         $options = new ProcessingOptions();
         $options->setRemoteRefProvider($refProvider);
 
-
         $schema = JsonSchema::importToSchema($schemaData, $options);
+
+        $swaggerData = json_decode(file_get_contents(__DIR__ . '/../../../../spec/petstore-swagger.json'));
+        $petstore = $schema->import($swaggerData);
     }
 
 }
