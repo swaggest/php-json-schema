@@ -20,6 +20,9 @@ class RefResolver
     public function setResolutionScope($resolutionScope)
     {
         $rootResolver = $this->rootResolver ? $this->rootResolver : $this;
+        if ($resolutionScope === $rootResolver->resolutionScope) {
+            return $resolutionScope;
+        }
         $prev = $rootResolver->resolutionScope;
         $rootResolver->resolutionScope = $resolutionScope;
         return $prev;
@@ -37,12 +40,12 @@ class RefResolver
 
     public function updateResolutionScope($id)
     {
+        $id = rtrim($id, '#');
         $rootResolver = $this->rootResolver ? $this->rootResolver : $this;
-        $prev = $rootResolver->resolutionScope;
         if (strpos($id, '://') !== false) {
-            $rootResolver->resolutionScope = $id;
+            $prev = $rootResolver->setResolutionScope($id);
         } else {
-            $rootResolver->resolutionScope = Helper::resolveURI($rootResolver->resolutionScope, $id);
+            $prev = $rootResolver->setResolutionScope(Helper::resolveURI($rootResolver->resolutionScope, $id));
         }
 
         return $prev;
@@ -130,16 +133,9 @@ class RefResolver
             if ($referencePath[0] === '#') {
                 if ($referencePath === '#') {
                     $ref = new Ref($referencePath, $refResolver->rootData);
-                    $ref->resolutionScope = $this->getResolutionScope();
                 } else {
                     $ref = new Ref($referencePath);
                     $path = explode('/', trim($referencePath, '#/'));
-
-                    $prevResScope = $refResolver->getResolutionScope();
-                    /** @noinspection PhpUnusedLocalVariableInspection */
-                    $defer = new ScopeExit(function () use ($prevResScope, $refResolver) {
-                        $refResolver->setResolutionScope($prevResScope);
-                    });
 
                     /** @var JsonSchema $branch */
                     $branch = &$refResolver->rootData;
@@ -160,11 +156,10 @@ class RefResolver
                         } elseif (is_array($branch) && isset($branch[$folder])) {
                             $branch = &$branch[$folder];
                         } else {
-                            throw new InvalidValue('Could not resolve ' . $referencePath . '@' . $this->resolutionScope . ': ' . $folder);
+                            throw new InvalidValue('Could not resolve ' . $referencePath . '@' . $this->getResolutionScope() . ': ' . $folder);
                         }
                     }
                     $ref->setData($branch);
-                    $ref->resolutionScope = $refResolver->getResolutionScope();
                 }
             } else {
                 if ($url !== $this->url) {

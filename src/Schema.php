@@ -378,6 +378,11 @@ class Schema extends ObjectItem
                         && !isset($this->properties['$ref'])
                     ) {
                         $refString = $data->{'$ref'};
+                        $preRefScope = $options->refResolver->getResolutionScope();
+                        /** @noinspection PhpUnusedLocalVariableInspection */
+                        $deferRefScope = new ScopeExit(function () use ($preRefScope, $options) {
+                            $options->refResolver->setResolutionScope($preRefScope);
+                        });
                         $ref = $options->refResolver->resolveReference($refString);
                         if ($ref->isImported()) {
                             return $ref->getImported();
@@ -387,14 +392,6 @@ class Schema extends ObjectItem
                             $result->fromRef = $refString;
                         }
                         $ref->setImported($result);
-                        if ($ref->resolutionScope !== $options->refResolver->resolutionScope) {
-                            $parentRefScope = $options->refResolver->updateResolutionScope($ref->resolutionScope);
-                            /** @noinspection PhpUnusedLocalVariableInspection */
-                            $deferRef = new ScopeExit(function () use ($parentRefScope, $options) {
-                                $options->refResolver->setResolutionScope($parentRefScope);
-                            });
-                        }
-
                         return $this->process($data, $options, $path . '->ref:' . $refString, $result);
                     }
                 } catch (InvalidValue $exception) {

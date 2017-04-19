@@ -4,8 +4,6 @@ namespace Swaggest\JsonSchema\Constraint;
 
 class Ref implements Constraint
 {
-    public $resolutionScope;
-
     public $ref;
     public function __construct($ref, $data = null)
     {
