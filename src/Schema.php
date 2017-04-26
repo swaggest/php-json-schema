@@ -298,7 +298,7 @@ class Schema extends ObjectItem
             }
             if ($this->pattern !== null) {
                 if (0 === preg_match(Helper::toPregPattern($this->pattern), $data)) {
-                    $this->fail(new StringException('Does not match to '
+                    $this->fail(new StringException(json_encode($data) . ' does not match to '
                         . $this->pattern, StringException::PATTERN_MISMATCH), $path);
                 }
             }
