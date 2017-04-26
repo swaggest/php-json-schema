@@ -21,6 +21,10 @@ class SwaggerTest extends \PHPUnit_Framework_TestCase
         $options->setRemoteRefProvider($refProvider);
 
         $schema = JsonSchema::importToSchema($schemaData, $options);
+        $ts = $schema->definitions['header']->properties['maximum'];
+        $max = $schema->definitions['maximum'];
+        $this->assertSame('number', $ts->type);
+
 
         $swaggerData = json_decode(file_get_contents(__DIR__ . '/../../../../spec/petstore-swagger.json'));
         $petstore = $schema->import($swaggerData);

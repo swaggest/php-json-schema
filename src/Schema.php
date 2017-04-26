@@ -31,14 +31,14 @@ class Schema extends ObjectItem
 
     /*
     public $__seqId;
+    public static $seq = 0;
 
     public function __construct()
     {
-        static $seq = 0;
-        $seq++;
-        $this->__seqId = $seq;
+        self::$seq++;
+        $this->__seqId = self::$seq;
     }
-    */
+    //*/
 
     /** @var Type */
     public $type;
@@ -392,14 +392,17 @@ class Schema extends ObjectItem
                         });
                         $ref = $options->refResolver->resolveReference($refString);
                         if ($ref->isImported()) {
-                            return $ref->getImported();
+                            $refResult = $ref->getImported();
+                            return $refResult;
                         }
                         $data = $ref->getData();
                         if ($result instanceof Schema) {
                             $result->fromRef = $refString;
                         }
                         $ref->setImported($result);
-                        return $this->process($data, $options, $path . '->ref:' . $refString, $result);
+                        $refResult = $this->process($data, $options, $path . '->ref:' . $refString, $result);
+                        $ref->setImported($refResult);
+                        return $refResult;
                     }
                 } catch (InvalidValue $exception) {
                     $this->fail($exception, $path);
@@ -507,7 +510,7 @@ class Schema extends ObjectItem
                         $this->fail(new ObjectException('Additional properties not allowed'), $path . ':' . $key);
                     }
 
-                    $value = $this->additionalProperties->process($value, $options, $path . '->additionalProperties');
+                    $value = $this->additionalProperties->process($value, $options, $path . '->additionalProperties:' . $key);
                     if ($import && !$this->useObjectAsArray) {
                         $result->addAdditionalPropertyName($key);
                     }
