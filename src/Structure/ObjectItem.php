@@ -9,6 +9,8 @@ class ObjectItem extends MagicMap
 {
     /** @var ObjectItem[] */
     protected $__nestedObjects;
+    protected $__documentPath;
+    protected $__fromRef;
 
     public function setNestedProperty($propertyName, $value, Egg $nestedEgg)
     {
@@ -74,5 +76,19 @@ class ObjectItem extends MagicMap
         }
     }
 
+    /**
+     * @return string
+     */
+    public function getDocumentPath()
+    {
+        return $this->__documentPath;
+    }
 
+    /**
+     * @return string
+     */
+    public function getFromRef()
+    {
+        return $this->__fromRef;
+    }
 }

@@ -40,6 +40,10 @@ class Util
             if (isset($schemaData->name)) {
                 unset($schemaData->name);
             }
+            if (isset($schemaData->collectionFormat)) {
+                unset($schemaData->collectionFormat);
+            }
+
 
             return Schema::import($schemaData);
         }

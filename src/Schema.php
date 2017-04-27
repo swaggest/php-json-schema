@@ -26,9 +26,6 @@ class Schema extends ObjectItem
 {
     const SCHEMA_DRAFT_04_URL = 'http://json-schema.org/draft-04/schema';
 
-    public $fromRef;
-    public $originPath;
-
     /*
     public $__seqId;
     public static $seq = 0;
@@ -371,8 +368,8 @@ class Schema extends ObjectItem
                         }
                     }
 
-                    if ($result instanceof Schema) {
-                        $result->originPath = $path;
+                    if ($result instanceof ObjectItem) {
+                        $result->__documentPath = $path;
                     }
                 }
             }
@@ -396,8 +393,8 @@ class Schema extends ObjectItem
                             return $refResult;
                         }
                         $data = $ref->getData();
-                        if ($result instanceof Schema) {
-                            $result->fromRef = $refString;
+                        if ($result instanceof ObjectItem) {
+                            $result->__fromRef = $refString;
                         }
                         $ref->setImported($result);
                         $refResult = $this->process($data, $options, $path . '->ref:' . $refString, $result);
