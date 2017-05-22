@@ -5,10 +5,11 @@ namespace Swaggest\JsonSchema\Tests\PHPUnit\Example;
 
 use Swaggest\JsonSchema\Exception\NumericException;
 use Swaggest\JsonSchema\Exception\ObjectException;
+use Swaggest\JsonSchema\JsonSchema;
 use Swaggest\JsonSchema\Meta\FieldName;
 use Swaggest\JsonSchema\PreProcessor\NameMapper;
+use Swaggest\JsonSchema\ProcessingOptions;
 use Swaggest\JsonSchema\Schema;
-use Swaggest\JsonSchema\SchemaLoader;
 use Swaggest\JsonSchema\Structure\Composition;
 use Swaggest\JsonSchema\Tests\Helper\User;
 use Swaggest\JsonSchema\Tests\Helper\Order;
@@ -20,7 +21,7 @@ class ExampleTest extends \PHPUnit_Framework_TestCase
     public function testJsonSchema()
     {
         $this->setExpectedException(get_class(new ObjectException()),
-            'Required property missing: id at #->properties:orders->items[1]->#/definitions/order'
+            'Required property missing: id at #->properties:orders->items[1]'
         );
 
         $schemaJson = <<<'JSON'
@@ -62,7 +63,7 @@ class ExampleTest extends \PHPUnit_Framework_TestCase
 }
 JSON;
 
-        $schema = SchemaLoader::create()->readSchema(json_decode($schemaJson));
+        $schema = JsonSchema::importToSchema(json_decode($schemaJson));
         $schema->import(json_decode(<<<'JSON'
 {
     "id": 1,
@@ -114,11 +115,13 @@ JSON
     public function testNameMapper()
     {
         $mapper = new NameMapper();
+        $options = new ProcessingOptions();
+        $options->dataPreProcessor = $mapper;
 
         $order = new Order();
         $order->id = 1;
         $order->dateTime = '2015-10-28T07:28:00Z';
-        $exported = Order::export($order, $mapper);
+        $exported = Order::export($order, $options);
         $json = <<<JSON
 {
     "id": 1,
@@ -127,7 +130,7 @@ JSON
 JSON;
         $this->assertSame($json, json_encode($exported, JSON_PRETTY_PRINT));
 
-        $imported = Order::import(json_decode($json), $mapper);
+        $imported = Order::import(json_decode($json), $options);
         $this->assertSame('2015-10-28T07:28:00Z', $imported->dateTime);
     }
 

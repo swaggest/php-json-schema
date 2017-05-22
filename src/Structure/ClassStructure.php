@@ -3,9 +3,9 @@
 namespace Swaggest\JsonSchema\Structure;
 
 use Swaggest\JsonSchema\Constraint\Properties;
-use Swaggest\JsonSchema\Constraint\Type;
-use Swaggest\JsonSchema\DataPreProcessor;
 use Swaggest\JsonSchema\NameMirror;
+use Swaggest\JsonSchema\ProcessingOptions;
+use Swaggest\JsonSchema\Schema;
 
 abstract class ClassStructure extends ObjectItem implements ClassStructureContract
 {
@@ -20,10 +20,29 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
 
         if (null === $schema) {
             $schema = new ClassSchema();
-            $schema->type = new Type(Type::OBJECT);
             $properties = new Properties();
             $schema->properties = $properties;
             $schema->objectItemClass = get_called_class();
+            static::setUpProperties($properties, $schema);
+        }
+
+        return $schema;
+    }
+
+    /**
+     * @return Schema
+     */
+    public static function metaSchema()
+    {
+        static $schemas = array();
+        $className = get_called_class();
+        $schema = &$schemas[$className];
+
+        if (null === $schema) {
+            $schema = new Schema();
+            $properties = new Properties();
+            $schema->properties = $properties;
+            $schema->objectItemClass = get_class($schema);
             static::setUpProperties($properties, $schema);
         }
 
@@ -40,24 +59,22 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
 
     /**
      * @param $data
-     * @param DataPreProcessor $preProcessor
+     * @param ProcessingOptions $options
      * @return static
-     * @throws \Swaggest\JsonSchema\InvalidValue
      */
-    public static function import($data, DataPreProcessor $preProcessor = null)
+    public static function import($data, ProcessingOptions $options = null)
     {
-        return static::schema()->import($data, $preProcessor);
+        return static::schema()->import($data, $options);
     }
 
     /**
      * @param $data
-     * @param DataPreProcessor $preProcessor
+     * @param ProcessingOptions $options
      * @return mixed
-     * @throws \Swaggest\JsonSchema\InvalidValue
      */
-    public static function export($data, DataPreProcessor $preProcessor = null)
+    public static function export($data, ProcessingOptions $options = null)
     {
-        return static::schema()->export($data, $preProcessor);
+        return static::schema()->export($data, $options);
     }
 
     /**
@@ -127,5 +144,9 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
         }
         $this->__arrayOfData[$name] = $column;
         return $this;
+    }
+
+    public static function className() {
+        return get_called_class();
     }
 }

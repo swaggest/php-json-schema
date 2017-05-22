@@ -8,6 +8,11 @@ use Swaggest\JsonSchema\Constraint\Ref;
 use Swaggest\JsonSchema\Constraint\Type;
 use Swaggest\JsonSchema\RemoteRef\BasicFetcher;
 
+/**
+ * Class SchemaLoader
+ * @package Swaggest\JsonSchema
+ * @deprecated
+ */
 class SchemaLoader
 {
     const ID = 'id';
@@ -80,6 +85,61 @@ class SchemaLoader
         return $this->readSchemaDeeper($schemaData);
     }
 
+    /** @var \SplObjectStorage */
+    private $circularReferences;
+    public function dumpSchema(Schema $schema)
+    {
+        $this->circularReferences = new \SplObjectStorage();
+        $this->dumpDefinitions = array();
+        $this->dumpDefIndex = 0;
+        $contents = $this->dumpSchemaDeeper($schema, '#');
+        return $contents;
+    }
+
+    private function dumpSchemaDeeper(Schema $schema, $path)
+    {
+        $result = new \stdClass();
+
+        if ($this->circularReferences->contains($schema)) {
+            $path = $this->circularReferences[$schema];
+            $result->{self::REF} = $path;
+            return $result;
+        }
+        $this->circularReferences->attach($schema, $path);
+
+        $data = get_object_vars($schema);
+        foreach ($data as $key => $value) {
+            if ($value === null) {
+                continue;
+            }
+
+            if ($value instanceof Schema) {
+                $value = $this->dumpSchemaDeeper($value, $path . '/' . $key);
+            }
+
+            if (is_array($value)) {
+                foreach ($value as $k => $v) {
+                    if ($v instanceof Schema) {
+                        $value[$k] = $this->dumpSchemaDeeper($v, $path . '/' . $key . '/' . $k);
+                    }
+                }
+            }
+
+            if ($key === self::PROPERTIES) {
+                /** @var Properties $properties */
+                $properties = $value;
+                $value = array();
+                foreach ($properties->toArray() as $propertyName => $property) {
+                    $value[$propertyName] = $this->dumpSchemaDeeper($property, $path . '/' . $key . '/' . $propertyName);
+                }
+            }
+
+
+            $result->$key = $value;
+        }
+        return $result;
+    }
+
     private $resolutionScope;
 
     protected function readSchemaDeeper($schemaArray)
@@ -104,7 +164,7 @@ class SchemaLoader
         }
 
         if (isset($schemaArray[self::TYPE])) {
-            $schema->type = new Type($schemaArray[self::TYPE]);
+            $schema->type = $schemaArray[self::TYPE];
         }
 
 
@@ -119,7 +179,7 @@ class SchemaLoader
 
         if (isset($schemaArray[self::PATTERN_PROPERTIES])) {
             foreach ($schemaArray[self::PATTERN_PROPERTIES] as $name => $data) {
-                $schema->patternProperties[Helper::toPregPattern($name)] = $this->readSchemaDeeper($data);
+                $schema->patternProperties[$name] = $this->readSchemaDeeper($data);
             }
         }
 
@@ -212,7 +272,8 @@ class SchemaLoader
 
         // String
         if (isset($schemaArray[self::PATTERN])) {
-            $schema->pattern = Helper::toPregPattern($schemaArray[self::PATTERN]);
+            $schema->pattern = $schemaArray[self::PATTERN];
+
         }
         if (isset($schemaArray[self::MIN_LENGTH])) {
             $schema->minLength = $schemaArray[self::MIN_LENGTH];
@@ -269,6 +330,7 @@ class SchemaLoader
                 if ($referencePath === '#') {
                     $ref = new Ref($referencePath, $this->rootSchema);
                 } else {
+                    $ref = new Ref($referencePath);
                     $path = explode('/', trim($referencePath, '#/'));
                     $branch = &$this->rootData;
                     while (!empty($path)) {
@@ -287,7 +349,7 @@ class SchemaLoader
                             throw new \Exception('Could not resolve ' . $referencePath . ': ' . $folder);
                         }
                     }
-                    $ref = new Ref($referencePath, $this->readSchema($branch));
+                    $ref->setData($this->readSchema($branch));
                 }
             } else {
                 $refParts = explode('#', $referencePath);

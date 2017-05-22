@@ -2,35 +2,28 @@
 
 namespace Swaggest\JsonSchema\Constraint;
 
-
-use Swaggest\JsonSchema\Schema;
-
 class Type implements Constraint
 {
     const OBJECT = 'object';
     const STRING = 'string';
     const INTEGER = 'integer';
     const NUMBER = 'number';
-    const _ARRAY = 'array';
+    const ARR = 'array';
     const BOOLEAN = 'boolean';
     const NULL = 'null';
 
-    public $types;
-
-    public function __construct($type)
+    public static function isValid($types, $data)
     {
-        $this->types = is_array($type) ? $type : array($type);
-    }
-
-    public function isValid($data)
-    {
+        if (!is_array($types)) {
+            $types = array($types);
+        }
         $ok = false;
-        foreach ($this->types as $type) {
+        foreach ($types as $type) {
             switch ($type) {
                 case self::OBJECT:
                     $ok = $data instanceof \stdClass;
                     break;
-                case self::_ARRAY:
+                case self::ARR:
                     $ok = is_array($data);
                     break;
                 case self::STRING:

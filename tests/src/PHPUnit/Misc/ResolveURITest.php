@@ -19,4 +19,17 @@ class ResolveURITest extends \PHPUnit_Framework_TestCase
         $this->assertSame("some://where.else/completely#", Helper::resolveURI($root, "some://where.else/completely#"));
     }
 
+    public function testResolveInner()
+    {
+        $root = 'http://x.y.z/rootschema.json';
+        $resolved = Helper::resolveURI($root, '#/def/deep');
+        $this->assertSame('http://x.y.z/rootschema.json#/def/deep', $resolved);
+    }
+
+    public function testResolveInnerDoc()
+    {
+        $root = 'http://x.y.z/rootschema.json#';
+        $resolved = Helper::resolveURI($root, '#/def/deep');
+        $this->assertSame('http://x.y.z/rootschema.json#/def/deep', $resolved);
+    }
 }

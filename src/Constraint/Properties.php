@@ -3,18 +3,33 @@
 namespace Swaggest\JsonSchema\Constraint;
 
 use Swaggest\JsonSchema\Exception;
-use Swaggest\JsonSchema\MagicMap;
 use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\Structure\Egg;
 use Swaggest\JsonSchema\Structure\Nested;
+use Swaggest\JsonSchema\Structure\ObjectItem;
 
 /**
  * @method Schema __get($key)
+ * @method Schema[] toArray()
  */
-class Properties extends MagicMap implements Constraint
+class Properties extends ObjectItem implements Constraint
 {
     /** @var Schema[] */
     protected $__arrayOfData = array();
+
+    /** @var Schema */
+    protected $__schema;
+
+    public function setSchema(Schema $schema)
+    {
+        $this->__schema = $schema;
+        return $this;
+    }
+
+    public function getSchema()
+    {
+        return $this->__schema;
+    }
 
     public function __set($name, $column)
     {

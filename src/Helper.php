@@ -28,31 +28,40 @@ class Helper
         return $pattern;
     }
 
+    /**
+     * @param $parent
+     * @param $current
+     * @return string
+     * @todo getaway from zeroes
+     */
     public static function resolveURI($parent, $current)
     {
-        if (false !== $pos = strpos($current, '://')) {
-            if (strpos($current, '/') > $pos) {
-                return $current;
-            }
-        }
-
         if ($current === '') {
             return $parent;
         }
 
-        $result = $parent;
-        if ($current[0] === '#') {
-            if (false !== $pos = strpos($parent, '#')) {
-                $result = substr($parent, 0, $pos) . $current;
-            }
-        } else {
-            if (false !== $pos = strrpos($parent, '/')) {
-                $result = substr($parent, 0, $pos + 1) . $current;
+        $parentParts = explode('#', $parent, 2);
+        $currentParts = explode('#', $current, 2);
+
+        $resultParts = array($parentParts[0], '');
+        if (isset($currentParts[1])) {
+            $resultParts[1] = $currentParts[1];
+        }
+
+        if (isset($currentParts[0]) && $currentParts[0]) {
+            if (strpos($currentParts[0], '://')) {
+                $resultParts[0] = $currentParts[0];
+            } elseif ('/' === substr($currentParts[0], 0, 1)) {
+                $resultParts[0] = $currentParts[0];
+                if ($pos = strpos($parentParts[0], '://')) {
+                    $resultParts[0] = substr($parentParts[0], 0, strpos($parentParts[0], '/', $pos)) . $resultParts[0];
+                }
+            } elseif (false !== $pos = strrpos($parentParts[0], '/')) {
+                $resultParts[0] = substr($parentParts[0], 0, $pos + 1) . $currentParts[0];
             }
         }
-        if (false === strpos($result, '#')) {
-            $result .= '#';
-        }
+
+        $result = $resultParts[0] . '#' . $resultParts[1];
         return $result;
     }
 

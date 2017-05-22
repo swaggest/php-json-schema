@@ -41,7 +41,7 @@ class ParentTest extends \PHPUnit_Framework_TestCase
             ->properties->__get('level2')
             ->properties->__get('level3');
 
-        $this->assertSame($level3Schema->type->types, array('integer'));
+        $this->assertSame($level3Schema->type, 'integer');
     }
 
     public function testParent()

@@ -3,19 +3,13 @@
 namespace Swaggest\JsonSchema\Tests\PHPUnit\Spec;
 
 use Swaggest\JsonSchema\InvalidValue;
+use Swaggest\JsonSchema\JsonSchema;
+use Swaggest\JsonSchema\ProcessingOptions;
 use Swaggest\JsonSchema\RemoteRef\Preloaded;
-use Swaggest\JsonSchema\SchemaLoader;
 
 class SpecTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @dataProvider provider
-     * @param $schemaData
-     * @param $data
-     * @param $isValid
-     * @throws InvalidValue
-     */
-    public function testSpecDraft4($schemaData, $data, $isValid)
+    public static function getProvider()
     {
         static $refProvider = null;
 
@@ -31,17 +25,39 @@ class SpecTest extends \PHPUnit_Framework_TestCase
                     json_decode(file_get_contents(__DIR__
                         . '/../../../../spec/JSON-Schema-Test-Suite/remotes/subSchemas.json')))
                 ->setSchemaData(
+                    'http://localhost:1234/name.json',
+                    json_decode(file_get_contents(__DIR__
+                        . '/../../../../spec/JSON-Schema-Test-Suite/remotes/name.json')))
+                ->setSchemaData(
                     'http://localhost:1234/folder/folderInteger.json',
                     json_decode(file_get_contents(__DIR__
                         . '/../../../../spec/JSON-Schema-Test-Suite/remotes/folder/folderInteger.json')));
         }
 
+        return $refProvider;
+    }
+
+    /**
+     * @dataProvider provider
+     * @param $schemaData
+     * @param $data
+     * @param $isValid
+     * @throws InvalidValue
+     */
+    public function testSpecDraft4($schemaData, $data, $isValid)
+    {
+        $refProvider = self::getProvider();
+
         $actualValid = true;
         $error = '';
         try {
-            $schema = SchemaLoader::create()->setRemoteRefProvider($refProvider)->readSchema($schemaData);
+            $options = new ProcessingOptions();
+            $options->setRemoteRefProvider($refProvider);
+            $schema = JsonSchema::importToSchema($schemaData, $options);
             $res = $schema->import($data);
-            $this->assertEquals($data, $schema->export($res));
+
+            $exported = $schema->export($res);
+            $this->assertEquals($data, $exported);
         } catch (InvalidValue $exception) {
             $actualValid = false;
             $error = $exception->getMessage();
@@ -68,15 +84,21 @@ class SpecTest extends \PHPUnit_Framework_TestCase
                     if ('.json' !== substr($entry, -5)) {
                         continue;
                     }
-                    //die('!1');
+
+                    //if ($entry !== 'refRemote.json') {
+                        //continue;
+                    //}
 
                     //echo "$entry\n";
                     /** @var _SpecTest[] $tests */
                     $tests = json_decode(file_get_contents($path . '/' . $entry));
-                    ///print_r($tests);
                     foreach ($tests as $test) {
-                        //$schema = SchemaLoader::create()->readSchema($test->schema);
                         foreach ($test->tests as $case) {
+                            /*if ($case->description !== 'changed scope ref invalid') {
+                                continue;
+                            }
+                            */
+
                             $testCases[$entry . ' ' . $test->description . ': ' . $case->description] = array(
                                 'schema' => $test->schema,
                                 'data' => $case->data,

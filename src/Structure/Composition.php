@@ -16,7 +16,7 @@ class Composition extends Schema
      */
     public function __construct()
     {
-        $this->type = new Type(Type::OBJECT);
+        $this->type = Type::OBJECT;
         $properties = new Properties();
         $this->properties = $properties;
 
