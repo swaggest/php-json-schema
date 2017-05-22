@@ -7,7 +7,7 @@
 namespace Swaggest\JsonSchema\SwaggerSchema;
 
 use Swaggest\JsonSchema\Constraint\Properties;
-use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\Schema as JsonBasicSchema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
@@ -79,26 +79,26 @@ class QueryParameterSubSchema extends ClassStructure {
 
 	/**
 	 * @param Properties|static $properties
-	 * @param Schema $ownerSchema
+	 * @param JsonBasicSchema $ownerSchema
 	 */
-	public static function setUpProperties($properties, Schema $ownerSchema)
+	public static function setUpProperties($properties, JsonBasicSchema $ownerSchema)
 	{
-		$properties->required = Schema::boolean();
+		$properties->required = JsonBasicSchema::boolean();
 		$properties->required->description = 'Determines whether or not this parameter is required or optional.';
 		$properties->required->default = false;
-		$properties->in = Schema::string();
+		$properties->in = JsonBasicSchema::string();
 		$properties->in->description = 'Determines the location of the parameter.';
 		$properties->in->enum = array (
 		  0 => 'query',
 		);
-		$properties->description = Schema::string();
+		$properties->description = JsonBasicSchema::string();
 		$properties->description->description = 'A brief description of the parameter. This could contain examples of use.  GitHub Flavored Markdown is allowed.';
-		$properties->name = Schema::string();
+		$properties->name = JsonBasicSchema::string();
 		$properties->name->description = 'The name of the parameter.';
-		$properties->allowEmptyValue = Schema::boolean();
+		$properties->allowEmptyValue = JsonBasicSchema::boolean();
 		$properties->allowEmptyValue->description = 'allows sending a parameter by name only or with an empty value.';
 		$properties->allowEmptyValue->default = false;
-		$properties->type = Schema::string();
+		$properties->type = JsonBasicSchema::string();
 		$properties->type->enum = array (
 		  0 => 'string',
 		  1 => 'number',
@@ -106,9 +106,9 @@ class QueryParameterSubSchema extends ClassStructure {
 		  3 => 'integer',
 		  4 => 'array',
 		);
-		$properties->format = Schema::string();
+		$properties->format = JsonBasicSchema::string();
 		$properties->items = PrimitivesItems::schema();
-		$properties->collectionFormat = Schema::string();
+		$properties->collectionFormat = JsonBasicSchema::string();
 		$properties->collectionFormat->default = 'csv';
 		$properties->collectionFormat->enum = array (
 		  0 => 'csv',
@@ -117,40 +117,40 @@ class QueryParameterSubSchema extends ClassStructure {
 		  3 => 'pipes',
 		  4 => 'multi',
 		);
-		$properties->default = new Schema();
-		$properties->maximum = Schema::number();
-		$properties->exclusiveMaximum = Schema::boolean();
+		$properties->default = new JsonBasicSchema();
+		$properties->maximum = JsonBasicSchema::number();
+		$properties->exclusiveMaximum = JsonBasicSchema::boolean();
 		$properties->exclusiveMaximum->default = false;
-		$properties->minimum = Schema::number();
-		$properties->exclusiveMinimum = Schema::boolean();
+		$properties->minimum = JsonBasicSchema::number();
+		$properties->exclusiveMinimum = JsonBasicSchema::boolean();
 		$properties->exclusiveMinimum->default = false;
-		$properties->maxLength = Schema::integer();
+		$properties->maxLength = JsonBasicSchema::integer();
 		$properties->maxLength->minimum = 0;
-		$properties->minLength = new Schema();
-		$properties->minLength->allOf[0] = Schema::integer();
+		$properties->minLength = new JsonBasicSchema();
+		$properties->minLength->allOf[0] = JsonBasicSchema::integer();
 		$properties->minLength->allOf[0]->minimum = 0;
-		$properties->minLength->allOf[1] = new Schema();
+		$properties->minLength->allOf[1] = new JsonBasicSchema();
 		$properties->minLength->allOf[1]->default = 0;
-		$properties->pattern = Schema::string();
+		$properties->pattern = JsonBasicSchema::string();
 		$properties->pattern->format = 'regex';
-		$properties->maxItems = Schema::integer();
+		$properties->maxItems = JsonBasicSchema::integer();
 		$properties->maxItems->minimum = 0;
-		$properties->minItems = new Schema();
-		$properties->minItems->allOf[0] = Schema::integer();
+		$properties->minItems = new JsonBasicSchema();
+		$properties->minItems->allOf[0] = JsonBasicSchema::integer();
 		$properties->minItems->allOf[0]->minimum = 0;
-		$properties->minItems->allOf[1] = new Schema();
+		$properties->minItems->allOf[1] = new JsonBasicSchema();
 		$properties->minItems->allOf[1]->default = 0;
-		$properties->uniqueItems = Schema::boolean();
+		$properties->uniqueItems = JsonBasicSchema::boolean();
 		$properties->uniqueItems->default = false;
-		$properties->enum = Schema::arr();
+		$properties->enum = JsonBasicSchema::arr();
 		$properties->enum->minItems = 1;
 		$properties->enum->uniqueItems = true;
-		$properties->multipleOf = Schema::number();
+		$properties->multipleOf = JsonBasicSchema::number();
 		$properties->multipleOf->minimum = 0;
 		$properties->multipleOf->exclusiveMinimum = true;
-		$ownerSchema = new Schema();
+		$ownerSchema = new JsonBasicSchema();
 		$ownerSchema->additionalProperties = false;
-		$ownerSchema->patternProperties['^x-'] = new Schema();
+		$ownerSchema->patternProperties['^x-'] = new JsonBasicSchema();
 		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 	}
 }

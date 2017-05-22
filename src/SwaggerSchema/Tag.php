@@ -7,7 +7,7 @@
 namespace Swaggest\JsonSchema\SwaggerSchema;
 
 use Swaggest\JsonSchema\Constraint\Properties;
-use Swaggest\JsonSchema\Schema as BasicSchema;
+use Swaggest\JsonSchema\Schema as JsonBasicSchema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
@@ -23,16 +23,16 @@ class Tag extends ClassStructure {
 
 	/**
 	 * @param Properties|static $properties
-	 * @param BasicSchema $ownerSchema
+	 * @param JsonBasicSchema $ownerSchema
 	 */
-	public static function setUpProperties($properties, BasicSchema $ownerSchema)
+	public static function setUpProperties($properties, JsonBasicSchema $ownerSchema)
 	{
-		$properties->name = BasicSchema::string();
-		$properties->description = BasicSchema::string();
+		$properties->name = JsonBasicSchema::string();
+		$properties->description = JsonBasicSchema::string();
 		$properties->externalDocs = ExternalDocs::schema();
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
-		$ownerSchema->patternProperties['^x-'] = new BasicSchema();
+		$ownerSchema->patternProperties['^x-'] = new JsonBasicSchema();
 		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->required = array (
 		  0 => 'name',
