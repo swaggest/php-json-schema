@@ -11,8 +11,8 @@ use Swaggest\JsonSchema\PreProcessor\NameMapper;
 use Swaggest\JsonSchema\ProcessingOptions;
 use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\Structure\Composition;
-use Swaggest\JsonSchema\Tests\Helper\User;
 use Swaggest\JsonSchema\Tests\Helper\Order;
+use Swaggest\JsonSchema\Tests\Helper\User;
 use Swaggest\JsonSchema\Tests\Helper\UserInfo;
 
 class ExampleTest extends \PHPUnit_Framework_TestCase

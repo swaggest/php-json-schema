@@ -4,7 +4,6 @@ namespace Swaggest\JsonSchema\Tests\PHPUnit\ClassStructure;
 
 
 use Swaggest\JsonSchema\Exception\TypeException;
-use Swaggest\JsonSchema\InvalidValue;
 use Swaggest\JsonSchema\Tests\Helper\LevelThreeClass;
 use Swaggest\JsonSchema\Tests\Helper\SampleStructure;
 use Swaggest\JsonSchema\Tests\Helper\StructureWithItems;

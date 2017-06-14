@@ -3,7 +3,6 @@
 namespace Swaggest\JsonSchema\Tests\PHPUnit\Schema;
 
 use Swaggest\JsonSchema\Constraint\Properties;
-use Swaggest\JsonSchema\Constraint\Type;
 use Swaggest\JsonSchema\Schema;
 
 class ParentSymbolicTest extends ParentTest

@@ -3,7 +3,6 @@
 namespace Swaggest\JsonSchema\Tests\PHPUnit\Swagger;
 
 
-use Swaggest\JsonSchema\JsonSchema;
 use Swaggest\JsonSchema\ProcessingOptions;
 use Swaggest\JsonSchema\RemoteRef\Preloaded;
 use Swaggest\JsonSchema\SwaggerSchema\SwaggerSchema;

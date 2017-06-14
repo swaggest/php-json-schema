@@ -2,9 +2,6 @@
 
 namespace Swaggest\JsonSchema\Tests\PHPUnit\Schema;
 
-use Swaggest\JsonSchema\Constraint\Ref;
-use Swaggest\JsonSchema\Constraint\Type;
-use Swaggest\JsonSchema\Constraint\Properties;
 use Swaggest\JsonSchema\Schema;
 
 class CreateTest extends \PHPUnit_Framework_TestCase

@@ -2,7 +2,6 @@
 
 namespace Swaggest\JsonSchema;
 
-use PhpLang\ScopeExit;
 use Swaggest\JsonSchema\Constraint\Ref;
 use Swaggest\JsonSchema\RemoteRef\BasicFetcher;
 

@@ -3,8 +3,8 @@
 namespace Swaggest\JsonSchema\Tests\PHPUnit;
 
 
-use Swaggest\JsonSchema\SchemaLoader;
 use Swaggest\JsonSchema\OldSchema;
+use Swaggest\JsonSchema\SchemaLoader;
 
 class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
 {
