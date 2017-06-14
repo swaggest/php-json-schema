@@ -9,10 +9,10 @@ class PropertiesTest extends \PHPUnit_Framework_TestCase
 {
     public function testValid()
     {
-        $schema = SchemaLoader::create()->readSchema(array(
-            'properties' => array(
-                'one' => array('type' => 'string'),
-                'two' => array(),
+        $schema = \Swaggest\JsonSchema\JsonSchema::importToSchema((object)array(
+            'properties' => (object)array(
+                'one' => (object)array('type' => 'string'),
+                'two' => (object)array(),
             )
         ));
 

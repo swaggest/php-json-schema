@@ -6,7 +6,7 @@ class ProcessingOptions extends MagicMap
 {
 
 
-    protected $import = true;
+    public $import = true;
     /** @var DataPreProcessor */
     public $dataPreProcessor;
     /** @var RefResolver */
@@ -17,6 +17,9 @@ class ProcessingOptions extends MagicMap
 
     /** @var string */
     public $propagateObjectItemClass;
+
+    /** @var \SplObjectStorage */
+    public $circularReferences;
 
     /**
      * ProcessingOptions constructor.

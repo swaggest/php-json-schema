@@ -26,6 +26,9 @@ class Schema extends ObjectItem
 {
     const SCHEMA_DRAFT_04_URL = 'http://json-schema.org/draft-04/schema';
 
+    const REF = '$ref';
+
+
     /*
     public $__seqId;
     public static $seq = 0;
@@ -167,12 +170,14 @@ class Schema extends ObjectItem
         return $this->process($data, $options, '#');
     }
 
+
     public function export($data, ProcessingOptions $options = null)
     {
         if ($options === null) {
             $options = new ProcessingOptions();
         }
 
+        $options->circularReferences = new \SplObjectStorage();
         $options->import = false;
         return $this->process($data, $options);
     }
@@ -184,6 +189,16 @@ class Schema extends ObjectItem
         //$pathTrace = explode('->', $path);
 
         if (!$import && $data instanceof ObjectItem) {
+            $result = new \stdClass();
+            if ($options->circularReferences->contains($data)) {
+                /** @noinspection PhpIllegalArrayKeyTypeInspection */
+                $path = $options->circularReferences[$data];
+                $result->{self::REF} = $path;
+                return $result;
+            }
+            $options->circularReferences->attach($data, $path);
+
+
             $data = $data->jsonSerialize();
         }
         if (!$import && is_array($data) && $this->useObjectAsArray) {

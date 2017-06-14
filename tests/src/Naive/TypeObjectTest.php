@@ -11,8 +11,8 @@ class TypeObjectTest extends \PHPUnit_Framework_TestCase
     public function testValid()
     {
 //        $this->markTestSkipped('additionalProperties or generic object required, not implemented');
-        $schema = SchemaLoader::create()->readSchema(
-            array(
+        $schema = \Swaggest\JsonSchema\JsonSchema::importToSchema(
+            (object)array(
                 'type' => 'object',
             )
         );
@@ -30,7 +30,7 @@ class TypeObjectTest extends \PHPUnit_Framework_TestCase
 //        $this->markTestSkipped('additionalProperties or generic object required, not implemented');
 
         $this->setExpectedException(get_class(new TypeException()), 'Object expected, 123 received');
-        $schema = SchemaLoader::create()->readSchema(array('type' => 'object'));
+        $schema = \Swaggest\JsonSchema\JsonSchema::importToSchema((object)array('type' => 'object'));
         $this->assertSame(123, $schema->import(123));
     }
 }

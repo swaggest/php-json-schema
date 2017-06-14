@@ -4,6 +4,7 @@ namespace Swaggest\JsonSchema\Tests\PHPUnit\Constraint;
 
 
 use Swaggest\JsonSchema\InvalidValue;
+use Swaggest\JsonSchema\JsonSchema;
 use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\SchemaLoader;
 
@@ -11,8 +12,8 @@ class AdditionalItemsTest extends \PHPUnit_Framework_TestCase
 {
     public function testAdditionalItemsAreNotAllowed()
     {
-        $schema = SchemaLoader::create()->readSchema(
-            array(
+        $schema = JsonSchema::importToSchema(
+            (object)array(
                 'items' => array(
                     new \stdClass(),
                     new \stdClass(),

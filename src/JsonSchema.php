@@ -3,6 +3,7 @@
 namespace Swaggest\JsonSchema;
 
 use Swaggest\JsonSchema\Constraint\Properties;
+use Swaggest\JsonSchema\Structure\ClassStructure;
 use Swaggest\JsonSchema\Structure\SchemaStructure;
 
 

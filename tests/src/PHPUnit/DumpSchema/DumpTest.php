@@ -3,6 +3,7 @@
 namespace Swaggest\JsonSchema\Tests\PHPUnit\DumpSchema;
 
 
+use Swaggest\JsonSchema\JsonSchema;
 use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\SchemaLoader;
 
@@ -10,26 +11,23 @@ class DumpTest extends \PHPUnit_Framework_TestCase
 {
     public function testDump()
     {
-        $anotherSchema = Schema::object()
-            ->setProperty('hello', Schema::boolean())
-            ->setProperty('world', Schema::string());
+        $anotherSchema = JsonSchema::object()
+            ->setProperty('hello', JsonSchema::boolean())
+            ->setProperty('world', JsonSchema::string());
 
 
-        $schema = Schema::object()
-            ->setProperty('sampleInt', Schema::integer())
-            ->setProperty('sampleBool', Schema::boolean())
-            ->setProperty('sampleString', Schema::string())
-            ->setProperty('sampleNumber', Schema::number());
+        $schema = JsonSchema::object()
+            ->setProperty('sampleInt', JsonSchema::integer())
+            ->setProperty('sampleBool', JsonSchema::boolean())
+            ->setProperty('sampleString', JsonSchema::string())
+            ->setProperty('sampleNumber', JsonSchema::number());
         $schema
             ->setProperty('sampleSelf', $schema)
             ->setProperty('another', $anotherSchema);
 
-        $loader = SchemaLoader::create();
-
-        $schemaData = $loader->dumpSchema($schema);
+        $schemaData = JsonSchema::exportFromSchema($schema);
         $expected = <<<'JSON'
 {
-    "type": "object",
     "properties": {
         "sampleInt": {
             "type": "integer"
@@ -47,7 +45,6 @@ class DumpTest extends \PHPUnit_Framework_TestCase
             "$ref": "#"
         },
         "another": {
-            "type": "object",
             "properties": {
                 "hello": {
                     "type": "boolean"
@@ -55,9 +52,11 @@ class DumpTest extends \PHPUnit_Framework_TestCase
                 "world": {
                     "type": "string"
                 }
-            }
+            },
+            "type": "object"
         }
-    }
+    },
+    "type": "object"
 }
 JSON;
 

@@ -33,6 +33,7 @@ abstract class SchemaStructure extends Schema implements ClassStructureContract
      * @param $data
      * @param ProcessingOptions $options
      * @return static
+     * @deprecated ?
      */
     public static function importToSchema($data, ProcessingOptions $options = null)
     {
@@ -43,6 +44,7 @@ abstract class SchemaStructure extends Schema implements ClassStructureContract
      * @param $data
      * @param ProcessingOptions $options
      * @return mixed
+     * @deprecated ?
      */
     public static function exportFromSchema($data, ProcessingOptions $options = null)
     {

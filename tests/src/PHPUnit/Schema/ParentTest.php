@@ -5,6 +5,7 @@ namespace Swaggest\JsonSchema\Tests\PHPUnit\Schema;
 
 use Swaggest\JsonSchema\Exception\TypeException;
 use Swaggest\JsonSchema\InvalidValue;
+use Swaggest\JsonSchema\JsonSchema;
 use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\SchemaLoader;
 
@@ -12,16 +13,16 @@ class ParentTest extends \PHPUnit_Framework_TestCase
 {
     protected function deepSchema()
     {
-        $schemaValue = array(
+        $schemaValue = (object)array(
             'type' => 'object',
-            'properties' => array(
-                'level1' => array(
+            'properties' => (object)array(
+                'level1' => (object)array(
                     'type' => 'object',
-                    'properties' => array(
-                        'level2' => array(
+                    'properties' => (object)array(
+                        'level2' => (object)array(
                             'type' => 'object',
-                            'properties' => array(
-                                'level3' => array(
+                            'properties' => (object)array(
+                                'level3' => (object)array(
                                     'type' => 'integer',
                                 ),
                             ),
@@ -31,7 +32,8 @@ class ParentTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $schema = SchemaLoader::create()->readSchema($schemaValue);
+        $schema = JsonSchema::importToSchema($schemaValue);
+
         return $schema;
     }
 

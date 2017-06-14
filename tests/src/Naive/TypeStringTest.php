@@ -10,8 +10,8 @@ class TypeStringTest extends \PHPUnit_Framework_TestCase
 {
     public function testValid()
     {
-        $schema = SchemaLoader::create()->readSchema(
-            array(
+        $schema = \Swaggest\JsonSchema\JsonSchema::importToSchema(
+            (object)array(
                 'type' => 'string',
             )
         );
@@ -20,8 +20,8 @@ class TypeStringTest extends \PHPUnit_Framework_TestCase
 
     public function testInvalidInteger()
     {
-        $schema = SchemaLoader::create()->readSchema(
-            array(
+        $schema = \Swaggest\JsonSchema\JsonSchema::importToSchema(
+            (object)array(
                 'type' => 'integer',
             )
         );
