@@ -3,7 +3,7 @@
 namespace Swaggest\JsonSchema\Tests\PHPUnit\Constraint;
 
 
-use Swaggest\JsonSchema\JsonSchema;
+use Swaggest\JsonSchema\Schema;
 
 class DependenciesTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,8 +26,8 @@ JSON;
 JSON;
 
 
-        $schema = JsonSchema::importToSchema(json_decode($schemaJson));
-        $imported = $schema->import(json_decode($dataJson));
+        $schema = Schema::import(json_decode($schemaJson));
+        $imported = $schema->in(json_decode($dataJson));
         $this->assertSame(1, $imported->foo);
         $this->assertSame(2, $imported->bar);
     }

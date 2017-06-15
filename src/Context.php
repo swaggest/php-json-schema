@@ -2,11 +2,9 @@
 
 namespace Swaggest\JsonSchema;
 
-class ProcessingOptions extends MagicMap
+class Context extends MagicMap
 {
-
-
-    protected $import = true;
+    public $import = true;
     /** @var DataPreProcessor */
     public $dataPreProcessor;
     /** @var RefResolver */
@@ -17,6 +15,9 @@ class ProcessingOptions extends MagicMap
 
     /** @var string */
     public $propagateObjectItemClass;
+
+    /** @var \SplObjectStorage */
+    public $circularReferences;
 
     /**
      * ProcessingOptions constructor.
@@ -37,7 +38,7 @@ class ProcessingOptions extends MagicMap
 
     /**
      * @param DataPreProcessor $dataPreProcessor
-     * @return ProcessingOptions
+     * @return Context
      */
     public function setDataPreProcessor($dataPreProcessor)
     {
@@ -55,7 +56,7 @@ class ProcessingOptions extends MagicMap
 
     /**
      * @param RemoteRefProvider $remoteRefProvider
-     * @return ProcessingOptions
+     * @return Context
      */
     public function setRemoteRefProvider($remoteRefProvider)
     {

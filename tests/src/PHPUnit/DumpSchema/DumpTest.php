@@ -2,9 +2,7 @@
 
 namespace Swaggest\JsonSchema\Tests\PHPUnit\DumpSchema;
 
-
 use Swaggest\JsonSchema\Schema;
-use Swaggest\JsonSchema\SchemaLoader;
 
 class DumpTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,12 +22,9 @@ class DumpTest extends \PHPUnit_Framework_TestCase
             ->setProperty('sampleSelf', $schema)
             ->setProperty('another', $anotherSchema);
 
-        $loader = SchemaLoader::create();
-
-        $schemaData = $loader->dumpSchema($schema);
+        $schemaData = Schema::export($schema);
         $expected = <<<'JSON'
 {
-    "type": "object",
     "properties": {
         "sampleInt": {
             "type": "integer"
@@ -47,7 +42,6 @@ class DumpTest extends \PHPUnit_Framework_TestCase
             "$ref": "#"
         },
         "another": {
-            "type": "object",
             "properties": {
                 "hello": {
                     "type": "boolean"
@@ -55,9 +49,11 @@ class DumpTest extends \PHPUnit_Framework_TestCase
                 "world": {
                     "type": "string"
                 }
-            }
+            },
+            "type": "object"
         }
-    }
+    },
+    "type": "object"
 }
 JSON;
 

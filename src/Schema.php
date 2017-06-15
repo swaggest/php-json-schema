@@ -22,9 +22,12 @@ use Swaggest\JsonSchema\Structure\ObjectItem;
  * Class Schema
  * @package Swaggest\JsonSchema
  */
-class Schema extends ObjectItem
+class Schema extends JsonSchema
 {
     const SCHEMA_DRAFT_04_URL = 'http://json-schema.org/draft-04/schema';
+
+    const REF = '$ref';
+
 
     /*
     public $__seqId;
@@ -37,9 +40,6 @@ class Schema extends ObjectItem
     }
     //*/
 
-    /** @var Type */
-    public $type;
-
     // Object
     /** @var Properties|Schema[] */
     public $properties;
@@ -47,57 +47,14 @@ class Schema extends ObjectItem
     public $additionalProperties;
     /** @var Schema[] */
     public $patternProperties;
-    /** @var string[] */
-    public $required;
     /** @var string[][]|Schema[] */
     public $dependencies;
-    /** @var int */
-    public $minProperties;
-    /** @var int */
-    public $maxProperties;
 
     // Array
     /** @var Schema|Schema[] */
     public $items;
     /** @var Schema|bool */
     public $additionalItems;
-    /** @var bool */
-    public $uniqueItems;
-    /** @var int */
-    public $minItems;
-    /** @var int */
-    public $maxItems;
-
-    // Reference
-    /** @var string */
-    public $ref;
-
-    // Enum
-    /** @var array */
-    public $enum;
-
-    // Number
-    /** @var int */
-    public $maximum;
-    /** @var bool */
-    public $exclusiveMaximum;
-    /** @var int */
-    public $minimum;
-    /** @var bool */
-    public $exclusiveMinimum;
-    /** @var float|int */
-    public $multipleOf;
-
-
-    // String
-    /** @var string */
-    public $pattern;
-    /** @var int */
-    public $minLength;
-    /** @var int */
-    public $maxLength;
-    /** @var string */
-    public $format;
 
     const FORMAT_DATE_TIME = 'date-time'; // todo implement
 
@@ -125,7 +82,7 @@ class Schema extends ObjectItem
         return $this;
     }
 
-    private function preProcessReferences($data, ProcessingOptions $options = null)
+    private function preProcessReferences($data, Context $options = null)
     {
         if (is_array($data)) {
             foreach ($data as $key => $item) {
@@ -147,10 +104,10 @@ class Schema extends ObjectItem
         }
     }
 
-    public function import($data, ProcessingOptions $options = null)
+    public function in($data, Context $options = null)
     {
         if ($options === null) {
-            $options = new ProcessingOptions();
+            $options = new Context();
         }
 
         $options->import = true;
@@ -167,23 +124,35 @@ class Schema extends ObjectItem
         return $this->process($data, $options, '#');
     }
 
-    public function export($data, ProcessingOptions $options = null)
+
+    public function out($data, Context $options = null)
     {
         if ($options === null) {
-            $options = new ProcessingOptions();
+            $options = new Context();
         }
 
+        $options->circularReferences = new \SplObjectStorage();
         $options->import = false;
         return $this->process($data, $options);
     }
 
-    public function process($data, ProcessingOptions $options, $path = '#', $result = null)
+    public function process($data, Context $options, $path = '#', $result = null)
     {
 
         $import = $options->import;
         //$pathTrace = explode('->', $path);
 
         if (!$import && $data instanceof ObjectItem) {
+            $result = new \stdClass();
+            if ($options->circularReferences->contains($data)) {
+                /** @noinspection PhpIllegalArrayKeyTypeInspection */
+                $path = $options->circularReferences[$data];
+                $result->{self::REF} = $path;
+                return $result;
+            }
+            $options->circularReferences->attach($data, $path);
+
+
             $data = $data->jsonSerialize();
         }
         if (!$import && is_array($data) && $this->useObjectAsArray) {

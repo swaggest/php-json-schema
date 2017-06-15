@@ -3,7 +3,7 @@
 namespace Swaggest\JsonSchema\Tests\PHPUnit\Constraint;
 
 
-use Swaggest\JsonSchema\JsonSchema;
+use Swaggest\JsonSchema\Schema;
 
 class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,8 +18,8 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
 JSON;
 
         $schemaData = json_decode($json);
-        $schema = JsonSchema::importToSchema($schemaData);
-        $schema->import(json_decode('{"foo": 1}'));
+        $schema = Schema::import($schemaData);
+        $schema->in(json_decode('{"foo": 1}'));
     }
 
 }

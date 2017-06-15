@@ -3,24 +3,23 @@
 namespace Swaggest\JsonSchema\Tests\PHPUnit;
 
 
-use Swaggest\JsonSchema\OldSchema;
-use Swaggest\JsonSchema\SchemaLoader;
+use Swaggest\JsonSchema\Schema;
 
 class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testBasic()
     {
-        $schemaData = array(
+        $schemaData = (object)array(
             'type' => 'object',
             'additionalProperties' => (object)array(
                 'type' => 'integer'
             ),
         );
 
-        $schema = SchemaLoader::create()->readSchema($schemaData);
+        $schema = Schema::import($schemaData);
 
-        $object = $schema->import(
+        $object = $schema->in(
             (object)array('one' => 1, 'two' => 2)
         );
 
@@ -32,7 +31,7 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
     public function testRef()
     {
 //        $this->markTestSkipped('Not implemented');
-        $schemaData = array(
+        $schemaData = (object)array(
             'type' => 'object',
             'additionalProperties' => (object)array(
                 '$ref' => '#/def'
@@ -43,10 +42,10 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
         );
 
 
-        $schema = SchemaLoader::create()->readSchema($schemaData);
+        $schema = Schema::import($schemaData);
         //print_r($schema);
 
-        $object = $schema->import(
+        $object = $schema->in(
             (object)array('one' => 1, 'two' => 2)
         );
 
@@ -57,13 +56,13 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
     public function testWithProperties()
     {
 
-        $schemaData = array(
+        $schemaData = (object)array(
             'type' => 'object',
             'additionalProperties' => (object)array(
                 '$ref' => '#/def'
             ),
-            'properties' => array(
-                'zero' => array(
+            'properties' => (object)array(
+                'zero' => (object)array(
                     'type' => 'string',
                 ),
             ),
@@ -72,8 +71,8 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $schema = SchemaLoader::create()->readSchema($schemaData);
-        $object = $schema->import(
+        $schema = Schema::import($schemaData);
+        $object = $schema->in(
             (object)array('zero' => '0', 'one' => 1, 'two' => 2)
         );
 
@@ -85,9 +84,9 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
 
     public function testNonRootSchema()
     {
-        $schemaData = array(
+        $schemaData = (object)array(
             'type' => 'object',
-            'properties' => array(
+            'properties' => (object)array(
                 'deeper' => (object)array(
                     'type' => 'object',
                     'additionalProperties' => (object)array(
@@ -97,11 +96,11 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $schema = SchemaLoader::create()->readSchema($schemaData);
+        $schema = Schema::import($schemaData);
 
         //print_r($schema);
 
-        $object = $schema->import(
+        $object = $schema->in(
             (object)array(
                 'deeper' => (object)array('one' => 1, 'two' => 2)
             )

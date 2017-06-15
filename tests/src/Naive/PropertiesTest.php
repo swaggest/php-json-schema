@@ -2,17 +2,16 @@
 
 namespace Swaggest\JsonSchema\Tests\Naive;
 
-
-use Swaggest\JsonSchema\SchemaLoader;
+use Swaggest\JsonSchema\Schema;
 
 class PropertiesTest extends \PHPUnit_Framework_TestCase
 {
     public function testValid()
     {
-        $schema = SchemaLoader::create()->readSchema(array(
-            'properties' => array(
-                'one' => array('type' => 'string'),
-                'two' => array(),
+        $schema = Schema::import((object)array(
+            'properties' => (object)array(
+                'one' => (object)array('type' => 'string'),
+                'two' => (object)array(),
             )
         ));
 
@@ -22,7 +21,7 @@ class PropertiesTest extends \PHPUnit_Framework_TestCase
             'one' => 'aaa',
             'two' => 123,
         );
-        $entity = $schema->import($data);
+        $entity = $schema->in($data);
         $this->assertSame('aaa', $entity->one);
         $this->assertSame(123, $entity->two);
     }

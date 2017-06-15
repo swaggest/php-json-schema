@@ -49,7 +49,7 @@ JSON
 JSON
         );
 
-        $object = $schema->import($data);
+        $object = $schema->in($data);
 
         $this->assertSame('aaa', $object->ownString);
         $this->assertSame(1, $object->ownMagicInt);
@@ -72,7 +72,7 @@ JSON
 
         $sample->propTwo = 8;
 
-        $data2 = $schema->export($object);
+        $data2 = $schema->out($object);
         $this->assertEquals(array(
             'ownString' => 'aaa',
             'ownMagicInt' => 1,

@@ -6,22 +6,21 @@ namespace Swaggest\JsonSchema\Tests\PHPUnit\Schema;
 use Swaggest\JsonSchema\Exception\TypeException;
 use Swaggest\JsonSchema\InvalidValue;
 use Swaggest\JsonSchema\Schema;
-use Swaggest\JsonSchema\SchemaLoader;
 
 class ParentTest extends \PHPUnit_Framework_TestCase
 {
     protected function deepSchema()
     {
-        $schemaValue = array(
+        $schemaValue = (object)array(
             'type' => 'object',
-            'properties' => array(
-                'level1' => array(
+            'properties' => (object)array(
+                'level1' => (object)array(
                     'type' => 'object',
-                    'properties' => array(
-                        'level2' => array(
+                    'properties' => (object)array(
+                        'level2' => (object)array(
                             'type' => 'object',
-                            'properties' => array(
-                                'level3' => array(
+                            'properties' => (object)array(
+                                'level3' => (object)array(
                                     'type' => 'integer',
                                 ),
                             ),
@@ -31,7 +30,8 @@ class ParentTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $schema = SchemaLoader::create()->readSchema($schemaValue);
+        $schema = Schema::import($schemaValue);
+
         return $schema;
     }
 
@@ -56,7 +56,7 @@ class ParentTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(get_class(new TypeException()),
             'Integer expected, "abc" received at #->properties:level1->properties:level2->properties:level3');
         try {
-            $object = $schema->import((object)array(
+            $object = $schema->in((object)array(
                 'level1'=> (object)array(
                     'level2' =>(object)array(
                         'level3' => 'abc' // integer required
