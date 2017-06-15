@@ -4,9 +4,9 @@ namespace Swaggest\JsonSchema\Tests\PHPUnit;
 
 
 
-use Swaggest\JsonSchema\JsonSchema;
-use Swaggest\JsonSchema\ProcessingOptions;
+use Swaggest\JsonSchema\Context;
 use Swaggest\JsonSchema\RemoteRef\Preloaded;
+use Swaggest\JsonSchema\Schema;
 
 class ReImportTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,7 +16,7 @@ class ReImportTest extends \PHPUnit_Framework_TestCase
         $data = file_get_contents(__DIR__ . '/../../../spec/json-schema.json');
         $data = json_decode($data);
 
-        $schema = JsonSchema::importToSchema($data, new ProcessingOptions(new Preloaded()));
+        $schema = Schema::import($data, new Context(new Preloaded()));
     }
 
 
@@ -26,9 +26,9 @@ class ReImportTest extends \PHPUnit_Framework_TestCase
         $data = json_decode($data);
         //print_r($data);
 
-        $schema = JsonSchema::importToSchema($data, new ProcessingOptions(new Preloaded()));
+        $schema = Schema::import($data, new Context(new Preloaded()));
         //print_r(Properties::getFromSchema($schema)->enum);
-        $jsonSchema = $schema->import($data); // @todo fix the test
+        $jsonSchema = $schema->in($data); // @todo fix the test
         //print_r($jsonSchema);
 // #->properties:definitions->additionalProperties->properties:items->anyOf:0->$ref:#->properties:dependencies->additionalProperties
 

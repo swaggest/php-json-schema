@@ -24,12 +24,12 @@ class CreateTest extends \PHPUnit_Framework_TestCase
                 ),
             ),
         );
-        $data = $schema->import($rawData);
+        $data = $schema->in($rawData);
 
         $this->assertSame('abc', $data->stringValue);
         $this->assertSame(3, $data->one->two->three);
 
-        $rawDataTwo = $schema->export($data);
+        $rawDataTwo = $schema->out($data);
         $this->assertEquals($rawData, $rawDataTwo);
     }
 

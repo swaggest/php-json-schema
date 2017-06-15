@@ -4,15 +4,13 @@ namespace Swaggest\JsonSchema\Tests\PHPUnit\Constraint;
 
 
 use Swaggest\JsonSchema\InvalidValue;
-use Swaggest\JsonSchema\JsonSchema;
 use Swaggest\JsonSchema\Schema;
-use Swaggest\JsonSchema\SchemaLoader;
 
 class AdditionalItemsTest extends \PHPUnit_Framework_TestCase
 {
     public function testAdditionalItemsAreNotAllowed()
     {
-        $schema = JsonSchema::importToSchema(
+        $schema = Schema::import(
             (object)array(
                 'items' => array(
                     new \stdClass(),
@@ -24,7 +22,7 @@ class AdditionalItemsTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->setExpectedException(get_class(new InvalidValue()));
-        $schema->import(array(1,2,3,4));
+        $schema->in(array(1,2,3,4));
     }
 
     public function testEmptyPropertyName()
@@ -37,8 +35,8 @@ class AdditionalItemsTest extends \PHPUnit_Framework_TestCase
         }
 
         $data = (object)array('' => 1, 'a' => 2, 1 => 3);
-        $schema->import($data);
-        $schema->export($data);
+        $schema->in($data);
+        $schema->out($data);
     }
 
 }

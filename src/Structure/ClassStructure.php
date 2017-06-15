@@ -3,8 +3,8 @@
 namespace Swaggest\JsonSchema\Structure;
 
 use Swaggest\JsonSchema\Constraint\Properties;
+use Swaggest\JsonSchema\Context;
 use Swaggest\JsonSchema\NameMirror;
-use Swaggest\JsonSchema\ProcessingOptions;
 use Swaggest\JsonSchema\Schema;
 
 abstract class ClassStructure extends ObjectItem implements ClassStructureContract
@@ -59,22 +59,22 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
 
     /**
      * @param $data
-     * @param ProcessingOptions $options
+     * @param Context $options
      * @return static
      */
-    public static function import($data, ProcessingOptions $options = null)
+    public static function import($data, Context $options = null)
     {
-        return static::schema()->import($data, $options);
+        return static::schema()->in($data, $options);
     }
 
     /**
      * @param $data
-     * @param ProcessingOptions $options
+     * @param Context $options
      * @return mixed
      */
-    public static function export($data, ProcessingOptions $options = null)
+    public static function export($data, Context $options = null)
     {
-        return static::schema()->export($data, $options);
+        return static::schema()->out($data, $options);
     }
 
     /**
@@ -139,7 +139,7 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
     {
         if ($this->__validateOnSet) {
             if ($property = static::schema()->properties[$name]) {
-                $property->export($column);
+                $property->out($column);
             }
         }
         $this->__arrayOfData[$name] = $column;

@@ -2,10 +2,10 @@
 
 namespace Swaggest\JsonSchema\Tests\PHPUnit\Spec;
 
+use Swaggest\JsonSchema\Context;
 use Swaggest\JsonSchema\InvalidValue;
-use Swaggest\JsonSchema\JsonSchema;
-use Swaggest\JsonSchema\ProcessingOptions;
 use Swaggest\JsonSchema\RemoteRef\Preloaded;
+use Swaggest\JsonSchema\Schema;
 
 class SpecTest extends \PHPUnit_Framework_TestCase
 {
@@ -51,12 +51,12 @@ class SpecTest extends \PHPUnit_Framework_TestCase
         $actualValid = true;
         $error = '';
         try {
-            $options = new ProcessingOptions();
+            $options = new Context();
             $options->setRemoteRefProvider($refProvider);
-            $schema = JsonSchema::importToSchema($schemaData, $options);
-            $res = $schema->import($data);
+            $schema = Schema::import($schemaData, $options);
+            $res = $schema->in($data);
 
-            $exported = $schema->export($res);
+            $exported = $schema->out($res);
             $this->assertEquals($data, $exported);
         } catch (InvalidValue $exception) {
             $actualValid = false;

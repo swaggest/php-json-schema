@@ -64,12 +64,12 @@ JSON;
 
 Load it
 ```php
-$schema = SchemaLoader::create()->readSchema(json_decode($schemaJson));
+$schema = Schema::import(json_decode($schemaJson));
 ```
 
 Validate data
 ```php
-$schema->import(json_decode(<<<'JSON'
+$schema->in(json_decode(<<<'JSON'
 {
     "id": 1,
     "name":"John Doe",

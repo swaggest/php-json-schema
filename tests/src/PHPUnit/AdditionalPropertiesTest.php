@@ -3,7 +3,7 @@
 namespace Swaggest\JsonSchema\Tests\PHPUnit;
 
 
-use Swaggest\JsonSchema\SchemaLoader;
+use Swaggest\JsonSchema\Schema;
 
 class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,9 +17,9 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $schema = \Swaggest\JsonSchema\JsonSchema::importToSchema($schemaData);
+        $schema = Schema::import($schemaData);
 
-        $object = $schema->import(
+        $object = $schema->in(
             (object)array('one' => 1, 'two' => 2)
         );
 
@@ -42,10 +42,10 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
         );
 
 
-        $schema = \Swaggest\JsonSchema\JsonSchema::importToSchema($schemaData);
+        $schema = Schema::import($schemaData);
         //print_r($schema);
 
-        $object = $schema->import(
+        $object = $schema->in(
             (object)array('one' => 1, 'two' => 2)
         );
 
@@ -71,8 +71,8 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $schema = \Swaggest\JsonSchema\JsonSchema::importToSchema($schemaData);
-        $object = $schema->import(
+        $schema = Schema::import($schemaData);
+        $object = $schema->in(
             (object)array('zero' => '0', 'one' => 1, 'two' => 2)
         );
 
@@ -96,11 +96,11 @@ class AdditionalPropertiesTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $schema = \Swaggest\JsonSchema\JsonSchema::importToSchema($schemaData);
+        $schema = Schema::import($schemaData);
 
         //print_r($schema);
 
-        $object = $schema->import(
+        $object = $schema->in(
             (object)array(
                 'deeper' => (object)array('one' => 1, 'two' => 2)
             )

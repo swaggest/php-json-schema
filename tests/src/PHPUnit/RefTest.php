@@ -3,14 +3,14 @@
 namespace Swaggest\JsonSchema\Tests\PHPUnit;
 
 
+use Swaggest\JsonSchema\Context;
 use Swaggest\JsonSchema\Exception\LogicException;
 use Swaggest\JsonSchema\Exception\ObjectException;
 use Swaggest\JsonSchema\Exception\TypeException;
 use Swaggest\JsonSchema\InvalidValue;
-use Swaggest\JsonSchema\JsonSchema;
-use Swaggest\JsonSchema\ProcessingOptions;
 use Swaggest\JsonSchema\RefResolver;
 use Swaggest\JsonSchema\RemoteRef\Preloaded;
+use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\Tests\PHPUnit\Spec\SpecTest;
 
 class RefTest extends \PHPUnit_Framework_TestCase
@@ -32,9 +32,9 @@ class RefTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $schema = JsonSchema::importToSchema(json_decode(json_encode($schemaData)));
+        $schema = Schema::import(json_decode(json_encode($schemaData)));
 
-        $import = $schema->import((object)array('one' => 123));
+        $import = $schema->in((object)array('one' => 123));
         $this->assertSame(123, $import->one);
     }
 
@@ -63,9 +63,9 @@ class RefTest extends \PHPUnit_Framework_TestCase
         );
 
 
-        $schema = JsonSchema::importToSchema(json_decode(json_encode($schemaData)));
+        $schema = Schema::import(json_decode(json_encode($schemaData)));
 
-        $object = $schema->import((object)array(
+        $object = $schema->in((object)array(
             'two' => (object)array(
                 'one' => 123
             )
@@ -84,11 +84,11 @@ class RefTest extends \PHPUnit_Framework_TestCase
                     }
                 }';
 
-        $options = new ProcessingOptions();
+        $options = new Context();
         $options->setRemoteRefProvider(new Preloaded());
-        $schema = JsonSchema::importToSchema(json_decode($schemaJson), $options);
+        $schema = Schema::import(json_decode($schemaJson), $options);
 
-        $schema->import(json_decode($dataJson));
+        $schema->in(json_decode($dataJson));
     }
 
 
@@ -101,12 +101,12 @@ class RefTest extends \PHPUnit_Framework_TestCase
                     }
                 }';
 
-        $options = new ProcessingOptions();
+        $options = new Context();
         $options->setRemoteRefProvider(new Preloaded());
-        $schema = JsonSchema::importToSchema(json_decode($schemaJson), $options);
+        $schema = Schema::import(json_decode($schemaJson), $options);
 
         $this->setExpectedException(get_class(new LogicException()));
-        $result = $schema->import(json_decode($dataJson));
+        $result = $schema->in(json_decode($dataJson));
     }
 
     public function testNestedRefs()
@@ -121,12 +121,12 @@ class RefTest extends \PHPUnit_Framework_TestCase
         }';
         $dataJson = 'a';
 
-        $options = new ProcessingOptions();
+        $options = new Context();
         $options->setRemoteRefProvider(new Preloaded());
-        $schema = JsonSchema::importToSchema(json_decode($schemaJson), $options);
+        $schema = Schema::import(json_decode($schemaJson), $options);
 
         $this->setExpectedException(get_class(new TypeException()));
-        $schema->import(json_decode($dataJson));
+        $schema->in(json_decode($dataJson));
     }
 
     public function testRemoteRef()
@@ -139,16 +139,16 @@ class RefTest extends \PHPUnit_Framework_TestCase
             ))
         );
 
-        $options = new ProcessingOptions();
+        $options = new Context();
         $options->setRemoteRefProvider($refProvider);
         $schemaJson = <<<'JSON'
 {"$ref": "http://localhost:1234/subSchemas.json#/integer"}
 JSON;
-        $schema = JsonSchema::importToSchema(json_decode($schemaJson), $options);
+        $schema = Schema::import(json_decode($schemaJson), $options);
 
-        $schema->import(1);
+        $schema->in(1);
         $this->setExpectedException(get_class(new TypeException()));
-        $schema->import('a');
+        $schema->in('a');
     }
 
     public function testSimple()
@@ -179,10 +179,10 @@ JSON;
 {"foo": {"bar": false}}
 JSON;
 
-        $schema = JsonSchema::importToSchema(json_decode($schemaJson));
-        $schema->import(json_decode($dataJson));
+        $schema = Schema::import(json_decode($schemaJson));
+        $schema->in(json_decode($dataJson));
         $this->setExpectedException(get_class(new ObjectException()));
-        $schema->import(json_decode($dataInvalidJson));
+        $schema->in(json_decode($dataInvalidJson));
     }
 
 
@@ -266,10 +266,10 @@ JSON;
 
 JSON;
 
-        $schema = JsonSchema::importToSchema(json_decode($schemaJson));
+        $schema = Schema::import(json_decode($schemaJson));
 
         $this->setExpectedException(get_class(new InvalidValue()));
-        $schema->import(json_decode($dataJson));
+        $schema->in(json_decode($dataJson));
     }
 
     public function testScopeChange()
@@ -307,13 +307,13 @@ JSON;
 JSON
         );
 
-        $options = new ProcessingOptions();
+        $options = new Context();
         $options->remoteRefProvider = SpecTest::getProvider();
-        $schema = JsonSchema::importToSchema($testData->schema, $options);
+        $schema = Schema::import($testData->schema, $options);
 
-        $schema->import($testData->tests[0]->data);
+        $schema->in($testData->tests[0]->data);
         $this->setExpectedException(get_class(new InvalidValue()));
-        $schema->import($testData->tests[1]->data);
+        $schema->in($testData->tests[1]->data);
     }
 
 
@@ -355,13 +355,13 @@ JSON
 }
 JSON
 );
-        $options = new ProcessingOptions();
+        $options = new Context();
         $options->remoteRefProvider = SpecTest::getProvider();
-        $schema = JsonSchema::importToSchema($testData->schema, $options);
+        $schema = Schema::import($testData->schema, $options);
 
-        $schema->import($testData->tests[0]->data);
+        $schema->in($testData->tests[0]->data);
         $this->setExpectedException(get_class(new InvalidValue()));
-        $schema->import($testData->tests[1]->data);
+        $schema->in($testData->tests[1]->data);
 
 
     }
@@ -391,12 +391,12 @@ JSON
 JSON
         );
 
-        $schema = JsonSchema::importToSchema($testData->schema, new ProcessingOptions(
+        $schema = Schema::import($testData->schema, new Context(
                 SpecTest::getProvider())
         );
-        $schema->import($testData->tests[0]->data);
+        $schema->in($testData->tests[0]->data);
         $this->setExpectedException(get_class(new InvalidValue()));
-        $schema->import($testData->tests[1]->data);
+        $schema->in($testData->tests[1]->data);
 
     }
 
@@ -424,12 +424,12 @@ JSON
     }
 JSON
 );
-        $schema = JsonSchema::importToSchema($testData->schema, new ProcessingOptions(
+        $schema = Schema::import($testData->schema, new Context(
                 SpecTest::getProvider())
         );
-        $schema->import($testData->tests[0]->data);
+        $schema->in($testData->tests[0]->data);
         $this->setExpectedException(get_class(new InvalidValue()));
-        $schema->import($testData->tests[1]->data);
+        $schema->in($testData->tests[1]->data);
 
     }
 

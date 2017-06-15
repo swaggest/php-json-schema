@@ -3,12 +3,11 @@
 namespace Swaggest\JsonSchema\Tests\PHPUnit\Example;
 
 
+use Swaggest\JsonSchema\Context;
 use Swaggest\JsonSchema\Exception\NumericException;
 use Swaggest\JsonSchema\Exception\ObjectException;
-use Swaggest\JsonSchema\JsonSchema;
 use Swaggest\JsonSchema\Meta\FieldName;
 use Swaggest\JsonSchema\PreProcessor\NameMapper;
-use Swaggest\JsonSchema\ProcessingOptions;
 use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\Structure\Composition;
 use Swaggest\JsonSchema\Tests\Helper\Order;
@@ -63,8 +62,8 @@ class ExampleTest extends \PHPUnit_Framework_TestCase
 }
 JSON;
 
-        $schema = JsonSchema::importToSchema(json_decode($schemaJson));
-        $schema->import(json_decode(<<<'JSON'
+        $schema = Schema::import(json_decode($schemaJson));
+        $schema->in(json_decode(<<<'JSON'
 {
     "id": 1,
     "name":"John Doe",
@@ -115,7 +114,7 @@ JSON
     public function testNameMapper()
     {
         $mapper = new NameMapper();
-        $options = new ProcessingOptions();
+        $options = new Context();
         $options->dataPreProcessor = $mapper;
 
         $order = new Order();
@@ -176,7 +175,7 @@ JSON;
     "price": 2.66
 }
 JSON;
-        $object = $schema->import(json_decode($json));
+        $object = $schema->in(json_decode($json));
 
         // Get particular object with `pick` accessor
         $info = UserInfo::pick($object);

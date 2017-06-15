@@ -2,30 +2,27 @@
 
 namespace Swaggest\JsonSchema\Tests\PHPUnit\DumpSchema;
 
-
-use Swaggest\JsonSchema\JsonSchema;
 use Swaggest\JsonSchema\Schema;
-use Swaggest\JsonSchema\SchemaLoader;
 
 class DumpTest extends \PHPUnit_Framework_TestCase
 {
     public function testDump()
     {
-        $anotherSchema = JsonSchema::object()
-            ->setProperty('hello', JsonSchema::boolean())
-            ->setProperty('world', JsonSchema::string());
+        $anotherSchema = Schema::object()
+            ->setProperty('hello', Schema::boolean())
+            ->setProperty('world', Schema::string());
 
 
-        $schema = JsonSchema::object()
-            ->setProperty('sampleInt', JsonSchema::integer())
-            ->setProperty('sampleBool', JsonSchema::boolean())
-            ->setProperty('sampleString', JsonSchema::string())
-            ->setProperty('sampleNumber', JsonSchema::number());
+        $schema = Schema::object()
+            ->setProperty('sampleInt', Schema::integer())
+            ->setProperty('sampleBool', Schema::boolean())
+            ->setProperty('sampleString', Schema::string())
+            ->setProperty('sampleNumber', Schema::number());
         $schema
             ->setProperty('sampleSelf', $schema)
             ->setProperty('another', $anotherSchema);
 
-        $schemaData = JsonSchema::exportFromSchema($schema);
+        $schemaData = Schema::export($schema);
         $expected = <<<'JSON'
 {
     "properties": {
