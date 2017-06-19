@@ -346,11 +346,12 @@ class Schema extends JsonSchema
             if ($import) {
                 try {
                     while (
-                        isset($data->{'$ref'})
-                        && is_string($data->{'$ref'})
-                        && !isset($this->properties['$ref'])
+                        isset($data->{self::REF})
+                        && is_string($data->{self::REF})
+                        && !isset($this->properties[self::REF])
                     ) {
-                        $refString = $data->{'$ref'};
+                        $refString = $data->{self::REF};
+                        // TODO consider process # by reference here ?
                         $preRefScope = $options->refResolver->getResolutionScope();
                         /** @noinspection PhpUnusedLocalVariableInspection */
                         $deferRefScope = new ScopeExit(function () use ($preRefScope, $options) {
@@ -427,8 +428,8 @@ class Schema extends JsonSchema
                 }
 
                 $found = false;
-                if (isset($this->dependencies[$key])) {
-                    $dependencies = $this->dependencies[$key];
+                if (isset($this->dependencies->$key)) {
+                    $dependencies = $this->dependencies->$key;
                     if ($dependencies instanceof Schema) {
                         $dependencies->process($data, $options, $path . '->dependencies:' . $key);
                     } else {

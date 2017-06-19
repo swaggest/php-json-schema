@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file ATTENTION!!! The code below was carefully crafted by a mean machine.
+ * Please consider to NOT put any emotional human-generated modifications as the splendid AI will throw them away with no mercy.
+ */
 
 namespace Swaggest\JsonSchema;
 
@@ -75,7 +79,7 @@ class JsonSchema extends ClassStructure {
 	/** @var JsonSchema[] */
 	public $definitions;
 
-	/** @var JsonSchema|JsonSchema[] */
+	/** @var JsonSchema[] */
 	public $properties;
 
 	/** @var JsonSchema[] */
@@ -105,7 +109,7 @@ class JsonSchema extends ClassStructure {
 	/** @var JsonSchema[]|array */
 	public $oneOf;
 
-	/** @var JsonSchema */
+	/** @var JsonSchema Core schema meta-schema */
 	public $not;
 
 	/**
@@ -115,7 +119,9 @@ class JsonSchema extends ClassStructure {
 	public static function setUpProperties($properties, Schema $ownerSchema)
 	{
 		$properties->id = Schema::string();
+		$properties->id->format = 'uri';
 		$properties->schema = Schema::string();
+		$properties->schema->format = 'uri';
 		$ownerSchema->addPropertyMapping('$schema', self::names()->schema);
 		$properties->title = Schema::string();
 		$properties->description = Schema::string();
@@ -125,60 +131,78 @@ class JsonSchema extends ClassStructure {
 		$properties->multipleOf->exclusiveMinimum = true;
 		$properties->maximum = Schema::number();
 		$properties->exclusiveMaximum = Schema::boolean();
+		$properties->exclusiveMaximum->default = false;
 		$properties->minimum = Schema::number();
 		$properties->exclusiveMinimum = Schema::boolean();
+		$properties->exclusiveMinimum->default = false;
 		$properties->maxLength = Schema::integer();
 		$properties->maxLength->minimum = 0;
 		$properties->minLength = new Schema();
 		$properties->minLength->allOf[0] = Schema::integer();
 		$properties->minLength->allOf[0]->minimum = 0;
 		$properties->minLength->allOf[1] = new Schema();
+		$properties->minLength->allOf[1]->default = 0;
 		$properties->pattern = Schema::string();
+		$properties->pattern->format = 'regex';
 		$properties->additionalItems = new Schema();
 		$properties->additionalItems->anyOf[0] = Schema::boolean();
 		$properties->additionalItems->anyOf[1] = Schema::schema();
+		$properties->additionalItems->default = (object)array (
+		);
 		$properties->items = new Schema();
 		$properties->items->anyOf[0] = Schema::schema();
 		$properties->items->anyOf[1] = Schema::arr();
 		$properties->items->anyOf[1]->items = Schema::schema();
 		$properties->items->anyOf[1]->minItems = 1;
+		$properties->items->default = (object)array (
+		);
 		$properties->maxItems = Schema::integer();
 		$properties->maxItems->minimum = 0;
 		$properties->minItems = new Schema();
 		$properties->minItems->allOf[0] = Schema::integer();
 		$properties->minItems->allOf[0]->minimum = 0;
 		$properties->minItems->allOf[1] = new Schema();
+		$properties->minItems->allOf[1]->default = 0;
 		$properties->uniqueItems = Schema::boolean();
+		$properties->uniqueItems->default = false;
 		$properties->maxProperties = Schema::integer();
 		$properties->maxProperties->minimum = 0;
 		$properties->minProperties = new Schema();
 		$properties->minProperties->allOf[0] = Schema::integer();
 		$properties->minProperties->allOf[0]->minimum = 0;
 		$properties->minProperties->allOf[1] = new Schema();
+		$properties->minProperties->allOf[1]->default = 0;
 		$properties->required = Schema::arr();
 		$properties->required->items = Schema::string();
-		$properties->required->uniqueItems = true;
 		$properties->required->minItems = 1;
+		$properties->required->uniqueItems = true;
 		$properties->additionalProperties = new Schema();
 		$properties->additionalProperties->anyOf[0] = Schema::boolean();
 		$properties->additionalProperties->anyOf[1] = Schema::schema();
+		$properties->additionalProperties->default = (object)array (
+		);
 		$properties->definitions = Schema::object();
 		$properties->definitions->additionalProperties = Schema::schema();
+		$properties->definitions->default = (object)array (
+		);
 		$properties->properties = Schema::object();
 		$properties->properties->additionalProperties = Schema::schema();
+		$properties->properties->default = (object)array (
+		);
 		$properties->patternProperties = Schema::object();
 		$properties->patternProperties->additionalProperties = Schema::schema();
+		$properties->patternProperties->default = (object)array (
+		);
 		$properties->dependencies = Schema::object();
-		//$properties->dependencies->additionalProperties = Schema::schema();
 		$properties->dependencies->additionalProperties = new Schema();
 		$properties->dependencies->additionalProperties->anyOf[0] = Schema::schema();
 		$properties->dependencies->additionalProperties->anyOf[1] = Schema::arr();
 		$properties->dependencies->additionalProperties->anyOf[1]->items = Schema::string();
-		$properties->dependencies->additionalProperties->anyOf[1]->uniqueItems = true;
 		$properties->dependencies->additionalProperties->anyOf[1]->minItems = 1;
+		$properties->dependencies->additionalProperties->anyOf[1]->uniqueItems = true;
 		$properties->enum = Schema::arr();
-		$properties->enum->uniqueItems = true;
 		$properties->enum->minItems = 1;
+		$properties->enum->uniqueItems = true;
 		$properties->type = new Schema();
 		$properties->type->anyOf[0] = new Schema();
 		$properties->type->anyOf[0]->enum = array (
@@ -201,8 +225,8 @@ class JsonSchema extends ClassStructure {
 		  5 => 'object',
 		  6 => 'string',
 		);
-		$properties->type->anyOf[1]->uniqueItems = true;
 		$properties->type->anyOf[1]->minItems = 1;
+		$properties->type->anyOf[1]->uniqueItems = true;
 		$properties->format = Schema::string();
 		$properties->ref = Schema::string();
 		$ownerSchema->addPropertyMapping('$ref', self::names()->ref);
@@ -217,7 +241,12 @@ class JsonSchema extends ClassStructure {
 		$properties->oneOf->minItems = 1;
 		$properties->not = Schema::schema();
 		$ownerSchema->type = 'object';
-		$ownerSchema->dependencies = array (
+		$ownerSchema->id = 'http://json-schema.org/draft-04/schema#';
+		$ownerSchema->schema = 'http://json-schema.org/draft-04/schema#';
+		$ownerSchema->description = 'Core schema meta-schema';
+		$ownerSchema->default = (object)array (
+		);
+		$ownerSchema->dependencies = (object)array (
 		  'exclusiveMaximum' => 
 		  array (
 		    0 => 'maximum',
@@ -227,615 +256,6 @@ class JsonSchema extends ClassStructure {
 		    0 => 'minimum',
 		  ),
 		);
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getId()
-	{
-		return $this->id;
-	}
-
-	/**
-	 * @param string $id
-	 * @return $this
-	 */
-	public function setId($id)
-	{
-		$this->id = $id;
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSchema()
-	{
-		return $this->schema;
-	}
-
-	/**
-	 * @param string $schema
-	 * @return $this
-	 */
-	public function setSchema($schema)
-	{
-		$this->schema = $schema;
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getTitle()
-	{
-		return $this->title;
-	}
-
-	/**
-	 * @param string $title
-	 * @return $this
-	 */
-	public function setTitle($title)
-	{
-		$this->title = $title;
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getDescription()
-	{
-		return $this->description;
-	}
-
-	/**
-	 * @param string $description
-	 * @return $this
-	 */
-	public function setDescription($description)
-	{
-		$this->description = $description;
-		return $this;
-	}
-
-	public function getDefault()
-	{
-		return $this->default;
-	}
-
-	/**
-	 * @param $default
-	 * @return $this
-	 */
-	public function setDefault($default)
-	{
-		$this->default = $default;
-		return $this;
-	}
-
-	/**
-	 * @return float
-	 */
-	public function getMultipleOf()
-	{
-		return $this->multipleOf;
-	}
-
-	/**
-	 * @param float $multipleOf
-	 * @return $this
-	 */
-	public function setMultipleOf($multipleOf)
-	{
-		$this->multipleOf = $multipleOf;
-		return $this;
-	}
-
-	/**
-	 * @return float
-	 */
-	public function getMaximum()
-	{
-		return $this->maximum;
-	}
-
-	/**
-	 * @param float $maximum
-	 * @return $this
-	 */
-	public function setMaximum($maximum)
-	{
-		$this->maximum = $maximum;
-		return $this;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function getExclusiveMaximum()
-	{
-		return $this->exclusiveMaximum;
-	}
-
-	/**
-	 * @param bool $exclusiveMaximum
-	 * @return $this
-	 */
-	public function setExclusiveMaximum($exclusiveMaximum)
-	{
-		$this->exclusiveMaximum = $exclusiveMaximum;
-		return $this;
-	}
-
-	/**
-	 * @return float
-	 */
-	public function getMinimum()
-	{
-		return $this->minimum;
-	}
-
-	/**
-	 * @param float $minimum
-	 * @return $this
-	 */
-	public function setMinimum($minimum)
-	{
-		$this->minimum = $minimum;
-		return $this;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function getExclusiveMinimum()
-	{
-		return $this->exclusiveMinimum;
-	}
-
-	/**
-	 * @param bool $exclusiveMinimum
-	 * @return $this
-	 */
-	public function setExclusiveMinimum($exclusiveMinimum)
-	{
-		$this->exclusiveMinimum = $exclusiveMinimum;
-		return $this;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getMaxLength()
-	{
-		return $this->maxLength;
-	}
-
-	/**
-	 * @param int $maxLength
-	 * @return $this
-	 */
-	public function setMaxLength($maxLength)
-	{
-		$this->maxLength = $maxLength;
-		return $this;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getMinLength()
-	{
-		return $this->minLength;
-	}
-
-	/**
-	 * @param int $minLength
-	 * @return $this
-	 */
-	public function setMinLength($minLength)
-	{
-		$this->minLength = $minLength;
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getPattern()
-	{
-		return $this->pattern;
-	}
-
-	/**
-	 * @param string $pattern
-	 * @return $this
-	 */
-	public function setPattern($pattern)
-	{
-		$this->pattern = $pattern;
-		return $this;
-	}
-
-	/**
-	 * @return bool|JsonSchema
-	 */
-	public function getAdditionalItems()
-	{
-		return $this->additionalItems;
-	}
-
-	/**
-	 * @param bool|JsonSchema $additionalItems
-	 * @return $this
-	 */
-	public function setAdditionalItems($additionalItems)
-	{
-		$this->additionalItems = $additionalItems;
-		return $this;
-	}
-
-	/**
-	 * @return JsonSchema|JsonSchema[]|array
-	 */
-	public function getItems()
-	{
-		return $this->items;
-	}
-
-	/**
-	 * @param JsonSchema|JsonSchema[]|array $items
-	 * @return $this
-	 */
-	public function setItems($items)
-	{
-		$this->items = $items;
-		return $this;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getMaxItems()
-	{
-		return $this->maxItems;
-	}
-
-	/**
-	 * @param int $maxItems
-	 * @return $this
-	 */
-	public function setMaxItems($maxItems)
-	{
-		$this->maxItems = $maxItems;
-		return $this;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getMinItems()
-	{
-		return $this->minItems;
-	}
-
-	/**
-	 * @param int $minItems
-	 * @return $this
-	 */
-	public function setMinItems($minItems)
-	{
-		$this->minItems = $minItems;
-		return $this;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function getUniqueItems()
-	{
-		return $this->uniqueItems;
-	}
-
-	/**
-	 * @param bool $uniqueItems
-	 * @return $this
-	 */
-	public function setUniqueItems($uniqueItems)
-	{
-		$this->uniqueItems = $uniqueItems;
-		return $this;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getMaxProperties()
-	{
-		return $this->maxProperties;
-	}
-
-	/**
-	 * @param int $maxProperties
-	 * @return $this
-	 */
-	public function setMaxProperties($maxProperties)
-	{
-		$this->maxProperties = $maxProperties;
-		return $this;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getMinProperties()
-	{
-		return $this->minProperties;
-	}
-
-	/**
-	 * @param int $minProperties
-	 * @return $this
-	 */
-	public function setMinProperties($minProperties)
-	{
-		$this->minProperties = $minProperties;
-		return $this;
-	}
-
-	/**
-	 * @return string[]|array
-	 */
-	public function getRequired()
-	{
-		return $this->required;
-	}
-
-	/**
-	 * @param string[]|array $required
-	 * @return $this
-	 */
-	public function setRequired($required)
-	{
-		$this->required = $required;
-		return $this;
-	}
-
-	/**
-	 * @return bool|JsonSchema
-	 */
-	public function getAdditionalProperties()
-	{
-		return $this->additionalProperties;
-	}
-
-	/**
-	 * @param bool|JsonSchema $additionalProperties
-	 * @return $this
-	 */
-	public function setAdditionalProperties($additionalProperties)
-	{
-		$this->additionalProperties = $additionalProperties;
-		return $this;
-	}
-
-	/**
-	 * @return JsonSchema[]
-	 */
-	public function getDefinitions()
-	{
-		return $this->definitions;
-	}
-
-	/**
-	 * @param JsonSchema[] $definitions
-	 * @return $this
-	 */
-	public function setDefinitions($definitions)
-	{
-		$this->definitions = $definitions;
-		return $this;
-	}
-
-	/**
-	 * @return JsonSchema[]
-	 */
-	public function getProperties()
-	{
-		return $this->properties;
-	}
-
-	/**
-	 * @param JsonSchema[] $properties
-	 * @return $this
-	 */
-	public function setProperties($properties)
-	{
-		$this->properties = $properties;
-		return $this;
-	}
-
-	/**
-	 * @return JsonSchema[]
-	 */
-	public function getPatternProperties()
-	{
-		return $this->patternProperties;
-	}
-
-	/**
-	 * @param JsonSchema[] $patternProperties
-	 * @return $this
-	 */
-	public function setPatternProperties($patternProperties)
-	{
-		$this->patternProperties = $patternProperties;
-		return $this;
-	}
-
-	/**
-	 * @return JsonSchema[]|string[][]|array[]
-	 */
-	public function getDependencies()
-	{
-		return $this->dependencies;
-	}
-
-	/**
-	 * @param JsonSchema[]|string[][]|array[] $dependencies
-	 * @return $this
-	 */
-	public function setDependencies($dependencies)
-	{
-		$this->dependencies = $dependencies;
-		return $this;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getEnum()
-	{
-		return $this->enum;
-	}
-
-	/**
-	 * @param array $enum
-	 * @return $this
-	 */
-	public function setEnum($enum)
-	{
-		$this->enum = $enum;
-		return $this;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getType()
-	{
-		return $this->type;
-	}
-
-	/**
-	 * @param array $type
-	 * @return $this
-	 */
-	public function setType($type)
-	{
-		$this->type = $type;
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getFormat()
-	{
-		return $this->format;
-	}
-
-	/**
-	 * @param string $format
-	 * @return $this
-	 */
-	public function setFormat($format)
-	{
-		$this->format = $format;
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getRef()
-	{
-		return $this->ref;
-	}
-
-	/**
-	 * @param string $ref
-	 * @return $this
-	 */
-	public function setRef($ref)
-	{
-		$this->ref = $ref;
-		return $this;
-	}
-
-	/**
-	 * @return JsonSchema[]|array
-	 */
-	public function getAllOf()
-	{
-		return $this->allOf;
-	}
-
-	/**
-	 * @param JsonSchema[]|array $allOf
-	 * @return $this
-	 */
-	public function setAllOf($allOf)
-	{
-		$this->allOf = $allOf;
-		return $this;
-	}
-
-	/**
-	 * @return JsonSchema[]|array
-	 */
-	public function getAnyOf()
-	{
-		return $this->anyOf;
-	}
-
-	/**
-	 * @param JsonSchema[]|array $anyOf
-	 * @return $this
-	 */
-	public function setAnyOf($anyOf)
-	{
-		$this->anyOf = $anyOf;
-		return $this;
-	}
-
-	/**
-	 * @return JsonSchema[]|array
-	 */
-	public function getOneOf()
-	{
-		return $this->oneOf;
-	}
-
-	/**
-	 * @param JsonSchema[]|array $oneOf
-	 * @return $this
-	 */
-	public function setOneOf($oneOf)
-	{
-		$this->oneOf = $oneOf;
-		return $this;
-	}
-
-	/**
-	 * @return JsonSchema
-	 */
-	public function getNot()
-	{
-		return $this->not;
-	}
-
-	/**
-	 * @param JsonSchema $not
-	 * @return $this
-	 */
-	public function setNot($not)
-	{
-		$this->not = $not;
-		return $this;
 	}
 }
 

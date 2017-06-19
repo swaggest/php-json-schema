@@ -22,7 +22,7 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
             $schema = new ClassSchema();
             $properties = new Properties();
             $schema->properties = $properties;
-            $schema->objectItemClass = get_called_class();
+            $schema->objectItemClass = $className;
             static::setUpProperties($properties, $schema);
         }
 

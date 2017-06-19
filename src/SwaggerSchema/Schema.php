@@ -1,13 +1,13 @@
 <?php
 /**
  * @file ATTENTION!!! The code below was carefully crafted by a mean machine.
- * Please consider to NOT put any emotional human-generated modifications as AI will throw them away with no mercy.
+ * Please consider to NOT put any emotional human-generated modifications as the splendid AI will throw them away with no mercy.
  */
 
 namespace Swaggest\JsonSchema\SwaggerSchema;
 
 use Swaggest\JsonSchema\Constraint\Properties;
-use Swaggest\JsonSchema\Schema as JsonBasicSchema;
+use Swaggest\JsonSchema\Schema as Schema1;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
@@ -102,63 +102,64 @@ class Schema extends ClassStructure {
 
 	/**
 	 * @param Properties|static $properties
-	 * @param JsonBasicSchema $ownerSchema
+	 * @param Schema1 $ownerSchema
 	 */
-	public static function setUpProperties($properties, JsonBasicSchema $ownerSchema)
+	public static function setUpProperties($properties, Schema1 $ownerSchema)
 	{
-		$properties->ref = JsonBasicSchema::string();
+		$properties->ref = Schema1::string();
 		$ownerSchema->addPropertyMapping('$ref', self::names()->ref);
-		$properties->format = JsonBasicSchema::string();
-		$properties->title = JsonBasicSchema::string();
-		$properties->description = JsonBasicSchema::string();
-		$properties->default = new JsonBasicSchema();
-		$properties->multipleOf = JsonBasicSchema::number();
+		$properties->format = Schema1::string();
+		$properties->title = Schema1::string();
+		$properties->description = Schema1::string();
+		$properties->default = new Schema1();
+		$properties->multipleOf = Schema1::number();
 		$properties->multipleOf->minimum = 0;
 		$properties->multipleOf->exclusiveMinimum = true;
-		$properties->maximum = JsonBasicSchema::number();
-		$properties->exclusiveMaximum = JsonBasicSchema::boolean();
+		$properties->maximum = Schema1::number();
+		$properties->exclusiveMaximum = Schema1::boolean();
 		$properties->exclusiveMaximum->default = false;
-		$properties->minimum = JsonBasicSchema::number();
-		$properties->exclusiveMinimum = JsonBasicSchema::boolean();
+		$properties->minimum = Schema1::number();
+		$properties->exclusiveMinimum = Schema1::boolean();
 		$properties->exclusiveMinimum->default = false;
-		$properties->maxLength = JsonBasicSchema::integer();
+		$properties->maxLength = Schema1::integer();
 		$properties->maxLength->minimum = 0;
-		$properties->minLength = new JsonBasicSchema();
-		$properties->minLength->allOf[0] = JsonBasicSchema::integer();
+		$properties->minLength = new Schema1();
+		$properties->minLength->allOf[0] = Schema1::integer();
 		$properties->minLength->allOf[0]->minimum = 0;
-		$properties->minLength->allOf[1] = new JsonBasicSchema();
+		$properties->minLength->allOf[1] = new Schema1();
 		$properties->minLength->allOf[1]->default = 0;
-		$properties->pattern = JsonBasicSchema::string();
+		$properties->pattern = Schema1::string();
 		$properties->pattern->format = 'regex';
-		$properties->maxItems = JsonBasicSchema::integer();
+		$properties->maxItems = Schema1::integer();
 		$properties->maxItems->minimum = 0;
-		$properties->minItems = new JsonBasicSchema();
-		$properties->minItems->allOf[0] = JsonBasicSchema::integer();
+		$properties->minItems = new Schema1();
+		$properties->minItems->allOf[0] = Schema1::integer();
 		$properties->minItems->allOf[0]->minimum = 0;
-		$properties->minItems->allOf[1] = new JsonBasicSchema();
+		$properties->minItems->allOf[1] = new Schema1();
 		$properties->minItems->allOf[1]->default = 0;
-		$properties->uniqueItems = JsonBasicSchema::boolean();
+		$properties->uniqueItems = Schema1::boolean();
 		$properties->uniqueItems->default = false;
-		$properties->maxProperties = JsonBasicSchema::integer();
+		$properties->maxProperties = Schema1::integer();
 		$properties->maxProperties->minimum = 0;
-		$properties->minProperties = new JsonBasicSchema();
-		$properties->minProperties->allOf[0] = JsonBasicSchema::integer();
+		$properties->minProperties = new Schema1();
+		$properties->minProperties->allOf[0] = Schema1::integer();
 		$properties->minProperties->allOf[0]->minimum = 0;
-		$properties->minProperties->allOf[1] = new JsonBasicSchema();
+		$properties->minProperties->allOf[1] = new Schema1();
 		$properties->minProperties->allOf[1]->default = 0;
-		$properties->required = JsonBasicSchema::arr();
-		$properties->required->items = JsonBasicSchema::string();
+		$properties->required = Schema1::arr();
+		$properties->required->items = Schema1::string();
 		$properties->required->minItems = 1;
 		$properties->required->uniqueItems = true;
-		$properties->enum = JsonBasicSchema::arr();
+		$properties->enum = Schema1::arr();
 		$properties->enum->minItems = 1;
 		$properties->enum->uniqueItems = true;
-		$properties->additionalProperties = new JsonBasicSchema();
+		$properties->additionalProperties = new Schema1();
 		$properties->additionalProperties->anyOf[0] = Schema::schema();
-		$properties->additionalProperties->anyOf[1] = JsonBasicSchema::boolean();
-		$properties->additionalProperties->default = new \stdClass();
-		$properties->type = new JsonBasicSchema();
-		$properties->type->anyOf[0] = new JsonBasicSchema();
+		$properties->additionalProperties->anyOf[1] = Schema1::boolean();
+		$properties->additionalProperties->default = (object)array (
+		);
+		$properties->type = new Schema1();
+		$properties->type->anyOf[0] = new Schema1();
 		$properties->type->anyOf[0]->enum = array (
 		  0 => 'array',
 		  1 => 'boolean',
@@ -168,8 +169,8 @@ class Schema extends ClassStructure {
 		  5 => 'object',
 		  6 => 'string',
 		);
-		$properties->type->anyOf[1] = JsonBasicSchema::arr();
-		$properties->type->anyOf[1]->items = new JsonBasicSchema();
+		$properties->type->anyOf[1] = Schema1::arr();
+		$properties->type->anyOf[1]->items = new Schema1();
 		$properties->type->anyOf[1]->items->enum = array (
 		  0 => 'array',
 		  1 => 'boolean',
@@ -181,27 +182,29 @@ class Schema extends ClassStructure {
 		);
 		$properties->type->anyOf[1]->minItems = 1;
 		$properties->type->anyOf[1]->uniqueItems = true;
-		$properties->items = new JsonBasicSchema();
+		$properties->items = new Schema1();
 		$properties->items->anyOf[0] = Schema::schema();
-		$properties->items->anyOf[1] = JsonBasicSchema::arr();
+		$properties->items->anyOf[1] = Schema1::arr();
 		$properties->items->anyOf[1]->items = Schema::schema();
 		$properties->items->anyOf[1]->minItems = 1;
-		$properties->items->default = new \stdClass();
-		$properties->allOf = JsonBasicSchema::arr();
+		$properties->items->default = (object)array (
+		);
+		$properties->allOf = Schema1::arr();
 		$properties->allOf->items = Schema::schema();
 		$properties->allOf->minItems = 1;
-		$properties->properties = JsonBasicSchema::object();
+		$properties->properties = Schema1::object();
 		$properties->properties->additionalProperties = Schema::schema();
-		$properties->properties->default = new \stdClass();
-		$properties->discriminator = JsonBasicSchema::string();
-		$properties->readOnly = JsonBasicSchema::boolean();
+		$properties->properties->default = (object)array (
+		);
+		$properties->discriminator = Schema1::string();
+		$properties->readOnly = Schema1::boolean();
 		$properties->readOnly->default = false;
 		$properties->xml = Xml::schema();
 		$properties->externalDocs = ExternalDocs::schema();
-		$properties->example = new JsonBasicSchema();
+		$properties->example = new Schema1();
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
-		$ownerSchema->patternProperties['^x-'] = new JsonBasicSchema();
+		$ownerSchema->patternProperties['^x-'] = new Schema1();
 		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->description = 'A deterministic version of a JSON Schema object.';
 	}

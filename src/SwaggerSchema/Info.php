@@ -1,13 +1,13 @@
 <?php
 /**
  * @file ATTENTION!!! The code below was carefully crafted by a mean machine.
- * Please consider to NOT put any emotional human-generated modifications as AI will throw them away with no mercy.
+ * Please consider to NOT put any emotional human-generated modifications as the splendid AI will throw them away with no mercy.
  */
 
 namespace Swaggest\JsonSchema\SwaggerSchema;
 
 use Swaggest\JsonSchema\Constraint\Properties;
-use Swaggest\JsonSchema\Schema as JsonBasicSchema;
+use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
@@ -32,23 +32,23 @@ class Info extends ClassStructure {
 
 	/**
 	 * @param Properties|static $properties
-	 * @param JsonBasicSchema $ownerSchema
+	 * @param Schema $ownerSchema
 	 */
-	public static function setUpProperties($properties, JsonBasicSchema $ownerSchema)
+	public static function setUpProperties($properties, Schema $ownerSchema)
 	{
-		$properties->title = JsonBasicSchema::string();
+		$properties->title = Schema::string();
 		$properties->title->description = 'A unique and precise title of the API.';
-		$properties->version = JsonBasicSchema::string();
+		$properties->version = Schema::string();
 		$properties->version->description = 'A semantic version number of the API.';
-		$properties->description = JsonBasicSchema::string();
+		$properties->description = Schema::string();
 		$properties->description->description = 'A longer description of the API. Should be different from the title.  GitHub Flavored Markdown is allowed.';
-		$properties->termsOfService = JsonBasicSchema::string();
+		$properties->termsOfService = Schema::string();
 		$properties->termsOfService->description = 'The terms of service for the API.';
 		$properties->contact = Contact::schema();
 		$properties->license = License::schema();
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
-		$ownerSchema->patternProperties['^x-'] = new JsonBasicSchema();
+		$ownerSchema->patternProperties['^x-'] = new Schema();
 		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->description = 'General information about the API.';
 		$ownerSchema->required = array (
