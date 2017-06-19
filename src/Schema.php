@@ -428,15 +428,19 @@ class Schema extends JsonSchema
                 }
 
                 $found = false;
-                if (isset($this->dependencies->$key)) {
-                    $dependencies = $this->dependencies->$key;
-                    if ($dependencies instanceof Schema) {
-                        $dependencies->process($data, $options, $path . '->dependencies:' . $key);
-                    } else {
-                        foreach ($dependencies as $item) {
-                            if (!property_exists($data, $item)) {
-                                $this->fail(new ObjectException('Dependency property missing: ' . $item,
-                                    ObjectException::DEPENDENCY_MISSING), $path);
+
+                if (!empty($this->dependencies)) {
+                    $deps = $this->dependencies;
+                    if (isset($deps->$key)) {
+                        $dependencies = $deps->$key;
+                        if ($dependencies instanceof Schema) {
+                            $dependencies->process($data, $options, $path . '->dependencies:' . $key);
+                        } else {
+                            foreach ($dependencies as $item) {
+                                if (!property_exists($data, $item)) {
+                                    $this->fail(new ObjectException('Dependency property missing: ' . $item,
+                                        ObjectException::DEPENDENCY_MISSING), $path);
+                                }
                             }
                         }
                     }

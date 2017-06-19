@@ -117,4 +117,12 @@ class MagicMap implements \ArrayAccess, \JsonSerializable, \Iterator
     }
 
 
+    public function __isset($name)
+    {
+        if (isset($this->__arrayOfData[$name])) {
+            return true;
+        } else {
+            return isset($this->$name);
+        }
+    }
 }
