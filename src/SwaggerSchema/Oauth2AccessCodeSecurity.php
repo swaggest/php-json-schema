@@ -7,7 +7,7 @@
 namespace Swaggest\JsonSchema\SwaggerSchema;
 
 use Swaggest\JsonSchema\Constraint\Properties;
-use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\Schema as JsonBasicSchema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
@@ -32,28 +32,28 @@ class Oauth2AccessCodeSecurity extends ClassStructure {
 
 	/**
 	 * @param Properties|static $properties
-	 * @param Schema $ownerSchema
+	 * @param JsonBasicSchema $ownerSchema
 	 */
-	public static function setUpProperties($properties, Schema $ownerSchema)
+	public static function setUpProperties($properties, JsonBasicSchema $ownerSchema)
 	{
-		$properties->type = Schema::string();
+		$properties->type = JsonBasicSchema::string();
 		$properties->type->enum = array (
 		  0 => 'oauth2',
 		);
-		$properties->flow = Schema::string();
+		$properties->flow = JsonBasicSchema::string();
 		$properties->flow->enum = array (
 		  0 => 'accessCode',
 		);
-		$properties->scopes = Schema::object();
-		$properties->scopes->additionalProperties = Schema::string();
-		$properties->authorizationUrl = Schema::string();
+		$properties->scopes = JsonBasicSchema::object();
+		$properties->scopes->additionalProperties = JsonBasicSchema::string();
+		$properties->authorizationUrl = JsonBasicSchema::string();
 		$properties->authorizationUrl->format = 'uri';
-		$properties->tokenUrl = Schema::string();
+		$properties->tokenUrl = JsonBasicSchema::string();
 		$properties->tokenUrl->format = 'uri';
-		$properties->description = Schema::string();
+		$properties->description = JsonBasicSchema::string();
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
-		$ownerSchema->patternProperties['^x-'] = new Schema();
+		$ownerSchema->patternProperties['^x-'] = new JsonBasicSchema();
 		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->required = array (
 		  0 => 'type',

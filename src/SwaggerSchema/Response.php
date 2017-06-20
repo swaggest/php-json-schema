@@ -7,7 +7,7 @@
 namespace Swaggest\JsonSchema\SwaggerSchema;
 
 use Swaggest\JsonSchema\Constraint\Properties;
-use Swaggest\JsonSchema\Schema as Schema1;
+use Swaggest\JsonSchema\Schema as JsonBasicSchema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
@@ -25,20 +25,20 @@ class Response extends ClassStructure {
 
 	/**
 	 * @param Properties|static $properties
-	 * @param Schema1 $ownerSchema
+	 * @param JsonBasicSchema $ownerSchema
 	 */
-	public static function setUpProperties($properties, Schema1 $ownerSchema)
+	public static function setUpProperties($properties, JsonBasicSchema $ownerSchema)
 	{
-		$properties->description = Schema1::string();
-		$properties->schema = new Schema1();
+		$properties->description = JsonBasicSchema::string();
+		$properties->schema = new JsonBasicSchema();
 		$properties->schema->oneOf[0] = Schema::schema();
 		$properties->schema->oneOf[1] = FileSchema::schema();
-		$properties->headers = Schema1::object();
+		$properties->headers = JsonBasicSchema::object();
 		$properties->headers->additionalProperties = Header::schema();
-		$properties->examples = Schema1::object();
+		$properties->examples = JsonBasicSchema::object();
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
-		$ownerSchema->patternProperties['^x-'] = new Schema1();
+		$ownerSchema->patternProperties['^x-'] = new JsonBasicSchema();
 		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->required = array (
 		  0 => 'description',

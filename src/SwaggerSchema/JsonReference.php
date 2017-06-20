@@ -7,7 +7,7 @@
 namespace Swaggest\JsonSchema\SwaggerSchema;
 
 use Swaggest\JsonSchema\Constraint\Properties;
-use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\Schema as JsonBasicSchema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
@@ -17,11 +17,11 @@ class JsonReference extends ClassStructure {
 
 	/**
 	 * @param Properties|static $properties
-	 * @param Schema $ownerSchema
+	 * @param JsonBasicSchema $ownerSchema
 	 */
-	public static function setUpProperties($properties, Schema $ownerSchema)
+	public static function setUpProperties($properties, JsonBasicSchema $ownerSchema)
 	{
-		$properties->ref = Schema::string();
+		$properties->ref = JsonBasicSchema::string();
 		$ownerSchema->addPropertyMapping('$ref', self::names()->ref);
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;

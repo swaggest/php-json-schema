@@ -7,7 +7,7 @@
 namespace Swaggest\JsonSchema\SwaggerSchema;
 
 use Swaggest\JsonSchema\Constraint\Properties;
-use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\Schema as JsonBasicSchema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
@@ -32,23 +32,23 @@ class Info extends ClassStructure {
 
 	/**
 	 * @param Properties|static $properties
-	 * @param Schema $ownerSchema
+	 * @param JsonBasicSchema $ownerSchema
 	 */
-	public static function setUpProperties($properties, Schema $ownerSchema)
+	public static function setUpProperties($properties, JsonBasicSchema $ownerSchema)
 	{
-		$properties->title = Schema::string();
+		$properties->title = JsonBasicSchema::string();
 		$properties->title->description = 'A unique and precise title of the API.';
-		$properties->version = Schema::string();
+		$properties->version = JsonBasicSchema::string();
 		$properties->version->description = 'A semantic version number of the API.';
-		$properties->description = Schema::string();
+		$properties->description = JsonBasicSchema::string();
 		$properties->description->description = 'A longer description of the API. Should be different from the title.  GitHub Flavored Markdown is allowed.';
-		$properties->termsOfService = Schema::string();
+		$properties->termsOfService = JsonBasicSchema::string();
 		$properties->termsOfService->description = 'The terms of service for the API.';
 		$properties->contact = Contact::schema();
 		$properties->license = License::schema();
 		$ownerSchema->type = 'object';
 		$ownerSchema->additionalProperties = false;
-		$ownerSchema->patternProperties['^x-'] = new Schema();
+		$ownerSchema->patternProperties['^x-'] = new JsonBasicSchema();
 		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->description = 'General information about the API.';
 		$ownerSchema->required = array (
