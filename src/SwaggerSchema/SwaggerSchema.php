@@ -154,5 +154,155 @@ class SwaggerSchema extends ClassStructure {
 		  2 => 'paths',
 		);
 	}
+
+	/**
+	 * @param string $swagger The Swagger version of this document.
+	 * @return $this
+	 */
+	public function setSwagger($swagger)
+	{
+		$this->swagger = $swagger;
+		return $this;
+	}
+
+	/**
+	 * @param Info $info General information about the API.
+	 * @return $this
+	 */
+	public function setInfo($info)
+	{
+		$this->info = $info;
+		return $this;
+	}
+
+	/**
+	 * @param string $host The host (name or ip) of the API. Example: 'swagger.io'
+	 * @return $this
+	 */
+	public function setHost($host)
+	{
+		$this->host = $host;
+		return $this;
+	}
+
+	/**
+	 * @param string $basePath The base path to the API. Example: '/api'.
+	 * @return $this
+	 */
+	public function setBasePath($basePath)
+	{
+		$this->basePath = $basePath;
+		return $this;
+	}
+
+	/**
+	 * @param string[]|array $schemes The transfer protocol of the API.
+	 * @return $this
+	 */
+	public function setSchemes($schemes)
+	{
+		$this->schemes = $schemes;
+		return $this;
+	}
+
+	/**
+	 * @param string[]|array $consumes A list of MIME types accepted by the API.
+	 * @return $this
+	 */
+	public function setConsumes($consumes)
+	{
+		$this->consumes = $consumes;
+		return $this;
+	}
+
+	/**
+	 * @param string[]|array $produces A list of MIME types the API can produce.
+	 * @return $this
+	 */
+	public function setProduces($produces)
+	{
+		$this->produces = $produces;
+		return $this;
+	}
+
+	/**
+	 * @param PathItem[] $paths Relative paths to the individual endpoints. They must be relative to the 'basePath'.
+	 * @return $this
+	 */
+	public function setPaths($paths)
+	{
+		$this->paths = $paths;
+		return $this;
+	}
+
+	/**
+	 * @param Schema[] $definitions One or more JSON objects describing the schemas being consumed and produced by the API.
+	 * @return $this
+	 */
+	public function setDefinitions($definitions)
+	{
+		$this->definitions = $definitions;
+		return $this;
+	}
+
+	/**
+	 * @param BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[] $parameters One or more JSON representations for parameters
+	 * @return $this
+	 */
+	public function setParameters($parameters)
+	{
+		$this->parameters = $parameters;
+		return $this;
+	}
+
+	/**
+	 * @param Response[] $responses One or more JSON representations for parameters
+	 * @return $this
+	 */
+	public function setResponses($responses)
+	{
+		$this->responses = $responses;
+		return $this;
+	}
+
+	/**
+	 * @param string[][]|array[][]|array $security
+	 * @return $this
+	 */
+	public function setSecurity($security)
+	{
+		$this->security = $security;
+		return $this;
+	}
+
+	/**
+	 * @param BasicAuthenticationSecurity[]|ApiKeySecurity[]|Oauth2ImplicitSecurity[]|Oauth2PasswordSecurity[]|Oauth2ApplicationSecurity[]|Oauth2AccessCodeSecurity[] $securityDefinitions
+	 * @return $this
+	 */
+	public function setSecurityDefinitions($securityDefinitions)
+	{
+		$this->securityDefinitions = $securityDefinitions;
+		return $this;
+	}
+
+	/**
+	 * @param Tag[]|array $tags
+	 * @return $this
+	 */
+	public function setTags($tags)
+	{
+		$this->tags = $tags;
+		return $this;
+	}
+
+	/**
+	 * @param ExternalDocs $externalDocs information about external documentation
+	 * @return $this
+	 */
+	public function setExternalDocs($externalDocs)
+	{
+		$this->externalDocs = $externalDocs;
+		return $this;
+	}
 }
 

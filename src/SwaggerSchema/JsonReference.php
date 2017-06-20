@@ -29,5 +29,15 @@ class JsonReference extends ClassStructure {
 		  0 => '$ref',
 		);
 	}
+
+	/**
+	 * @param string $ref
+	 * @return $this
+	 */
+	public function setRef($ref)
+	{
+		$this->ref = $ref;
+		return $this;
+	}
 }
 

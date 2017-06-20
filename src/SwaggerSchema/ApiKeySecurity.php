@@ -51,5 +51,45 @@ class ApiKeySecurity extends ClassStructure {
 		  2 => 'in',
 		);
 	}
+
+	/**
+	 * @param string $type
+	 * @return $this
+	 */
+	public function setType($type)
+	{
+		$this->type = $type;
+		return $this;
+	}
+
+	/**
+	 * @param string $name
+	 * @return $this
+	 */
+	public function setName($name)
+	{
+		$this->name = $name;
+		return $this;
+	}
+
+	/**
+	 * @param string $in
+	 * @return $this
+	 */
+	public function setIn($in)
+	{
+		$this->in = $in;
+		return $this;
+	}
+
+	/**
+	 * @param string $description
+	 * @return $this
+	 */
+	public function setDescription($description)
+	{
+		$this->description = $description;
+		return $this;
+	}
 }
 

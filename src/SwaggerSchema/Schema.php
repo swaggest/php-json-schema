@@ -208,5 +208,305 @@ class Schema extends ClassStructure {
 		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->description = 'A deterministic version of a JSON Schema object.';
 	}
+
+	/**
+	 * @param string $ref
+	 * @return $this
+	 */
+	public function setRef($ref)
+	{
+		$this->ref = $ref;
+		return $this;
+	}
+
+	/**
+	 * @param string $format
+	 * @return $this
+	 */
+	public function setFormat($format)
+	{
+		$this->format = $format;
+		return $this;
+	}
+
+	/**
+	 * @param string $title
+	 * @return $this
+	 */
+	public function setTitle($title)
+	{
+		$this->title = $title;
+		return $this;
+	}
+
+	/**
+	 * @param string $description
+	 * @return $this
+	 */
+	public function setDescription($description)
+	{
+		$this->description = $description;
+		return $this;
+	}
+
+	/**
+	 * @param $default
+	 * @return $this
+	 */
+	public function setDefault($default)
+	{
+		$this->default = $default;
+		return $this;
+	}
+
+	/**
+	 * @param float $multipleOf
+	 * @return $this
+	 */
+	public function setMultipleOf($multipleOf)
+	{
+		$this->multipleOf = $multipleOf;
+		return $this;
+	}
+
+	/**
+	 * @param float $maximum
+	 * @return $this
+	 */
+	public function setMaximum($maximum)
+	{
+		$this->maximum = $maximum;
+		return $this;
+	}
+
+	/**
+	 * @param bool $exclusiveMaximum
+	 * @return $this
+	 */
+	public function setExclusiveMaximum($exclusiveMaximum)
+	{
+		$this->exclusiveMaximum = $exclusiveMaximum;
+		return $this;
+	}
+
+	/**
+	 * @param float $minimum
+	 * @return $this
+	 */
+	public function setMinimum($minimum)
+	{
+		$this->minimum = $minimum;
+		return $this;
+	}
+
+	/**
+	 * @param bool $exclusiveMinimum
+	 * @return $this
+	 */
+	public function setExclusiveMinimum($exclusiveMinimum)
+	{
+		$this->exclusiveMinimum = $exclusiveMinimum;
+		return $this;
+	}
+
+	/**
+	 * @param int $maxLength
+	 * @return $this
+	 */
+	public function setMaxLength($maxLength)
+	{
+		$this->maxLength = $maxLength;
+		return $this;
+	}
+
+	/**
+	 * @param int $minLength
+	 * @return $this
+	 */
+	public function setMinLength($minLength)
+	{
+		$this->minLength = $minLength;
+		return $this;
+	}
+
+	/**
+	 * @param string $pattern
+	 * @return $this
+	 */
+	public function setPattern($pattern)
+	{
+		$this->pattern = $pattern;
+		return $this;
+	}
+
+	/**
+	 * @param int $maxItems
+	 * @return $this
+	 */
+	public function setMaxItems($maxItems)
+	{
+		$this->maxItems = $maxItems;
+		return $this;
+	}
+
+	/**
+	 * @param int $minItems
+	 * @return $this
+	 */
+	public function setMinItems($minItems)
+	{
+		$this->minItems = $minItems;
+		return $this;
+	}
+
+	/**
+	 * @param bool $uniqueItems
+	 * @return $this
+	 */
+	public function setUniqueItems($uniqueItems)
+	{
+		$this->uniqueItems = $uniqueItems;
+		return $this;
+	}
+
+	/**
+	 * @param int $maxProperties
+	 * @return $this
+	 */
+	public function setMaxProperties($maxProperties)
+	{
+		$this->maxProperties = $maxProperties;
+		return $this;
+	}
+
+	/**
+	 * @param int $minProperties
+	 * @return $this
+	 */
+	public function setMinProperties($minProperties)
+	{
+		$this->minProperties = $minProperties;
+		return $this;
+	}
+
+	/**
+	 * @param string[]|array $required
+	 * @return $this
+	 */
+	public function setRequired($required)
+	{
+		$this->required = $required;
+		return $this;
+	}
+
+	/**
+	 * @param array $enum
+	 * @return $this
+	 */
+	public function setEnum($enum)
+	{
+		$this->enum = $enum;
+		return $this;
+	}
+
+	/**
+	 * @param Schema|bool $additionalProperties
+	 * @return $this
+	 */
+	public function setAdditionalProperties($additionalProperties)
+	{
+		$this->additionalProperties = $additionalProperties;
+		return $this;
+	}
+
+	/**
+	 * @param array $type
+	 * @return $this
+	 */
+	public function setType($type)
+	{
+		$this->type = $type;
+		return $this;
+	}
+
+	/**
+	 * @param Schema|Schema[]|array $items
+	 * @return $this
+	 */
+	public function setItems($items)
+	{
+		$this->items = $items;
+		return $this;
+	}
+
+	/**
+	 * @param Schema[]|array $allOf
+	 * @return $this
+	 */
+	public function setAllOf($allOf)
+	{
+		$this->allOf = $allOf;
+		return $this;
+	}
+
+	/**
+	 * @param Schema[] $properties
+	 * @return $this
+	 */
+	public function setProperties($properties)
+	{
+		$this->properties = $properties;
+		return $this;
+	}
+
+	/**
+	 * @param string $discriminator
+	 * @return $this
+	 */
+	public function setDiscriminator($discriminator)
+	{
+		$this->discriminator = $discriminator;
+		return $this;
+	}
+
+	/**
+	 * @param bool $readOnly
+	 * @return $this
+	 */
+	public function setReadOnly($readOnly)
+	{
+		$this->readOnly = $readOnly;
+		return $this;
+	}
+
+	/**
+	 * @param Xml $xml
+	 * @return $this
+	 */
+	public function setXml($xml)
+	{
+		$this->xml = $xml;
+		return $this;
+	}
+
+	/**
+	 * @param ExternalDocs $externalDocs information about external documentation
+	 * @return $this
+	 */
+	public function setExternalDocs($externalDocs)
+	{
+		$this->externalDocs = $externalDocs;
+		return $this;
+	}
+
+	/**
+	 * @param $example
+	 * @return $this
+	 */
+	public function setExample($example)
+	{
+		$this->example = $example;
+		return $this;
+	}
 }
 

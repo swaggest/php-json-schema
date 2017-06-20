@@ -37,5 +37,25 @@ class BasicAuthenticationSecurity extends ClassStructure {
 		  0 => 'type',
 		);
 	}
+
+	/**
+	 * @param string $type
+	 * @return $this
+	 */
+	public function setType($type)
+	{
+		$this->type = $type;
+		return $this;
+	}
+
+	/**
+	 * @param string $description
+	 * @return $this
+	 */
+	public function setDescription($description)
+	{
+		$this->description = $description;
+		return $this;
+	}
 }
 

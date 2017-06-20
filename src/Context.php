@@ -19,6 +19,8 @@ class Context extends MagicMap
     /** @var \SplObjectStorage */
     public $circularReferences;
 
+    public $skipValidation = false;
+
     /**
      * ProcessingOptions constructor.
      * @param RemoteRefProvider $remoteRefProvider

@@ -56,5 +56,65 @@ class Info extends ClassStructure {
 		  1 => 'title',
 		);
 	}
+
+	/**
+	 * @param string $title A unique and precise title of the API.
+	 * @return $this
+	 */
+	public function setTitle($title)
+	{
+		$this->title = $title;
+		return $this;
+	}
+
+	/**
+	 * @param string $version A semantic version number of the API.
+	 * @return $this
+	 */
+	public function setVersion($version)
+	{
+		$this->version = $version;
+		return $this;
+	}
+
+	/**
+	 * @param string $description A longer description of the API. Should be different from the title.  GitHub Flavored Markdown is allowed.
+	 * @return $this
+	 */
+	public function setDescription($description)
+	{
+		$this->description = $description;
+		return $this;
+	}
+
+	/**
+	 * @param string $termsOfService The terms of service for the API.
+	 * @return $this
+	 */
+	public function setTermsOfService($termsOfService)
+	{
+		$this->termsOfService = $termsOfService;
+		return $this;
+	}
+
+	/**
+	 * @param Contact $contact Contact information for the owners of the API.
+	 * @return $this
+	 */
+	public function setContact($contact)
+	{
+		$this->contact = $contact;
+		return $this;
+	}
+
+	/**
+	 * @param License $license
+	 * @return $this
+	 */
+	public function setLicense($license)
+	{
+		$this->license = $license;
+		return $this;
+	}
 }
 

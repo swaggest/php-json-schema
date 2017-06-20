@@ -41,5 +41,35 @@ class Contact extends ClassStructure {
 		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 		$ownerSchema->description = 'Contact information for the owners of the API.';
 	}
+
+	/**
+	 * @param string $name The identifying name of the contact person/organization.
+	 * @return $this
+	 */
+	public function setName($name)
+	{
+		$this->name = $name;
+		return $this;
+	}
+
+	/**
+	 * @param string $url The URL pointing to the contact information.
+	 * @return $this
+	 */
+	public function setUrl($url)
+	{
+		$this->url = $url;
+		return $this;
+	}
+
+	/**
+	 * @param string $email The email address of the contact person/organization.
+	 * @return $this
+	 */
+	public function setEmail($email)
+	{
+		$this->email = $email;
+		return $this;
+	}
 }
 
