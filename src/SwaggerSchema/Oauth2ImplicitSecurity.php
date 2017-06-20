@@ -60,51 +60,71 @@ class Oauth2ImplicitSecurity extends ClassStructure {
 	/**
 	 * @param string $type
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setType($type)
 	{
 		$this->type = $type;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $flow
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setFlow($flow)
 	{
 		$this->flow = $flow;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string[] $scopes
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setScopes($scopes)
 	{
 		$this->scopes = $scopes;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $authorizationUrl
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setAuthorizationUrl($authorizationUrl)
 	{
 		$this->authorizationUrl = $authorizationUrl;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $description
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setDescription($description)
 	{
 		$this->description = $description;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 }
 

@@ -33,11 +33,15 @@ class JsonReference extends ClassStructure {
 	/**
 	 * @param string $ref
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setRef($ref)
 	{
 		$this->ref = $ref;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 }
 

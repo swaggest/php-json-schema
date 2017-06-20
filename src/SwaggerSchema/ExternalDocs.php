@@ -40,21 +40,29 @@ class ExternalDocs extends ClassStructure {
 	/**
 	 * @param string $description
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setDescription($description)
 	{
 		$this->description = $description;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $url
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setUrl($url)
 	{
 		$this->url = $url;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 }
 

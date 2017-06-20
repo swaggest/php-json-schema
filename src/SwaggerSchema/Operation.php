@@ -136,121 +136,169 @@ class Operation extends ClassStructure {
 	/**
 	 * @param string[]|array $tags
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setTags($tags)
 	{
 		$this->tags = $tags;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $summary A brief summary of the operation.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setSummary($summary)
 	{
 		$this->summary = $summary;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $description A longer description of the operation, GitHub Flavored Markdown is allowed.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setDescription($description)
 	{
 		$this->description = $description;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param ExternalDocs $externalDocs information about external documentation
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setExternalDocs($externalDocs)
 	{
 		$this->externalDocs = $externalDocs;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $operationId A unique identifier of the operation.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setOperationId($operationId)
 	{
 		$this->operationId = $operationId;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string[]|array $produces A list of MIME types the API can produce.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setProduces($produces)
 	{
 		$this->produces = $produces;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string[]|array $consumes A list of MIME types the API can consume.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setConsumes($consumes)
 	{
 		$this->consumes = $consumes;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[]|JsonReference[]|array $parameters The parameters needed to send a valid API call.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setParameters($parameters)
 	{
 		$this->parameters = $parameters;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param Response[]|JsonReference[] $responses Response objects names can either be any valid HTTP status code or 'default'.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setResponses($responses)
 	{
 		$this->responses = $responses;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string[]|array $schemes The transfer protocol of the API.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setSchemes($schemes)
 	{
 		$this->schemes = $schemes;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param bool $deprecated
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setDeprecated($deprecated)
 	{
 		$this->deprecated = $deprecated;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string[][]|array[][]|array $security
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setSecurity($security)
 	{
 		$this->security = $security;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 }
 

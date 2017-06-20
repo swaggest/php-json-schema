@@ -45,31 +45,43 @@ class Contact extends ClassStructure {
 	/**
 	 * @param string $name The identifying name of the contact person/organization.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setName($name)
 	{
 		$this->name = $name;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $url The URL pointing to the contact information.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setUrl($url)
 	{
 		$this->url = $url;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $email The email address of the contact person/organization.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setEmail($email)
 	{
 		$this->email = $email;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 }
 

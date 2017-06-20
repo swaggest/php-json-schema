@@ -262,341 +262,477 @@ class JsonSchema extends ClassStructure {
 	/**
 	 * @param string $id
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setId($id)
 	{
 		$this->id = $id;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $schema
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setSchema($schema)
 	{
 		$this->schema = $schema;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $title
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setTitle($title)
 	{
 		$this->title = $title;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $description
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setDescription($description)
 	{
 		$this->description = $description;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param $default
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setDefault($default)
 	{
 		$this->default = $default;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param float $multipleOf
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setMultipleOf($multipleOf)
 	{
 		$this->multipleOf = $multipleOf;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param float $maximum
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setMaximum($maximum)
 	{
 		$this->maximum = $maximum;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param bool $exclusiveMaximum
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setExclusiveMaximum($exclusiveMaximum)
 	{
 		$this->exclusiveMaximum = $exclusiveMaximum;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param float $minimum
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setMinimum($minimum)
 	{
 		$this->minimum = $minimum;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param bool $exclusiveMinimum
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setExclusiveMinimum($exclusiveMinimum)
 	{
 		$this->exclusiveMinimum = $exclusiveMinimum;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param int $maxLength
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setMaxLength($maxLength)
 	{
 		$this->maxLength = $maxLength;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param int $minLength
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setMinLength($minLength)
 	{
 		$this->minLength = $minLength;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $pattern
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setPattern($pattern)
 	{
 		$this->pattern = $pattern;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param bool|JsonSchema $additionalItems
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setAdditionalItems($additionalItems)
 	{
 		$this->additionalItems = $additionalItems;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param JsonSchema|JsonSchema[]|array $items
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setItems($items)
 	{
 		$this->items = $items;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param int $maxItems
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setMaxItems($maxItems)
 	{
 		$this->maxItems = $maxItems;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param int $minItems
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setMinItems($minItems)
 	{
 		$this->minItems = $minItems;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param bool $uniqueItems
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setUniqueItems($uniqueItems)
 	{
 		$this->uniqueItems = $uniqueItems;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param int $maxProperties
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setMaxProperties($maxProperties)
 	{
 		$this->maxProperties = $maxProperties;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param int $minProperties
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setMinProperties($minProperties)
 	{
 		$this->minProperties = $minProperties;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string[]|array $required
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setRequired($required)
 	{
 		$this->required = $required;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param bool|JsonSchema $additionalProperties
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setAdditionalProperties($additionalProperties)
 	{
 		$this->additionalProperties = $additionalProperties;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param JsonSchema[] $definitions
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setDefinitions($definitions)
 	{
 		$this->definitions = $definitions;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param JsonSchema[] $properties
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setProperties($properties)
 	{
 		$this->properties = $properties;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param JsonSchema[] $patternProperties
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setPatternProperties($patternProperties)
 	{
 		$this->patternProperties = $patternProperties;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param JsonSchema[]|string[][]|array[] $dependencies
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setDependencies($dependencies)
 	{
 		$this->dependencies = $dependencies;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param array $enum
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setEnum($enum)
 	{
 		$this->enum = $enum;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param array $type
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setType($type)
 	{
 		$this->type = $type;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $format
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setFormat($format)
 	{
 		$this->format = $format;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $ref
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setRef($ref)
 	{
 		$this->ref = $ref;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param JsonSchema[]|array $allOf
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setAllOf($allOf)
 	{
 		$this->allOf = $allOf;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param JsonSchema[]|array $anyOf
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setAnyOf($anyOf)
 	{
 		$this->anyOf = $anyOf;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param JsonSchema[]|array $oneOf
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setOneOf($oneOf)
 	{
 		$this->oneOf = $oneOf;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param JsonSchema $not Core schema meta-schema
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setNot($not)
 	{
 		$this->not = $not;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 }
 

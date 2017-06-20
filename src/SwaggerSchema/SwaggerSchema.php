@@ -158,151 +158,211 @@ class SwaggerSchema extends ClassStructure {
 	/**
 	 * @param string $swagger The Swagger version of this document.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setSwagger($swagger)
 	{
 		$this->swagger = $swagger;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param Info $info General information about the API.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setInfo($info)
 	{
 		$this->info = $info;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $host The host (name or ip) of the API. Example: 'swagger.io'
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setHost($host)
 	{
 		$this->host = $host;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $basePath The base path to the API. Example: '/api'.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setBasePath($basePath)
 	{
 		$this->basePath = $basePath;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string[]|array $schemes The transfer protocol of the API.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setSchemes($schemes)
 	{
 		$this->schemes = $schemes;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string[]|array $consumes A list of MIME types accepted by the API.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setConsumes($consumes)
 	{
 		$this->consumes = $consumes;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string[]|array $produces A list of MIME types the API can produce.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setProduces($produces)
 	{
 		$this->produces = $produces;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param PathItem[] $paths Relative paths to the individual endpoints. They must be relative to the 'basePath'.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setPaths($paths)
 	{
 		$this->paths = $paths;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param Schema[] $definitions One or more JSON objects describing the schemas being consumed and produced by the API.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setDefinitions($definitions)
 	{
 		$this->definitions = $definitions;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[] $parameters One or more JSON representations for parameters
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setParameters($parameters)
 	{
 		$this->parameters = $parameters;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param Response[] $responses One or more JSON representations for parameters
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setResponses($responses)
 	{
 		$this->responses = $responses;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string[][]|array[][]|array $security
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setSecurity($security)
 	{
 		$this->security = $security;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param BasicAuthenticationSecurity[]|ApiKeySecurity[]|Oauth2ImplicitSecurity[]|Oauth2PasswordSecurity[]|Oauth2ApplicationSecurity[]|Oauth2AccessCodeSecurity[] $securityDefinitions
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setSecurityDefinitions($securityDefinitions)
 	{
 		$this->securityDefinitions = $securityDefinitions;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param Tag[]|array $tags
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setTags($tags)
 	{
 		$this->tags = $tags;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param ExternalDocs $externalDocs information about external documentation
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setExternalDocs($externalDocs)
 	{
 		$this->externalDocs = $externalDocs;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 }
 

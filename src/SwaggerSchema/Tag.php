@@ -42,31 +42,43 @@ class Tag extends ClassStructure {
 	/**
 	 * @param string $name
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setName($name)
 	{
 		$this->name = $name;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $description
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setDescription($description)
 	{
 		$this->description = $description;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param ExternalDocs $externalDocs information about external documentation
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setExternalDocs($externalDocs)
 	{
 		$this->externalDocs = $externalDocs;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 }
 

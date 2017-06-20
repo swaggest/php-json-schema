@@ -48,41 +48,57 @@ class Response extends ClassStructure {
 	/**
 	 * @param string $description
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setDescription($description)
 	{
 		$this->description = $description;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param Schema|FileSchema $schema
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setSchema($schema)
 	{
 		$this->schema = $schema;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param Header[] $headers
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setHeaders($headers)
 	{
 		$this->headers = $headers;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param $examples
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setExamples($examples)
 	{
 		$this->examples = $examples;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 }
 

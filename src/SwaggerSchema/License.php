@@ -41,21 +41,29 @@ class License extends ClassStructure {
 	/**
 	 * @param string $name The name of the license type. It's encouraged to use an OSI compatible license.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setName($name)
 	{
 		$this->name = $name;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param string $url The URL pointing to the license.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setUrl($url)
 	{
 		$this->url = $url;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 }
 

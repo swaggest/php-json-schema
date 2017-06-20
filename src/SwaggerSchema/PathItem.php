@@ -80,91 +80,127 @@ class PathItem extends ClassStructure {
 	/**
 	 * @param string $ref
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setRef($ref)
 	{
 		$this->ref = $ref;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param Operation $get
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setGet($get)
 	{
 		$this->get = $get;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param Operation $put
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setPut($put)
 	{
 		$this->put = $put;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param Operation $post
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setPost($post)
 	{
 		$this->post = $post;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param Operation $delete
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setDelete($delete)
 	{
 		$this->delete = $delete;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param Operation $options
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setOptions($options)
 	{
 		$this->options = $options;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param Operation $head
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setHead($head)
 	{
 		$this->head = $head;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param Operation $patch
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setPatch($patch)
 	{
 		$this->patch = $patch;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 
 	/**
 	 * @param BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[]|JsonReference[]|array $parameters The parameters needed to send a valid API call.
 	 * @return $this
+	 * @codeCoverageIgnoreStart 
 	 */
 	public function setParameters($parameters)
 	{
 		$this->parameters = $parameters;
 		return $this;
 	}
+	/**
+	 * @codeCoverageIgnoreEnd 
+	 */
 }
 
