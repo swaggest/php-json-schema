@@ -56,5 +56,55 @@ class Oauth2PasswordSecurity extends ClassStructure {
 		  2 => 'tokenUrl',
 		);
 	}
+
+	/**
+	 * @param string $type
+	 * @return $this
+	 */
+	public function setType($type)
+	{
+		$this->type = $type;
+		return $this;
+	}
+
+	/**
+	 * @param string $flow
+	 * @return $this
+	 */
+	public function setFlow($flow)
+	{
+		$this->flow = $flow;
+		return $this;
+	}
+
+	/**
+	 * @param string[] $scopes
+	 * @return $this
+	 */
+	public function setScopes($scopes)
+	{
+		$this->scopes = $scopes;
+		return $this;
+	}
+
+	/**
+	 * @param string $tokenUrl
+	 * @return $this
+	 */
+	public function setTokenUrl($tokenUrl)
+	{
+		$this->tokenUrl = $tokenUrl;
+		return $this;
+	}
+
+	/**
+	 * @param string $description
+	 * @return $this
+	 */
+	public function setDescription($description)
+	{
+		$this->description = $description;
+		return $this;
+	}
 }
 

@@ -45,5 +45,55 @@ class Xml extends ClassStructure {
 		$ownerSchema->patternProperties['^x-'] = new JsonBasicSchema();
 		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 	}
+
+	/**
+	 * @param string $name
+	 * @return $this
+	 */
+	public function setName($name)
+	{
+		$this->name = $name;
+		return $this;
+	}
+
+	/**
+	 * @param string $namespace
+	 * @return $this
+	 */
+	public function setNamespace($namespace)
+	{
+		$this->namespace = $namespace;
+		return $this;
+	}
+
+	/**
+	 * @param string $prefix
+	 * @return $this
+	 */
+	public function setPrefix($prefix)
+	{
+		$this->prefix = $prefix;
+		return $this;
+	}
+
+	/**
+	 * @param bool $attribute
+	 * @return $this
+	 */
+	public function setAttribute($attribute)
+	{
+		$this->attribute = $attribute;
+		return $this;
+	}
+
+	/**
+	 * @param bool $wrapped
+	 * @return $this
+	 */
+	public function setWrapped($wrapped)
+	{
+		$this->wrapped = $wrapped;
+		return $this;
+	}
 }
 

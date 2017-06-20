@@ -122,5 +122,175 @@ class PrimitivesItems extends ClassStructure {
 		$ownerSchema->patternProperties['^x-'] = new JsonBasicSchema();
 		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 	}
+
+	/**
+	 * @param string $type
+	 * @return $this
+	 */
+	public function setType($type)
+	{
+		$this->type = $type;
+		return $this;
+	}
+
+	/**
+	 * @param string $format
+	 * @return $this
+	 */
+	public function setFormat($format)
+	{
+		$this->format = $format;
+		return $this;
+	}
+
+	/**
+	 * @param PrimitivesItems $items
+	 * @return $this
+	 */
+	public function setItems($items)
+	{
+		$this->items = $items;
+		return $this;
+	}
+
+	/**
+	 * @param string $collectionFormat
+	 * @return $this
+	 */
+	public function setCollectionFormat($collectionFormat)
+	{
+		$this->collectionFormat = $collectionFormat;
+		return $this;
+	}
+
+	/**
+	 * @param $default
+	 * @return $this
+	 */
+	public function setDefault($default)
+	{
+		$this->default = $default;
+		return $this;
+	}
+
+	/**
+	 * @param float $maximum
+	 * @return $this
+	 */
+	public function setMaximum($maximum)
+	{
+		$this->maximum = $maximum;
+		return $this;
+	}
+
+	/**
+	 * @param bool $exclusiveMaximum
+	 * @return $this
+	 */
+	public function setExclusiveMaximum($exclusiveMaximum)
+	{
+		$this->exclusiveMaximum = $exclusiveMaximum;
+		return $this;
+	}
+
+	/**
+	 * @param float $minimum
+	 * @return $this
+	 */
+	public function setMinimum($minimum)
+	{
+		$this->minimum = $minimum;
+		return $this;
+	}
+
+	/**
+	 * @param bool $exclusiveMinimum
+	 * @return $this
+	 */
+	public function setExclusiveMinimum($exclusiveMinimum)
+	{
+		$this->exclusiveMinimum = $exclusiveMinimum;
+		return $this;
+	}
+
+	/**
+	 * @param int $maxLength
+	 * @return $this
+	 */
+	public function setMaxLength($maxLength)
+	{
+		$this->maxLength = $maxLength;
+		return $this;
+	}
+
+	/**
+	 * @param int $minLength
+	 * @return $this
+	 */
+	public function setMinLength($minLength)
+	{
+		$this->minLength = $minLength;
+		return $this;
+	}
+
+	/**
+	 * @param string $pattern
+	 * @return $this
+	 */
+	public function setPattern($pattern)
+	{
+		$this->pattern = $pattern;
+		return $this;
+	}
+
+	/**
+	 * @param int $maxItems
+	 * @return $this
+	 */
+	public function setMaxItems($maxItems)
+	{
+		$this->maxItems = $maxItems;
+		return $this;
+	}
+
+	/**
+	 * @param int $minItems
+	 * @return $this
+	 */
+	public function setMinItems($minItems)
+	{
+		$this->minItems = $minItems;
+		return $this;
+	}
+
+	/**
+	 * @param bool $uniqueItems
+	 * @return $this
+	 */
+	public function setUniqueItems($uniqueItems)
+	{
+		$this->uniqueItems = $uniqueItems;
+		return $this;
+	}
+
+	/**
+	 * @param array $enum
+	 * @return $this
+	 */
+	public function setEnum($enum)
+	{
+		$this->enum = $enum;
+		return $this;
+	}
+
+	/**
+	 * @param float $multipleOf
+	 * @return $this
+	 */
+	public function setMultipleOf($multipleOf)
+	{
+		$this->multipleOf = $multipleOf;
+		return $this;
+	}
 }
 

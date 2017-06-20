@@ -68,5 +68,95 @@ class FileSchema extends ClassStructure {
 		  0 => 'type',
 		);
 	}
+
+	/**
+	 * @param string $format
+	 * @return $this
+	 */
+	public function setFormat($format)
+	{
+		$this->format = $format;
+		return $this;
+	}
+
+	/**
+	 * @param string $title
+	 * @return $this
+	 */
+	public function setTitle($title)
+	{
+		$this->title = $title;
+		return $this;
+	}
+
+	/**
+	 * @param string $description
+	 * @return $this
+	 */
+	public function setDescription($description)
+	{
+		$this->description = $description;
+		return $this;
+	}
+
+	/**
+	 * @param $default
+	 * @return $this
+	 */
+	public function setDefault($default)
+	{
+		$this->default = $default;
+		return $this;
+	}
+
+	/**
+	 * @param string[]|array $required
+	 * @return $this
+	 */
+	public function setRequired($required)
+	{
+		$this->required = $required;
+		return $this;
+	}
+
+	/**
+	 * @param string $type
+	 * @return $this
+	 */
+	public function setType($type)
+	{
+		$this->type = $type;
+		return $this;
+	}
+
+	/**
+	 * @param bool $readOnly
+	 * @return $this
+	 */
+	public function setReadOnly($readOnly)
+	{
+		$this->readOnly = $readOnly;
+		return $this;
+	}
+
+	/**
+	 * @param ExternalDocs $externalDocs information about external documentation
+	 * @return $this
+	 */
+	public function setExternalDocs($externalDocs)
+	{
+		$this->externalDocs = $externalDocs;
+		return $this;
+	}
+
+	/**
+	 * @param $example
+	 * @return $this
+	 */
+	public function setExample($example)
+	{
+		$this->example = $example;
+		return $this;
+	}
 }
 

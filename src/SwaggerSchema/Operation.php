@@ -132,5 +132,125 @@ class Operation extends ClassStructure {
 		  0 => 'responses',
 		);
 	}
+
+	/**
+	 * @param string[]|array $tags
+	 * @return $this
+	 */
+	public function setTags($tags)
+	{
+		$this->tags = $tags;
+		return $this;
+	}
+
+	/**
+	 * @param string $summary A brief summary of the operation.
+	 * @return $this
+	 */
+	public function setSummary($summary)
+	{
+		$this->summary = $summary;
+		return $this;
+	}
+
+	/**
+	 * @param string $description A longer description of the operation, GitHub Flavored Markdown is allowed.
+	 * @return $this
+	 */
+	public function setDescription($description)
+	{
+		$this->description = $description;
+		return $this;
+	}
+
+	/**
+	 * @param ExternalDocs $externalDocs information about external documentation
+	 * @return $this
+	 */
+	public function setExternalDocs($externalDocs)
+	{
+		$this->externalDocs = $externalDocs;
+		return $this;
+	}
+
+	/**
+	 * @param string $operationId A unique identifier of the operation.
+	 * @return $this
+	 */
+	public function setOperationId($operationId)
+	{
+		$this->operationId = $operationId;
+		return $this;
+	}
+
+	/**
+	 * @param string[]|array $produces A list of MIME types the API can produce.
+	 * @return $this
+	 */
+	public function setProduces($produces)
+	{
+		$this->produces = $produces;
+		return $this;
+	}
+
+	/**
+	 * @param string[]|array $consumes A list of MIME types the API can consume.
+	 * @return $this
+	 */
+	public function setConsumes($consumes)
+	{
+		$this->consumes = $consumes;
+		return $this;
+	}
+
+	/**
+	 * @param BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[]|JsonReference[]|array $parameters The parameters needed to send a valid API call.
+	 * @return $this
+	 */
+	public function setParameters($parameters)
+	{
+		$this->parameters = $parameters;
+		return $this;
+	}
+
+	/**
+	 * @param Response[]|JsonReference[] $responses Response objects names can either be any valid HTTP status code or 'default'.
+	 * @return $this
+	 */
+	public function setResponses($responses)
+	{
+		$this->responses = $responses;
+		return $this;
+	}
+
+	/**
+	 * @param string[]|array $schemes The transfer protocol of the API.
+	 * @return $this
+	 */
+	public function setSchemes($schemes)
+	{
+		$this->schemes = $schemes;
+		return $this;
+	}
+
+	/**
+	 * @param bool $deprecated
+	 * @return $this
+	 */
+	public function setDeprecated($deprecated)
+	{
+		$this->deprecated = $deprecated;
+		return $this;
+	}
+
+	/**
+	 * @param string[][]|array[][]|array $security
+	 * @return $this
+	 */
+	public function setSecurity($security)
+	{
+		$this->security = $security;
+		return $this;
+	}
 }
 

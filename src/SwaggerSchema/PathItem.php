@@ -76,5 +76,95 @@ class PathItem extends ClassStructure {
 		$ownerSchema->patternProperties['^x-'] = new JsonBasicSchema();
 		$ownerSchema->patternProperties['^x-']->description = 'Any property starting with x- is valid.';
 	}
+
+	/**
+	 * @param string $ref
+	 * @return $this
+	 */
+	public function setRef($ref)
+	{
+		$this->ref = $ref;
+		return $this;
+	}
+
+	/**
+	 * @param Operation $get
+	 * @return $this
+	 */
+	public function setGet($get)
+	{
+		$this->get = $get;
+		return $this;
+	}
+
+	/**
+	 * @param Operation $put
+	 * @return $this
+	 */
+	public function setPut($put)
+	{
+		$this->put = $put;
+		return $this;
+	}
+
+	/**
+	 * @param Operation $post
+	 * @return $this
+	 */
+	public function setPost($post)
+	{
+		$this->post = $post;
+		return $this;
+	}
+
+	/**
+	 * @param Operation $delete
+	 * @return $this
+	 */
+	public function setDelete($delete)
+	{
+		$this->delete = $delete;
+		return $this;
+	}
+
+	/**
+	 * @param Operation $options
+	 * @return $this
+	 */
+	public function setOptions($options)
+	{
+		$this->options = $options;
+		return $this;
+	}
+
+	/**
+	 * @param Operation $head
+	 * @return $this
+	 */
+	public function setHead($head)
+	{
+		$this->head = $head;
+		return $this;
+	}
+
+	/**
+	 * @param Operation $patch
+	 * @return $this
+	 */
+	public function setPatch($patch)
+	{
+		$this->patch = $patch;
+		return $this;
+	}
+
+	/**
+	 * @param BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[]|JsonReference[]|array $parameters The parameters needed to send a valid API call.
+	 * @return $this
+	 */
+	public function setParameters($parameters)
+	{
+		$this->parameters = $parameters;
+		return $this;
+	}
 }
 

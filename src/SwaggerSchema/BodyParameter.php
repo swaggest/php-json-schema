@@ -56,5 +56,55 @@ class BodyParameter extends ClassStructure {
 		  2 => 'schema',
 		);
 	}
+
+	/**
+	 * @param string $description A brief description of the parameter. This could contain examples of use.  GitHub Flavored Markdown is allowed.
+	 * @return $this
+	 */
+	public function setDescription($description)
+	{
+		$this->description = $description;
+		return $this;
+	}
+
+	/**
+	 * @param string $name The name of the parameter.
+	 * @return $this
+	 */
+	public function setName($name)
+	{
+		$this->name = $name;
+		return $this;
+	}
+
+	/**
+	 * @param string $in Determines the location of the parameter.
+	 * @return $this
+	 */
+	public function setIn($in)
+	{
+		$this->in = $in;
+		return $this;
+	}
+
+	/**
+	 * @param bool $required Determines whether or not this parameter is required or optional.
+	 * @return $this
+	 */
+	public function setRequired($required)
+	{
+		$this->required = $required;
+		return $this;
+	}
+
+	/**
+	 * @param Schema $schema A deterministic version of a JSON Schema object.
+	 * @return $this
+	 */
+	public function setSchema($schema)
+	{
+		$this->schema = $schema;
+		return $this;
+	}
 }
 

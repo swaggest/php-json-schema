@@ -38,5 +38,35 @@ class Tag extends ClassStructure {
 		  0 => 'name',
 		);
 	}
+
+	/**
+	 * @param string $name
+	 * @return $this
+	 */
+	public function setName($name)
+	{
+		$this->name = $name;
+		return $this;
+	}
+
+	/**
+	 * @param string $description
+	 * @return $this
+	 */
+	public function setDescription($description)
+	{
+		$this->description = $description;
+		return $this;
+	}
+
+	/**
+	 * @param ExternalDocs $externalDocs information about external documentation
+	 * @return $this
+	 */
+	public function setExternalDocs($externalDocs)
+	{
+		$this->externalDocs = $externalDocs;
+		return $this;
+	}
 }
 
