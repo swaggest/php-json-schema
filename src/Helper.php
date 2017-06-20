@@ -66,4 +66,18 @@ class Helper
     }
 
 
+    public static function padLines($with, $text, $skipFirst = true)
+    {
+        $lines = explode("\n", $text);
+        foreach ($lines as $index => $line) {
+            if ($skipFirst && !$index) {
+                continue;
+            }
+            if ($line) {
+                $lines[$index] = $with . $line;
+            }
+        }
+        return implode("\n", $lines);
+    }
+
 }

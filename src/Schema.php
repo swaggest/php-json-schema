@@ -212,7 +212,7 @@ class Schema extends JsonSchema
                         break;
                     }
                 } catch (InvalidValue $exception) {
-                    $failures .= ' ' . $index . ': ' . $exception->getMessage() . "\n";
+                    $failures .= ' ' . $index . ': ' . Helper::padLines(' ', $exception->getMessage()) . "\n";
                     // Expected exception
                 }
             }
@@ -240,7 +240,7 @@ class Schema extends JsonSchema
                 }
             }
             if (!$successes) {
-                $this->fail(new LogicException('Failed due to logical constraint: no valid results for anyOf {' . "\n" . substr($failures, 0, -1) . "\n}"), $path);
+                $this->fail(new LogicException('Failed due to logical constraint: no valid results for anyOf {' . "\n" . substr(Helper::padLines(' ', $failures), 0, -1) . "\n}"), $path);
             }
         }
 
