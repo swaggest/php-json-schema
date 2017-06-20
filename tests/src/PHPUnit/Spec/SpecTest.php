@@ -69,6 +69,43 @@ class SpecTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    /**
+     * @dataProvider provider
+     * @param $schemaData
+     * @param $data
+     * @param $isValid
+     * @throws InvalidValue
+     */
+    public function testSpecDraft4SkipValidation($schemaData, $data, $isValid)
+    {
+        $refProvider = self::getProvider();
+
+        $actualValid = true;
+        $error = '';
+        try {
+            $options = new Context();
+            $options->setRemoteRefProvider($refProvider);
+            $schema = Schema::import($schemaData, $options);
+            $context = new Context();
+            $context->skipValidation = true;
+            $res = $schema->in($data, $context);
+
+            $context = new Context();
+            $context->skipValidation = true;
+            $exported = $schema->out($res, $context);
+            $this->assertEquals($data, $exported);
+        } catch (InvalidValue $exception) {
+            $actualValid = false;
+            $error = $exception->getMessage();
+        }
+
+
+        $this->assertTrue($actualValid, "Schema:\n" . json_encode($schemaData, JSON_PRETTY_PRINT)
+            . "\nData:\n" . json_encode($data, JSON_PRETTY_PRINT)
+            . "\nError: " . $error . "\n");
+    }
+
+
     public function provider()
     {
         $path = __DIR__ . '/../../../../spec/JSON-Schema-Test-Suite/tests/draft4';

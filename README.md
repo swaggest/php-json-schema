@@ -270,11 +270,13 @@ $properties->dateTime = Schema::string()->meta(new FieldName('date_time'));
 
 ```php
 $mapper = new NameMapper();
+$options = new Context();
+$options->dataPreProcessor = $mapper;
 
 $order = new Order();
 $order->id = 1;
 $order->dateTime = '2015-10-28T07:28:00Z';
-$exported = Order::export($order, $mapper);
+$exported = Order::export($order, $options);
 $json = <<<JSON
 {
     "id": 1,
@@ -283,7 +285,7 @@ $json = <<<JSON
 JSON;
 $this->assertSame($json, json_encode($exported, JSON_PRETTY_PRINT));
 
-$imported = Order::import(json_decode($json), $mapper);
+$imported = Order::import(json_decode($json), $options);
 $this->assertSame('2015-10-28T07:28:00Z', $imported->dateTime);
 ```
 
@@ -305,4 +307,21 @@ And get back.
 // Retrieving meta
 $myMeta = FieldName::get($schema);
 $this->assertSame('my-value', $myMeta->name);
+```
+
+
+#### Mapping without validation
+
+If you want to tolerate invalid data or improve mapping performance you can specify `skipValidation` flag in processing `Context`
+
+```
+$schema = Schema::object();
+$schema->setProperty('one', Schema::integer());
+$schema->properties->one->minimum = 5;
+
+$options = new Context();
+$options->skipValidation = true;
+
+$res = $schema->in(json_decode('{"one":4}'), $options);
+$this->assertSame(4, $res->one);
 ```

@@ -167,6 +167,10 @@ class Schema extends JsonSchema
             $result = $data;
         }
 
+        if ($options->skipValidation) {
+            goto skipValidation;
+        }
+
         if ($this->type !== null) {
             if (!Type::isValid($this->type, $data)) {
                 $this->fail(new TypeException(ucfirst(
@@ -311,9 +315,10 @@ class Schema extends JsonSchema
             }
         }
 
+        skipValidation:
 
         if ($data instanceof \stdClass) {
-            if ($this->required !== null) {
+            if (!$options->skipValidation && $this->required !== null) {
                 foreach ($this->required as $item) {
                     if (!property_exists($data, $item)) {
                         $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
@@ -416,12 +421,15 @@ class Schema extends JsonSchema
                 $array = (array)$data;
             }
 
-            if ($this->minProperties !== null && count($array) < $this->minProperties) {
-                $this->fail(new ObjectException("Not enough properties", ObjectException::TOO_FEW), $path);
+            if (!$options->skipValidation) {
+                if ($this->minProperties !== null && count($array) < $this->minProperties) {
+                    $this->fail(new ObjectException("Not enough properties", ObjectException::TOO_FEW), $path);
+                }
+                if ($this->maxProperties !== null && count($array) > $this->maxProperties) {
+                    $this->fail(new ObjectException("Too many properties", ObjectException::TOO_MANY), $path);
+                }
             }
-            if ($this->maxProperties !== null && count($array) > $this->maxProperties) {
-                $this->fail(new ObjectException("Too many properties", ObjectException::TOO_MANY), $path);
-            }
+
             foreach ($array as $key => $value) {
                 if ($key === '' && PHP_VERSION_ID < 71000) {
                     $this->fail(new InvalidValue('Empty property name'), $path);
@@ -429,7 +437,7 @@ class Schema extends JsonSchema
 
                 $found = false;
 
-                if (!empty($this->dependencies)) {
+                if (!$options->skipValidation && !empty($this->dependencies)) {
                     $deps = $this->dependencies;
                     if (isset($deps->$key)) {
                         $dependencies = $deps->$key;
@@ -477,11 +485,14 @@ class Schema extends JsonSchema
                     }
                 }
                 if (!$found && $this->additionalProperties !== null) {
-                    if ($this->additionalProperties === false) {
+                    if (!$options->skipValidation && $this->additionalProperties === false) {
                         $this->fail(new ObjectException('Additional properties not allowed'), $path . ':' . $key);
                     }
 
-                    $value = $this->additionalProperties->process($value, $options, $path . '->additionalProperties:' . $key);
+                    if ($this->additionalProperties !== false) {
+                        $value = $this->additionalProperties->process($value, $options, $path . '->additionalProperties:' . $key);
+                    }
+
                     if ($import && !$this->useObjectAsArray) {
                         $result->addAdditionalPropertyName($key);
                     }
@@ -511,12 +522,14 @@ class Schema extends JsonSchema
 
         if (is_array($data)) {
 
-            if ($this->minItems !== null && count($data) < $this->minItems) {
-                $this->fail(new ArrayException("Not enough items in array"), $path);
-            }
+            if (!$options->skipValidation) {
+                if ($this->minItems !== null && count($data) < $this->minItems) {
+                    $this->fail(new ArrayException("Not enough items in array"), $path);
+                }
 
-            if ($this->maxItems !== null && count($data) > $this->maxItems) {
-                $this->fail(new ArrayException("Too many items in array"), $path);
+                if ($this->maxItems !== null && count($data) > $this->maxItems) {
+                    $this->fail(new ArrayException("Too many items in array"), $path);
+                }
             }
 
             $pathItems = 'items';
@@ -542,7 +555,7 @@ class Schema extends JsonSchema
                         if ($additionalItems instanceof Schema) {
                             $result[$key] = $additionalItems->process($value, $options, $path . '->' . $pathItems
                                 . '[' . $index . ']');
-                        } elseif ($additionalItems === false) {
+                        } elseif (!$options->skipValidation && $additionalItems === false) {
                             $this->fail(new ArrayException('Unexpected array item'), $path);
                         }
                     }
@@ -550,7 +563,7 @@ class Schema extends JsonSchema
                 }
             }
 
-            if ($this->uniqueItems) {
+            if (!$options->skipValidation && $this->uniqueItems) {
                 if (!UniqueItems::isValid($data)) {
                     $this->fail(new ArrayException('Array is not unique'), $path);
                 }
