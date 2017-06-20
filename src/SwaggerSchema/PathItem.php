@@ -87,9 +87,7 @@ class PathItem extends ClassStructure {
 		$this->ref = $ref;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Operation $get
@@ -101,9 +99,7 @@ class PathItem extends ClassStructure {
 		$this->get = $get;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Operation $put
@@ -115,9 +111,7 @@ class PathItem extends ClassStructure {
 		$this->put = $put;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Operation $post
@@ -129,9 +123,7 @@ class PathItem extends ClassStructure {
 		$this->post = $post;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Operation $delete
@@ -143,9 +135,7 @@ class PathItem extends ClassStructure {
 		$this->delete = $delete;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Operation $options
@@ -157,9 +147,7 @@ class PathItem extends ClassStructure {
 		$this->options = $options;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Operation $head
@@ -171,9 +159,7 @@ class PathItem extends ClassStructure {
 		$this->head = $head;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Operation $patch
@@ -185,9 +171,7 @@ class PathItem extends ClassStructure {
 		$this->patch = $patch;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[]|JsonReference[]|array $parameters The parameters needed to send a valid API call.
@@ -199,8 +183,6 @@ class PathItem extends ClassStructure {
 		$this->parameters = $parameters;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 }
 

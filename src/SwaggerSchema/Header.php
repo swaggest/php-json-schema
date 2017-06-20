@@ -140,9 +140,7 @@ class Header extends ClassStructure {
 		$this->type = $type;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $format
@@ -154,9 +152,7 @@ class Header extends ClassStructure {
 		$this->format = $format;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param PrimitivesItems $items
@@ -168,9 +164,7 @@ class Header extends ClassStructure {
 		$this->items = $items;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $collectionFormat
@@ -182,9 +176,7 @@ class Header extends ClassStructure {
 		$this->collectionFormat = $collectionFormat;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param $default
@@ -196,9 +188,7 @@ class Header extends ClassStructure {
 		$this->default = $default;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param float $maximum
@@ -210,9 +200,7 @@ class Header extends ClassStructure {
 		$this->maximum = $maximum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $exclusiveMaximum
@@ -224,9 +212,7 @@ class Header extends ClassStructure {
 		$this->exclusiveMaximum = $exclusiveMaximum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param float $minimum
@@ -238,9 +224,7 @@ class Header extends ClassStructure {
 		$this->minimum = $minimum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $exclusiveMinimum
@@ -252,9 +236,7 @@ class Header extends ClassStructure {
 		$this->exclusiveMinimum = $exclusiveMinimum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $maxLength
@@ -266,9 +248,7 @@ class Header extends ClassStructure {
 		$this->maxLength = $maxLength;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $minLength
@@ -280,9 +260,7 @@ class Header extends ClassStructure {
 		$this->minLength = $minLength;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $pattern
@@ -294,9 +272,7 @@ class Header extends ClassStructure {
 		$this->pattern = $pattern;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $maxItems
@@ -308,9 +284,7 @@ class Header extends ClassStructure {
 		$this->maxItems = $maxItems;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $minItems
@@ -322,9 +296,7 @@ class Header extends ClassStructure {
 		$this->minItems = $minItems;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $uniqueItems
@@ -336,9 +308,7 @@ class Header extends ClassStructure {
 		$this->uniqueItems = $uniqueItems;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param array $enum
@@ -350,9 +320,7 @@ class Header extends ClassStructure {
 		$this->enum = $enum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param float $multipleOf
@@ -364,9 +332,7 @@ class Header extends ClassStructure {
 		$this->multipleOf = $multipleOf;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $description
@@ -378,8 +344,6 @@ class Header extends ClassStructure {
 		$this->description = $description;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 }
 

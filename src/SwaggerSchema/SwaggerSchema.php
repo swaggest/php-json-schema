@@ -165,9 +165,7 @@ class SwaggerSchema extends ClassStructure {
 		$this->swagger = $swagger;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Info $info General information about the API.
@@ -179,9 +177,7 @@ class SwaggerSchema extends ClassStructure {
 		$this->info = $info;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $host The host (name or ip) of the API. Example: 'swagger.io'
@@ -193,9 +189,7 @@ class SwaggerSchema extends ClassStructure {
 		$this->host = $host;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $basePath The base path to the API. Example: '/api'.
@@ -207,9 +201,7 @@ class SwaggerSchema extends ClassStructure {
 		$this->basePath = $basePath;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string[]|array $schemes The transfer protocol of the API.
@@ -221,9 +213,7 @@ class SwaggerSchema extends ClassStructure {
 		$this->schemes = $schemes;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string[]|array $consumes A list of MIME types accepted by the API.
@@ -235,9 +225,7 @@ class SwaggerSchema extends ClassStructure {
 		$this->consumes = $consumes;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string[]|array $produces A list of MIME types the API can produce.
@@ -249,9 +237,7 @@ class SwaggerSchema extends ClassStructure {
 		$this->produces = $produces;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param PathItem[] $paths Relative paths to the individual endpoints. They must be relative to the 'basePath'.
@@ -263,9 +249,7 @@ class SwaggerSchema extends ClassStructure {
 		$this->paths = $paths;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Schema[] $definitions One or more JSON objects describing the schemas being consumed and produced by the API.
@@ -277,9 +261,7 @@ class SwaggerSchema extends ClassStructure {
 		$this->definitions = $definitions;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[] $parameters One or more JSON representations for parameters
@@ -291,9 +273,7 @@ class SwaggerSchema extends ClassStructure {
 		$this->parameters = $parameters;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Response[] $responses One or more JSON representations for parameters
@@ -305,9 +285,7 @@ class SwaggerSchema extends ClassStructure {
 		$this->responses = $responses;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string[][]|array[][]|array $security
@@ -319,9 +297,7 @@ class SwaggerSchema extends ClassStructure {
 		$this->security = $security;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param BasicAuthenticationSecurity[]|ApiKeySecurity[]|Oauth2ImplicitSecurity[]|Oauth2PasswordSecurity[]|Oauth2ApplicationSecurity[]|Oauth2AccessCodeSecurity[] $securityDefinitions
@@ -333,9 +309,7 @@ class SwaggerSchema extends ClassStructure {
 		$this->securityDefinitions = $securityDefinitions;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Tag[]|array $tags
@@ -347,9 +321,7 @@ class SwaggerSchema extends ClassStructure {
 		$this->tags = $tags;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param ExternalDocs $externalDocs information about external documentation
@@ -361,8 +333,6 @@ class SwaggerSchema extends ClassStructure {
 		$this->externalDocs = $externalDocs;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 }
 

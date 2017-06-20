@@ -269,9 +269,7 @@ class JsonSchema extends ClassStructure {
 		$this->id = $id;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $schema
@@ -283,9 +281,7 @@ class JsonSchema extends ClassStructure {
 		$this->schema = $schema;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $title
@@ -297,9 +293,7 @@ class JsonSchema extends ClassStructure {
 		$this->title = $title;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $description
@@ -311,9 +305,7 @@ class JsonSchema extends ClassStructure {
 		$this->description = $description;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param $default
@@ -325,9 +317,7 @@ class JsonSchema extends ClassStructure {
 		$this->default = $default;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param float $multipleOf
@@ -339,9 +329,7 @@ class JsonSchema extends ClassStructure {
 		$this->multipleOf = $multipleOf;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param float $maximum
@@ -353,9 +341,7 @@ class JsonSchema extends ClassStructure {
 		$this->maximum = $maximum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $exclusiveMaximum
@@ -367,9 +353,7 @@ class JsonSchema extends ClassStructure {
 		$this->exclusiveMaximum = $exclusiveMaximum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param float $minimum
@@ -381,9 +365,7 @@ class JsonSchema extends ClassStructure {
 		$this->minimum = $minimum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $exclusiveMinimum
@@ -395,9 +377,7 @@ class JsonSchema extends ClassStructure {
 		$this->exclusiveMinimum = $exclusiveMinimum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $maxLength
@@ -409,9 +389,7 @@ class JsonSchema extends ClassStructure {
 		$this->maxLength = $maxLength;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $minLength
@@ -423,9 +401,7 @@ class JsonSchema extends ClassStructure {
 		$this->minLength = $minLength;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $pattern
@@ -437,9 +413,7 @@ class JsonSchema extends ClassStructure {
 		$this->pattern = $pattern;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool|JsonSchema $additionalItems
@@ -451,9 +425,7 @@ class JsonSchema extends ClassStructure {
 		$this->additionalItems = $additionalItems;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param JsonSchema|JsonSchema[]|array $items
@@ -465,9 +437,7 @@ class JsonSchema extends ClassStructure {
 		$this->items = $items;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $maxItems
@@ -479,9 +449,7 @@ class JsonSchema extends ClassStructure {
 		$this->maxItems = $maxItems;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $minItems
@@ -493,9 +461,7 @@ class JsonSchema extends ClassStructure {
 		$this->minItems = $minItems;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $uniqueItems
@@ -507,9 +473,7 @@ class JsonSchema extends ClassStructure {
 		$this->uniqueItems = $uniqueItems;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $maxProperties
@@ -521,9 +485,7 @@ class JsonSchema extends ClassStructure {
 		$this->maxProperties = $maxProperties;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $minProperties
@@ -535,9 +497,7 @@ class JsonSchema extends ClassStructure {
 		$this->minProperties = $minProperties;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string[]|array $required
@@ -549,9 +509,7 @@ class JsonSchema extends ClassStructure {
 		$this->required = $required;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool|JsonSchema $additionalProperties
@@ -563,9 +521,7 @@ class JsonSchema extends ClassStructure {
 		$this->additionalProperties = $additionalProperties;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param JsonSchema[] $definitions
@@ -577,9 +533,7 @@ class JsonSchema extends ClassStructure {
 		$this->definitions = $definitions;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param JsonSchema[] $properties
@@ -591,9 +545,7 @@ class JsonSchema extends ClassStructure {
 		$this->properties = $properties;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param JsonSchema[] $patternProperties
@@ -605,9 +557,7 @@ class JsonSchema extends ClassStructure {
 		$this->patternProperties = $patternProperties;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param JsonSchema[]|string[][]|array[] $dependencies
@@ -619,9 +569,7 @@ class JsonSchema extends ClassStructure {
 		$this->dependencies = $dependencies;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param array $enum
@@ -633,9 +581,7 @@ class JsonSchema extends ClassStructure {
 		$this->enum = $enum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param array $type
@@ -647,9 +593,7 @@ class JsonSchema extends ClassStructure {
 		$this->type = $type;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $format
@@ -661,9 +605,7 @@ class JsonSchema extends ClassStructure {
 		$this->format = $format;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $ref
@@ -675,9 +617,7 @@ class JsonSchema extends ClassStructure {
 		$this->ref = $ref;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param JsonSchema[]|array $allOf
@@ -689,9 +629,7 @@ class JsonSchema extends ClassStructure {
 		$this->allOf = $allOf;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param JsonSchema[]|array $anyOf
@@ -703,9 +641,7 @@ class JsonSchema extends ClassStructure {
 		$this->anyOf = $anyOf;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param JsonSchema[]|array $oneOf
@@ -717,9 +653,7 @@ class JsonSchema extends ClassStructure {
 		$this->oneOf = $oneOf;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param JsonSchema $not Core schema meta-schema
@@ -731,8 +665,6 @@ class JsonSchema extends ClassStructure {
 		$this->not = $not;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 }
 

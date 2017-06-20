@@ -165,9 +165,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->required = $required;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $in Determines the location of the parameter.
@@ -179,9 +177,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->in = $in;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $description A brief description of the parameter. This could contain examples of use.  GitHub Flavored Markdown is allowed.
@@ -193,9 +189,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->description = $description;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $name The name of the parameter.
@@ -207,9 +201,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->name = $name;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $allowEmptyValue allows sending a parameter by name only or with an empty value.
@@ -221,9 +213,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->allowEmptyValue = $allowEmptyValue;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $type
@@ -235,9 +225,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->type = $type;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $format
@@ -249,9 +237,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->format = $format;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param PrimitivesItems $items
@@ -263,9 +249,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->items = $items;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $collectionFormat
@@ -277,9 +261,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->collectionFormat = $collectionFormat;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param $default
@@ -291,9 +273,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->default = $default;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param float $maximum
@@ -305,9 +285,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->maximum = $maximum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $exclusiveMaximum
@@ -319,9 +297,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->exclusiveMaximum = $exclusiveMaximum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param float $minimum
@@ -333,9 +309,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->minimum = $minimum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $exclusiveMinimum
@@ -347,9 +321,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->exclusiveMinimum = $exclusiveMinimum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $maxLength
@@ -361,9 +333,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->maxLength = $maxLength;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $minLength
@@ -375,9 +345,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->minLength = $minLength;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $pattern
@@ -389,9 +357,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->pattern = $pattern;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $maxItems
@@ -403,9 +369,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->maxItems = $maxItems;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $minItems
@@ -417,9 +381,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->minItems = $minItems;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $uniqueItems
@@ -431,9 +393,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->uniqueItems = $uniqueItems;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param array $enum
@@ -445,9 +405,7 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->enum = $enum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param float $multipleOf
@@ -459,8 +417,6 @@ class FormDataParameterSubSchema extends ClassStructure {
 		$this->multipleOf = $multipleOf;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 }
 

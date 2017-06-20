@@ -56,9 +56,7 @@ class Xml extends ClassStructure {
 		$this->name = $name;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $namespace
@@ -70,9 +68,7 @@ class Xml extends ClassStructure {
 		$this->namespace = $namespace;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $prefix
@@ -84,9 +80,7 @@ class Xml extends ClassStructure {
 		$this->prefix = $prefix;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $attribute
@@ -98,9 +92,7 @@ class Xml extends ClassStructure {
 		$this->attribute = $attribute;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $wrapped
@@ -112,8 +104,6 @@ class Xml extends ClassStructure {
 		$this->wrapped = $wrapped;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 }
 

@@ -62,9 +62,7 @@ class ApiKeySecurity extends ClassStructure {
 		$this->type = $type;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $name
@@ -76,9 +74,7 @@ class ApiKeySecurity extends ClassStructure {
 		$this->name = $name;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $in
@@ -90,9 +86,7 @@ class ApiKeySecurity extends ClassStructure {
 		$this->in = $in;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $description
@@ -104,8 +98,6 @@ class ApiKeySecurity extends ClassStructure {
 		$this->description = $description;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 }
 

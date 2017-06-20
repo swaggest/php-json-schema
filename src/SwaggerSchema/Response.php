@@ -55,9 +55,7 @@ class Response extends ClassStructure {
 		$this->description = $description;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Schema|FileSchema $schema
@@ -69,9 +67,7 @@ class Response extends ClassStructure {
 		$this->schema = $schema;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Header[] $headers
@@ -83,9 +79,7 @@ class Response extends ClassStructure {
 		$this->headers = $headers;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param $examples
@@ -97,8 +91,6 @@ class Response extends ClassStructure {
 		$this->examples = $examples;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 }
 

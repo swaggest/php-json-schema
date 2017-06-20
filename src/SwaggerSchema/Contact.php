@@ -52,9 +52,7 @@ class Contact extends ClassStructure {
 		$this->name = $name;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $url The URL pointing to the contact information.
@@ -66,9 +64,7 @@ class Contact extends ClassStructure {
 		$this->url = $url;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $email The email address of the contact person/organization.
@@ -80,8 +76,6 @@ class Contact extends ClassStructure {
 		$this->email = $email;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 }
 

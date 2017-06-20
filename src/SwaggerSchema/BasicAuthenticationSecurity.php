@@ -48,9 +48,7 @@ class BasicAuthenticationSecurity extends ClassStructure {
 		$this->type = $type;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $description
@@ -62,8 +60,6 @@ class BasicAuthenticationSecurity extends ClassStructure {
 		$this->description = $description;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 }
 

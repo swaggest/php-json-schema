@@ -133,9 +133,7 @@ class PrimitivesItems extends ClassStructure {
 		$this->type = $type;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $format
@@ -147,9 +145,7 @@ class PrimitivesItems extends ClassStructure {
 		$this->format = $format;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param PrimitivesItems $items
@@ -161,9 +157,7 @@ class PrimitivesItems extends ClassStructure {
 		$this->items = $items;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $collectionFormat
@@ -175,9 +169,7 @@ class PrimitivesItems extends ClassStructure {
 		$this->collectionFormat = $collectionFormat;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param $default
@@ -189,9 +181,7 @@ class PrimitivesItems extends ClassStructure {
 		$this->default = $default;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param float $maximum
@@ -203,9 +193,7 @@ class PrimitivesItems extends ClassStructure {
 		$this->maximum = $maximum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $exclusiveMaximum
@@ -217,9 +205,7 @@ class PrimitivesItems extends ClassStructure {
 		$this->exclusiveMaximum = $exclusiveMaximum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param float $minimum
@@ -231,9 +217,7 @@ class PrimitivesItems extends ClassStructure {
 		$this->minimum = $minimum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $exclusiveMinimum
@@ -245,9 +229,7 @@ class PrimitivesItems extends ClassStructure {
 		$this->exclusiveMinimum = $exclusiveMinimum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $maxLength
@@ -259,9 +241,7 @@ class PrimitivesItems extends ClassStructure {
 		$this->maxLength = $maxLength;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $minLength
@@ -273,9 +253,7 @@ class PrimitivesItems extends ClassStructure {
 		$this->minLength = $minLength;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $pattern
@@ -287,9 +265,7 @@ class PrimitivesItems extends ClassStructure {
 		$this->pattern = $pattern;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $maxItems
@@ -301,9 +277,7 @@ class PrimitivesItems extends ClassStructure {
 		$this->maxItems = $maxItems;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $minItems
@@ -315,9 +289,7 @@ class PrimitivesItems extends ClassStructure {
 		$this->minItems = $minItems;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $uniqueItems
@@ -329,9 +301,7 @@ class PrimitivesItems extends ClassStructure {
 		$this->uniqueItems = $uniqueItems;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param array $enum
@@ -343,9 +313,7 @@ class PrimitivesItems extends ClassStructure {
 		$this->enum = $enum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param float $multipleOf
@@ -357,8 +325,6 @@ class PrimitivesItems extends ClassStructure {
 		$this->multipleOf = $multipleOf;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 }
 

@@ -67,9 +67,7 @@ class BodyParameter extends ClassStructure {
 		$this->description = $description;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $name The name of the parameter.
@@ -81,9 +79,7 @@ class BodyParameter extends ClassStructure {
 		$this->name = $name;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $in Determines the location of the parameter.
@@ -95,9 +91,7 @@ class BodyParameter extends ClassStructure {
 		$this->in = $in;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $required Determines whether or not this parameter is required or optional.
@@ -109,9 +103,7 @@ class BodyParameter extends ClassStructure {
 		$this->required = $required;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Schema $schema A deterministic version of a JSON Schema object.
@@ -123,8 +115,6 @@ class BodyParameter extends ClassStructure {
 		$this->schema = $schema;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 }
 

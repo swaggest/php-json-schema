@@ -40,8 +40,6 @@ class JsonReference extends ClassStructure {
 		$this->ref = $ref;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 }
 

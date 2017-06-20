@@ -143,9 +143,7 @@ class Operation extends ClassStructure {
 		$this->tags = $tags;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $summary A brief summary of the operation.
@@ -157,9 +155,7 @@ class Operation extends ClassStructure {
 		$this->summary = $summary;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $description A longer description of the operation, GitHub Flavored Markdown is allowed.
@@ -171,9 +167,7 @@ class Operation extends ClassStructure {
 		$this->description = $description;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param ExternalDocs $externalDocs information about external documentation
@@ -185,9 +179,7 @@ class Operation extends ClassStructure {
 		$this->externalDocs = $externalDocs;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $operationId A unique identifier of the operation.
@@ -199,9 +191,7 @@ class Operation extends ClassStructure {
 		$this->operationId = $operationId;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string[]|array $produces A list of MIME types the API can produce.
@@ -213,9 +203,7 @@ class Operation extends ClassStructure {
 		$this->produces = $produces;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string[]|array $consumes A list of MIME types the API can consume.
@@ -227,9 +215,7 @@ class Operation extends ClassStructure {
 		$this->consumes = $consumes;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[]|JsonReference[]|array $parameters The parameters needed to send a valid API call.
@@ -241,9 +227,7 @@ class Operation extends ClassStructure {
 		$this->parameters = $parameters;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Response[]|JsonReference[] $responses Response objects names can either be any valid HTTP status code or 'default'.
@@ -255,9 +239,7 @@ class Operation extends ClassStructure {
 		$this->responses = $responses;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string[]|array $schemes The transfer protocol of the API.
@@ -269,9 +251,7 @@ class Operation extends ClassStructure {
 		$this->schemes = $schemes;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $deprecated
@@ -283,9 +263,7 @@ class Operation extends ClassStructure {
 		$this->deprecated = $deprecated;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string[][]|array[][]|array $security
@@ -297,8 +275,6 @@ class Operation extends ClassStructure {
 		$this->security = $security;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 }
 

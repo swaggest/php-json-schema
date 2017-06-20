@@ -219,9 +219,7 @@ class Schema extends ClassStructure {
 		$this->ref = $ref;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $format
@@ -233,9 +231,7 @@ class Schema extends ClassStructure {
 		$this->format = $format;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $title
@@ -247,9 +243,7 @@ class Schema extends ClassStructure {
 		$this->title = $title;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $description
@@ -261,9 +255,7 @@ class Schema extends ClassStructure {
 		$this->description = $description;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param $default
@@ -275,9 +267,7 @@ class Schema extends ClassStructure {
 		$this->default = $default;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param float $multipleOf
@@ -289,9 +279,7 @@ class Schema extends ClassStructure {
 		$this->multipleOf = $multipleOf;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param float $maximum
@@ -303,9 +291,7 @@ class Schema extends ClassStructure {
 		$this->maximum = $maximum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $exclusiveMaximum
@@ -317,9 +303,7 @@ class Schema extends ClassStructure {
 		$this->exclusiveMaximum = $exclusiveMaximum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param float $minimum
@@ -331,9 +315,7 @@ class Schema extends ClassStructure {
 		$this->minimum = $minimum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $exclusiveMinimum
@@ -345,9 +327,7 @@ class Schema extends ClassStructure {
 		$this->exclusiveMinimum = $exclusiveMinimum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $maxLength
@@ -359,9 +339,7 @@ class Schema extends ClassStructure {
 		$this->maxLength = $maxLength;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $minLength
@@ -373,9 +351,7 @@ class Schema extends ClassStructure {
 		$this->minLength = $minLength;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $pattern
@@ -387,9 +363,7 @@ class Schema extends ClassStructure {
 		$this->pattern = $pattern;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $maxItems
@@ -401,9 +375,7 @@ class Schema extends ClassStructure {
 		$this->maxItems = $maxItems;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $minItems
@@ -415,9 +387,7 @@ class Schema extends ClassStructure {
 		$this->minItems = $minItems;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $uniqueItems
@@ -429,9 +399,7 @@ class Schema extends ClassStructure {
 		$this->uniqueItems = $uniqueItems;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $maxProperties
@@ -443,9 +411,7 @@ class Schema extends ClassStructure {
 		$this->maxProperties = $maxProperties;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param int $minProperties
@@ -457,9 +423,7 @@ class Schema extends ClassStructure {
 		$this->minProperties = $minProperties;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string[]|array $required
@@ -471,9 +435,7 @@ class Schema extends ClassStructure {
 		$this->required = $required;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param array $enum
@@ -485,9 +447,7 @@ class Schema extends ClassStructure {
 		$this->enum = $enum;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Schema|bool $additionalProperties
@@ -499,9 +459,7 @@ class Schema extends ClassStructure {
 		$this->additionalProperties = $additionalProperties;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param array $type
@@ -513,9 +471,7 @@ class Schema extends ClassStructure {
 		$this->type = $type;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Schema|Schema[]|array $items
@@ -527,9 +483,7 @@ class Schema extends ClassStructure {
 		$this->items = $items;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Schema[]|array $allOf
@@ -541,9 +495,7 @@ class Schema extends ClassStructure {
 		$this->allOf = $allOf;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Schema[] $properties
@@ -555,9 +507,7 @@ class Schema extends ClassStructure {
 		$this->properties = $properties;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $discriminator
@@ -569,9 +519,7 @@ class Schema extends ClassStructure {
 		$this->discriminator = $discriminator;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param bool $readOnly
@@ -583,9 +531,7 @@ class Schema extends ClassStructure {
 		$this->readOnly = $readOnly;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Xml $xml
@@ -597,9 +543,7 @@ class Schema extends ClassStructure {
 		$this->xml = $xml;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param ExternalDocs $externalDocs information about external documentation
@@ -611,9 +555,7 @@ class Schema extends ClassStructure {
 		$this->externalDocs = $externalDocs;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param $example
@@ -625,8 +567,6 @@ class Schema extends ClassStructure {
 		$this->example = $example;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 }
 

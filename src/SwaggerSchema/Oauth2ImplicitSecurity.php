@@ -67,9 +67,7 @@ class Oauth2ImplicitSecurity extends ClassStructure {
 		$this->type = $type;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $flow
@@ -81,9 +79,7 @@ class Oauth2ImplicitSecurity extends ClassStructure {
 		$this->flow = $flow;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string[] $scopes
@@ -95,9 +91,7 @@ class Oauth2ImplicitSecurity extends ClassStructure {
 		$this->scopes = $scopes;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $authorizationUrl
@@ -109,9 +103,7 @@ class Oauth2ImplicitSecurity extends ClassStructure {
 		$this->authorizationUrl = $authorizationUrl;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $description
@@ -123,8 +115,6 @@ class Oauth2ImplicitSecurity extends ClassStructure {
 		$this->description = $description;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 }
 

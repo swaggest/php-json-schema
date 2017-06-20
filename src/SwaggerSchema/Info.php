@@ -67,9 +67,7 @@ class Info extends ClassStructure {
 		$this->title = $title;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $version A semantic version number of the API.
@@ -81,9 +79,7 @@ class Info extends ClassStructure {
 		$this->version = $version;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $description A longer description of the API. Should be different from the title.  GitHub Flavored Markdown is allowed.
@@ -95,9 +91,7 @@ class Info extends ClassStructure {
 		$this->description = $description;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param string $termsOfService The terms of service for the API.
@@ -109,9 +103,7 @@ class Info extends ClassStructure {
 		$this->termsOfService = $termsOfService;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param Contact $contact Contact information for the owners of the API.
@@ -123,9 +115,7 @@ class Info extends ClassStructure {
 		$this->contact = $contact;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 
 	/**
 	 * @param License $license
@@ -137,8 +127,6 @@ class Info extends ClassStructure {
 		$this->license = $license;
 		return $this;
 	}
-	/**
-	 * @codeCoverageIgnoreEnd 
-	 */
+	/** @codeCoverageIgnoreEnd  */
 }
 
