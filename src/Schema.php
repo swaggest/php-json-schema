@@ -205,56 +205,6 @@ class Schema extends JsonSchema
             }
         }
 
-        if ($this->oneOf !== null) {
-            $successes = 0;
-            $failures = '';
-            foreach ($this->oneOf as $index => $item) {
-                try {
-                    $result = $item->process($data, $options, $path . '->oneOf:' . $index);
-                    $successes++;
-                    if ($successes > 1) {
-                        break;
-                    }
-                } catch (InvalidValue $exception) {
-                    $failures .= ' ' . $index . ': ' . Helper::padLines(' ', $exception->getMessage()) . "\n";
-                    // Expected exception
-                }
-            }
-            if ($successes === 0) {
-                $this->fail(new LogicException('Failed due to logical constraint: no valid results for oneOf {' . "\n" . substr($failures, 0, -1) . "\n}"), $path);
-            } elseif ($successes > 1) {
-                $this->fail(new LogicException('Failed due to logical constraint: '
-                    . $successes . '/' . count($this->oneOf) . ' valid results for oneOf'), $path);
-            }
-        }
-
-        if ($this->anyOf !== null) {
-            $successes = 0;
-            $failures = '';
-            foreach ($this->anyOf as $index => $item) {
-                try {
-                    $result = $item->process($data, $options, $path . '->anyOf:' . $index);
-                    $successes++;
-                    if ($successes) {
-                        break;
-                    }
-                } catch (InvalidValue $exception) {
-                    $failures .= ' ' . $index . ': ' . $exception->getMessage() . "\n";
-                    // Expected exception
-                }
-            }
-            if (!$successes) {
-                $this->fail(new LogicException('Failed due to logical constraint: no valid results for anyOf {' . "\n" . substr(Helper::padLines(' ', $failures), 0, -1) . "\n}"), $path);
-            }
-        }
-
-        if ($this->allOf !== null) {
-            foreach ($this->allOf as $index => $item) {
-                $result = $item->process($data, $options, $path . '->allOf' . $index);
-            }
-        }
-
-
         if (is_string($data)) {
             if ($this->minLength !== null) {
                 if (mb_strlen($data, 'UTF-8') < $this->minLength) {
@@ -316,6 +266,70 @@ class Schema extends JsonSchema
         }
 
         skipValidation:
+
+        if ($this->oneOf !== null) {
+            $successes = 0;
+            $failures = '';
+            $skipValidation = false;
+            if ($options->skipValidation) {
+                $skipValidation = true;
+                $options->skipValidation = false;
+            }
+
+            foreach ($this->oneOf as $index => $item) {
+                try {
+                    $result = $item->process($data, $options, $path . '->oneOf:' . $index);
+                    $successes++;
+                    if ($successes > 1 || $options->skipValidation) {
+                        break;
+                    }
+                } catch (InvalidValue $exception) {
+                    $failures .= ' ' . $index . ': ' . Helper::padLines(' ', $exception->getMessage()) . "\n";
+                    // Expected exception
+                }
+            }
+            if ($skipValidation) {
+                $options->skipValidation = true;
+                if ($successes === 0) {
+                    $result = $this->oneOf[0]->process($data, $options, $path . '->oneOf:' . 0);
+                }
+            }
+
+            if (!$options->skipValidation) {
+                if ($successes === 0) {
+                    $this->fail(new LogicException('Failed due to logical constraint: no valid results for oneOf {' . "\n" . substr($failures, 0, -1) . "\n}"), $path);
+                } elseif ($successes > 1) {
+                    $this->fail(new LogicException('Failed due to logical constraint: '
+                        . $successes . '/' . count($this->oneOf) . ' valid results for oneOf'), $path);
+                }
+            }
+        }
+
+        if ($this->anyOf !== null) {
+            $successes = 0;
+            $failures = '';
+            foreach ($this->anyOf as $index => $item) {
+                try {
+                    $result = $item->process($data, $options, $path . '->anyOf:' . $index);
+                    $successes++;
+                    if ($successes) {
+                        break;
+                    }
+                } catch (InvalidValue $exception) {
+                    $failures .= ' ' . $index . ': ' . $exception->getMessage() . "\n";
+                    // Expected exception
+                }
+            }
+            if (!$successes && !$options->skipValidation) {
+                $this->fail(new LogicException('Failed due to logical constraint: no valid results for anyOf {' . "\n" . substr(Helper::padLines(' ', $failures), 0, -1) . "\n}"), $path);
+            }
+        }
+
+        if ($this->allOf !== null) {
+            foreach ($this->allOf as $index => $item) {
+                $result = $item->process($data, $options, $path . '->allOf' . $index);
+            }
+        }
 
         if ($data instanceof \stdClass) {
             if (!$options->skipValidation && $this->required !== null) {

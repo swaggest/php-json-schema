@@ -19,7 +19,19 @@ class Context extends MagicMap
     /** @var \SplObjectStorage */
     public $circularReferences;
 
+    /** @var bool */
     public $skipValidation = false;
+
+    /**
+     * @param boolean $skipValidation
+     * @return Context
+     */
+    public function setSkipValidation($skipValidation = true)
+    {
+        $this->skipValidation = $skipValidation;
+        return $this;
+    }
+
 
     /**
      * ProcessingOptions constructor.
