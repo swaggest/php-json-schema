@@ -58,12 +58,24 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
     }
 
     /**
+     * @var string[] override of objectItemClass
+     * @see \Swaggest\JsonSchema\Context::$objectItemClassMapping
+     */
+    protected static $objectItemClassMapping;
+
+    /**
      * @param $data
-     * @param Context $options
+     * @param \Swaggest\JsonSchema\Context $options
      * @return static
      */
     public static function import($data, Context $options = null)
     {
+        if (static::$objectItemClassMapping !== null) {
+            if ($options === null) {
+                $options = new Context();
+            }
+            $options->objectItemClassMapping = static::$objectItemClassMapping;
+        }
         return static::schema()->in($data, $options);
     }
 

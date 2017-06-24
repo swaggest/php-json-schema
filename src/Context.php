@@ -22,6 +22,9 @@ class Context extends MagicMap
     /** @var bool */
     public $skipValidation = false;
 
+    /** @var string[] map of from -> to class names */
+    public $objectItemClassMapping;
+
     /**
      * @param boolean $skipValidation
      * @return Context

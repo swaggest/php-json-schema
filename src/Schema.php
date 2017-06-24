@@ -344,7 +344,7 @@ class Schema extends JsonSchema
                 if ($this->useObjectAsArray) {
                     $result = array();
                 } elseif (!$result instanceof ObjectItem) {
-                    $result = $this->makeObjectItem();
+                    $result = $this->makeObjectItem($options);
 
                     if ($result instanceof ClassStructure) {
                         if ($result->__validateOnSet) {
@@ -720,14 +720,21 @@ class Schema extends JsonSchema
     }
 
     /**
+     * @param Context $options
      * @return ObjectItem
      */
-    public function makeObjectItem()
+    public function makeObjectItem(Context $options = null)
     {
         if (null === $this->objectItemClass) {
             return new ObjectItem();
         } else {
-            return new $this->objectItemClass;
+            $className = $this->objectItemClass;
+            if ($options !== null) {
+                if (isset($options->objectItemClassMapping[$className])) {
+                    $className = $options->objectItemClassMapping[$className];
+                }
+            }
+            return new $className;
         }
     }
 }
