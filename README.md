@@ -314,7 +314,7 @@ $this->assertSame('my-value', $myMeta->name);
 
 If you want to tolerate invalid data or improve mapping performance you can specify `skipValidation` flag in processing `Context`
 
-```
+```php
 $schema = Schema::object();
 $schema->setProperty('one', Schema::integer());
 $schema->properties->one->minimum = 5;
@@ -331,7 +331,7 @@ $this->assertSame(4, $res->one);
 
 If you want to map data to a different class you can register mapping at top level of your importer structure.
 
-```
+```php
 class CustomSwaggerSchema extends SwaggerSchema
 {
     public static function setUpProperties($properties, JsonBasicSchema $ownerSchema)
@@ -344,7 +344,7 @@ class CustomSwaggerSchema extends SwaggerSchema
 
 Or specify it in processing context
 
-```
+```php
 $context = new Context();
 $context->objectItemClassMapping[Schema::className()] = CustomSchema::className();
 $schema = SwaggerSchema::schema()->in(json_decode(
