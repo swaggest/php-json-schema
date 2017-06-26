@@ -325,3 +325,30 @@ $options->skipValidation = true;
 $res = $schema->in(json_decode('{"one":4}'), $options);
 $this->assertSame(4, $res->one);
 ```
+
+
+#### Overriding mapping classes
+
+If you want to map data to a different class you can register mapping at top level of your importer structure.
+
+```
+class CustomSwaggerSchema extends SwaggerSchema
+{
+    public static function setUpProperties($properties, JsonBasicSchema $ownerSchema)
+    {
+        parent::setUpProperties($properties, $ownerSchema);
+        self::$objectItemClassMapping[Schema::className()] = CustomSchema::className();
+    }
+}
+```
+
+Or specify it in processing context
+
+```
+$context = new Context();
+$context->objectItemClassMapping[Schema::className()] = CustomSchema::className();
+$schema = SwaggerSchema::schema()->in(json_decode(
+    file_get_contents(__DIR__ . '/../../../../spec/petstore-swagger.json')
+), $context);
+$this->assertInstanceOf(CustomSchema::className(), $schema->definitions['User']);
+```

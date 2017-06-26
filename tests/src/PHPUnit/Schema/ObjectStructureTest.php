@@ -5,7 +5,7 @@ namespace Swaggest\JsonSchema\Tests\PHPUnit\Schema;
 
 use Swaggest\JsonSchema\Schema;
 
-class ObjectStructure extends \PHPUnit_Framework_TestCase
+class ObjectStructureTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testObjectAsArray()

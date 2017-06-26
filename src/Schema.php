@@ -371,12 +371,13 @@ class Schema extends JsonSchema
                     ) {
                         $refString = $data->{self::REF};
                         // TODO consider process # by reference here ?
-                        $preRefScope = $options->refResolver->getResolutionScope();
+                        $refResolver = $options->refResolver;
+                        $preRefScope = $refResolver->getResolutionScope();
                         /** @noinspection PhpUnusedLocalVariableInspection */
-                        $deferRefScope = new ScopeExit(function () use ($preRefScope, $options) {
-                            $options->refResolver->setResolutionScope($preRefScope);
+                        $deferRefScope = new ScopeExit(function () use ($preRefScope, $refResolver) {
+                            $refResolver->setResolutionScope($preRefScope);
                         });
-                        $ref = $options->refResolver->resolveReference($refString);
+                        $ref = $refResolver->resolveReference($refString);
                         if ($ref->isImported()) {
                             $refResult = $ref->getImported();
                             return $refResult;
@@ -597,27 +598,6 @@ class Schema extends JsonSchema
         return $this;
     }
 
-    /**
-     * @param bool|Schema $additionalProperties
-     * @return Schema
-     */
-    public function setAdditionalProperties($additionalProperties)
-    {
-        $this->additionalProperties = $additionalProperties;
-        return $this;
-    }
-
-    /**
-     * @param Schema|Schema[] $items
-     * @return Schema
-     */
-    public function setItems($items)
-    {
-        $this->items = $items;
-        return $this;
-    }
-
-
     private function fail(InvalidValue $exception, $path)
     {
         if ($path !== '#') {
@@ -672,13 +652,6 @@ class Schema extends JsonSchema
     {
         $schema = new static();
         $schema->type = Type::NULL;
-        return $schema;
-    }
-
-
-    public static function create()
-    {
-        $schema = new static();
         return $schema;
     }
 

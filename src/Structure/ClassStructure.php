@@ -70,13 +70,14 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
      */
     public static function import($data, Context $options = null)
     {
+        $schema = static::schema();
         if (static::$objectItemClassMapping !== null) {
             if ($options === null) {
                 $options = new Context();
             }
             $options->objectItemClassMapping = static::$objectItemClassMapping;
         }
-        return static::schema()->in($data, $options);
+        return $schema->in($data, $options);
     }
 
     /**
