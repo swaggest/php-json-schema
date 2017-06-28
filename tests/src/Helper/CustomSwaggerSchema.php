@@ -3,15 +3,18 @@
 namespace Swaggest\JsonSchema\Tests\Helper;
 
 
-use Swaggest\JsonSchema\Schema as JsonBasicSchema;
+use Swaggest\JsonSchema\Context;
 use Swaggest\JsonSchema\SwaggerSchema\Schema;
 use Swaggest\JsonSchema\SwaggerSchema\SwaggerSchema;
 
 class CustomSwaggerSchema extends SwaggerSchema
 {
-    public static function setUpProperties($properties, JsonBasicSchema $ownerSchema)
+    public static function import($data, Context $options = null)
     {
-        parent::setUpProperties($properties, $ownerSchema);
-        self::$objectItemClassMapping[Schema::className()] = CustomSchema::className();
+        if ($options === null) {
+            $options = new Context();
+        }
+        $options->objectItemClassMapping[Schema::className()] = CustomSchema::className();
+        return parent::import($data, $options);
     }
 }

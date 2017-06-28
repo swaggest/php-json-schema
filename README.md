@@ -334,10 +334,13 @@ If you want to map data to a different class you can register mapping at top lev
 ```php
 class CustomSwaggerSchema extends SwaggerSchema
 {
-    public static function setUpProperties($properties, JsonBasicSchema $ownerSchema)
+    public static function import($data, Context $options = null)
     {
-        parent::setUpProperties($properties, $ownerSchema);
-        self::$objectItemClassMapping[Schema::className()] = CustomSchema::className();
+        if ($options === null) {
+            $options = new Context();
+        }
+        $options->objectItemClassMapping[Schema::className()] = CustomSchema::className();
+        return parent::import($data, $options);
     }
 }
 ```
