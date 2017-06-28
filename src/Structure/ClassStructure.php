@@ -30,26 +30,6 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
     }
 
     /**
-     * @return Schema
-     */
-    public static function metaSchema()
-    {
-        static $schemas = array();
-        $className = get_called_class();
-        $schema = &$schemas[$className];
-
-        if (null === $schema) {
-            $schema = new Schema();
-            $properties = new Properties();
-            $schema->properties = $properties;
-            $schema->objectItemClass = get_class($schema);
-            static::setUpProperties($properties, $schema);
-        }
-
-        return $schema;
-    }
-
-    /**
      * @return Properties|static
      */
     public static function properties()
