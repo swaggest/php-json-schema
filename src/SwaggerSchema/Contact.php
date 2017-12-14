@@ -11,6 +11,10 @@ use Swaggest\JsonSchema\Schema as JsonBasicSchema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
+/**
+ * Contact information for the owners of the API.
+ * Built from #/definitions/contact
+ */
 class Contact extends ClassStructure {
 	/** @var string The identifying name of the contact person/organization. */
 	public $name;
@@ -45,37 +49,37 @@ class Contact extends ClassStructure {
 	/**
 	 * @param string $name The identifying name of the contact person/organization.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setName($name)
 	{
 		$this->name = $name;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $url The URL pointing to the contact information.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setUrl($url)
 	{
 		$this->url = $url;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $email The email address of the contact person/organization.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setEmail($email)
 	{
 		$this->email = $email;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 }
 

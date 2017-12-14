@@ -11,7 +11,32 @@ use Swaggest\JsonSchema\Schema as JsonBasicSchema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
+/**
+ * Built from #/definitions/pathParameterSubSchema
+ */
 class PathParameterSubSchema extends ClassStructure {
+	const CONST_1 = true;
+
+	const PATH = 'path';
+
+	const STRING = 'string';
+
+	const NUMBER = 'number';
+
+	const BOOLEAN = 'boolean';
+
+	const INTEGER = 'integer';
+
+	const _ARRAY = 'array';
+
+	const CSV = 'csv';
+
+	const SSV = 'ssv';
+
+	const TSV = 'tsv';
+
+	const PIPES = 'pipes';
+
 	/** @var bool Determines whether or not this parameter is required or optional. */
 	public $required;
 
@@ -81,37 +106,37 @@ class PathParameterSubSchema extends ClassStructure {
 	public static function setUpProperties($properties, JsonBasicSchema $ownerSchema)
 	{
 		$properties->required = JsonBasicSchema::boolean();
+		$properties->required->enum = array(
+		    self::CONST_1,
+		);
 		$properties->required->description = 'Determines whether or not this parameter is required or optional.';
-		$properties->required->enum = array (
-		  0 => true,
-		);
 		$properties->in = JsonBasicSchema::string();
-		$properties->in->description = 'Determines the location of the parameter.';
-		$properties->in->enum = array (
-		  0 => 'path',
+		$properties->in->enum = array(
+		    self::PATH,
 		);
+		$properties->in->description = 'Determines the location of the parameter.';
 		$properties->description = JsonBasicSchema::string();
 		$properties->description->description = 'A brief description of the parameter. This could contain examples of use.  GitHub Flavored Markdown is allowed.';
 		$properties->name = JsonBasicSchema::string();
 		$properties->name->description = 'The name of the parameter.';
 		$properties->type = JsonBasicSchema::string();
-		$properties->type->enum = array (
-		  0 => 'string',
-		  1 => 'number',
-		  2 => 'boolean',
-		  3 => 'integer',
-		  4 => 'array',
+		$properties->type->enum = array(
+		    self::STRING,
+		    self::NUMBER,
+		    self::BOOLEAN,
+		    self::INTEGER,
+		    self::_ARRAY,
 		);
 		$properties->format = JsonBasicSchema::string();
 		$properties->items = PrimitivesItems::schema();
 		$properties->collectionFormat = JsonBasicSchema::string();
-		$properties->collectionFormat->default = 'csv';
-		$properties->collectionFormat->enum = array (
-		  0 => 'csv',
-		  1 => 'ssv',
-		  2 => 'tsv',
-		  3 => 'pipes',
+		$properties->collectionFormat->enum = array(
+		    self::CSV,
+		    self::SSV,
+		    self::TSV,
+		    self::PIPES,
 		);
+		$properties->collectionFormat->default = 'csv';
 		$properties->default = new JsonBasicSchema();
 		$properties->maximum = JsonBasicSchema::number();
 		$properties->exclusiveMaximum = JsonBasicSchema::boolean();
@@ -155,253 +180,253 @@ class PathParameterSubSchema extends ClassStructure {
 	/**
 	 * @param bool $required Determines whether or not this parameter is required or optional.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setRequired($required)
 	{
 		$this->required = $required;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $in Determines the location of the parameter.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setIn($in)
 	{
 		$this->in = $in;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $description A brief description of the parameter. This could contain examples of use.  GitHub Flavored Markdown is allowed.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setDescription($description)
 	{
 		$this->description = $description;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $name The name of the parameter.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setName($name)
 	{
 		$this->name = $name;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $type
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setType($type)
 	{
 		$this->type = $type;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $format
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setFormat($format)
 	{
 		$this->format = $format;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param PrimitivesItems $items
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setItems($items)
 	{
 		$this->items = $items;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $collectionFormat
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setCollectionFormat($collectionFormat)
 	{
 		$this->collectionFormat = $collectionFormat;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param $default
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setDefault($default)
 	{
 		$this->default = $default;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param float $maximum
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setMaximum($maximum)
 	{
 		$this->maximum = $maximum;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param bool $exclusiveMaximum
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setExclusiveMaximum($exclusiveMaximum)
 	{
 		$this->exclusiveMaximum = $exclusiveMaximum;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param float $minimum
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setMinimum($minimum)
 	{
 		$this->minimum = $minimum;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param bool $exclusiveMinimum
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setExclusiveMinimum($exclusiveMinimum)
 	{
 		$this->exclusiveMinimum = $exclusiveMinimum;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param int $maxLength
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setMaxLength($maxLength)
 	{
 		$this->maxLength = $maxLength;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param int $minLength
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setMinLength($minLength)
 	{
 		$this->minLength = $minLength;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $pattern
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setPattern($pattern)
 	{
 		$this->pattern = $pattern;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param int $maxItems
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setMaxItems($maxItems)
 	{
 		$this->maxItems = $maxItems;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param int $minItems
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setMinItems($minItems)
 	{
 		$this->minItems = $minItems;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param bool $uniqueItems
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setUniqueItems($uniqueItems)
 	{
 		$this->uniqueItems = $uniqueItems;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param array $enum
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setEnum($enum)
 	{
 		$this->enum = $enum;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param float $multipleOf
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setMultipleOf($multipleOf)
 	{
 		$this->multipleOf = $multipleOf;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 }
 

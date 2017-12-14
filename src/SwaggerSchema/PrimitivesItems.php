@@ -11,7 +11,28 @@ use Swaggest\JsonSchema\Schema as JsonBasicSchema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
+/**
+ * Built from #/definitions/primitivesItems
+ */
 class PrimitivesItems extends ClassStructure {
+	const STRING = 'string';
+
+	const NUMBER = 'number';
+
+	const INTEGER = 'integer';
+
+	const BOOLEAN = 'boolean';
+
+	const _ARRAY = 'array';
+
+	const CSV = 'csv';
+
+	const SSV = 'ssv';
+
+	const TSV = 'tsv';
+
+	const PIPES = 'pipes';
+
 	/** @var string */
 	public $type;
 
@@ -69,23 +90,23 @@ class PrimitivesItems extends ClassStructure {
 	public static function setUpProperties($properties, JsonBasicSchema $ownerSchema)
 	{
 		$properties->type = JsonBasicSchema::string();
-		$properties->type->enum = array (
-		  0 => 'string',
-		  1 => 'number',
-		  2 => 'integer',
-		  3 => 'boolean',
-		  4 => 'array',
+		$properties->type->enum = array(
+		    self::STRING,
+		    self::NUMBER,
+		    self::INTEGER,
+		    self::BOOLEAN,
+		    self::_ARRAY,
 		);
 		$properties->format = JsonBasicSchema::string();
 		$properties->items = PrimitivesItems::schema();
 		$properties->collectionFormat = JsonBasicSchema::string();
-		$properties->collectionFormat->default = 'csv';
-		$properties->collectionFormat->enum = array (
-		  0 => 'csv',
-		  1 => 'ssv',
-		  2 => 'tsv',
-		  3 => 'pipes',
+		$properties->collectionFormat->enum = array(
+		    self::CSV,
+		    self::SSV,
+		    self::TSV,
+		    self::PIPES,
 		);
+		$properties->collectionFormat->default = 'csv';
 		$properties->default = new JsonBasicSchema();
 		$properties->maximum = JsonBasicSchema::number();
 		$properties->exclusiveMaximum = JsonBasicSchema::boolean();
@@ -126,205 +147,205 @@ class PrimitivesItems extends ClassStructure {
 	/**
 	 * @param string $type
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setType($type)
 	{
 		$this->type = $type;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $format
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setFormat($format)
 	{
 		$this->format = $format;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param PrimitivesItems $items
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setItems($items)
 	{
 		$this->items = $items;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $collectionFormat
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setCollectionFormat($collectionFormat)
 	{
 		$this->collectionFormat = $collectionFormat;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param $default
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setDefault($default)
 	{
 		$this->default = $default;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param float $maximum
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setMaximum($maximum)
 	{
 		$this->maximum = $maximum;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param bool $exclusiveMaximum
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setExclusiveMaximum($exclusiveMaximum)
 	{
 		$this->exclusiveMaximum = $exclusiveMaximum;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param float $minimum
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setMinimum($minimum)
 	{
 		$this->minimum = $minimum;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param bool $exclusiveMinimum
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setExclusiveMinimum($exclusiveMinimum)
 	{
 		$this->exclusiveMinimum = $exclusiveMinimum;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param int $maxLength
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setMaxLength($maxLength)
 	{
 		$this->maxLength = $maxLength;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param int $minLength
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setMinLength($minLength)
 	{
 		$this->minLength = $minLength;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $pattern
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setPattern($pattern)
 	{
 		$this->pattern = $pattern;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param int $maxItems
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setMaxItems($maxItems)
 	{
 		$this->maxItems = $maxItems;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param int $minItems
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setMinItems($minItems)
 	{
 		$this->minItems = $minItems;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param bool $uniqueItems
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setUniqueItems($uniqueItems)
 	{
 		$this->uniqueItems = $uniqueItems;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param array $enum
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setEnum($enum)
 	{
 		$this->enum = $enum;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param float $multipleOf
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setMultipleOf($multipleOf)
 	{
 		$this->multipleOf = $multipleOf;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 }
 

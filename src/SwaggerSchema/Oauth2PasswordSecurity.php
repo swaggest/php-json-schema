@@ -11,7 +11,14 @@ use Swaggest\JsonSchema\Schema as JsonBasicSchema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
+/**
+ * Built from #/definitions/oauth2PasswordSecurity
+ */
 class Oauth2PasswordSecurity extends ClassStructure {
+	const OAUTH2 = 'oauth2';
+
+	const PASSWORD = 'password';
+
 	/** @var string */
 	public $type;
 
@@ -34,12 +41,12 @@ class Oauth2PasswordSecurity extends ClassStructure {
 	public static function setUpProperties($properties, JsonBasicSchema $ownerSchema)
 	{
 		$properties->type = JsonBasicSchema::string();
-		$properties->type->enum = array (
-		  0 => 'oauth2',
+		$properties->type->enum = array(
+		    self::OAUTH2,
 		);
 		$properties->flow = JsonBasicSchema::string();
-		$properties->flow->enum = array (
-		  0 => 'password',
+		$properties->flow->enum = array(
+		    self::PASSWORD,
 		);
 		$properties->scopes = JsonBasicSchema::object();
 		$properties->scopes->additionalProperties = JsonBasicSchema::string();
@@ -60,61 +67,61 @@ class Oauth2PasswordSecurity extends ClassStructure {
 	/**
 	 * @param string $type
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setType($type)
 	{
 		$this->type = $type;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $flow
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setFlow($flow)
 	{
 		$this->flow = $flow;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string[] $scopes
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setScopes($scopes)
 	{
 		$this->scopes = $scopes;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $tokenUrl
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setTokenUrl($tokenUrl)
 	{
 		$this->tokenUrl = $tokenUrl;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $description
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setDescription($description)
 	{
 		$this->description = $description;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 }
 

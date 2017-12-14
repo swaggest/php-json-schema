@@ -11,7 +11,16 @@ use Swaggest\JsonSchema\Schema as JsonBasicSchema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
+/**
+ * Built from #/definitions/apiKeySecurity
+ */
 class ApiKeySecurity extends ClassStructure {
+	const APIKEY = 'apiKey';
+
+	const HEADER = 'header';
+
+	const QUERY = 'query';
+
 	/** @var string */
 	public $type;
 
@@ -31,14 +40,14 @@ class ApiKeySecurity extends ClassStructure {
 	public static function setUpProperties($properties, JsonBasicSchema $ownerSchema)
 	{
 		$properties->type = JsonBasicSchema::string();
-		$properties->type->enum = array (
-		  0 => 'apiKey',
+		$properties->type->enum = array(
+		    self::APIKEY,
 		);
 		$properties->name = JsonBasicSchema::string();
 		$properties->in = JsonBasicSchema::string();
-		$properties->in->enum = array (
-		  0 => 'header',
-		  1 => 'query',
+		$properties->in->enum = array(
+		    self::HEADER,
+		    self::QUERY,
 		);
 		$properties->description = JsonBasicSchema::string();
 		$ownerSchema->type = 'object';
@@ -55,49 +64,49 @@ class ApiKeySecurity extends ClassStructure {
 	/**
 	 * @param string $type
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setType($type)
 	{
 		$this->type = $type;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $name
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setName($name)
 	{
 		$this->name = $name;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $in
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setIn($in)
 	{
 		$this->in = $in;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $description
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setDescription($description)
 	{
 		$this->description = $description;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 }
 

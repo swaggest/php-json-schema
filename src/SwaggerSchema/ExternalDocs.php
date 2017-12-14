@@ -11,6 +11,10 @@ use Swaggest\JsonSchema\Schema as JsonBasicSchema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
+/**
+ * information about external documentation
+ * Built from #/definitions/externalDocs
+ */
 class ExternalDocs extends ClassStructure {
 	/** @var string */
 	public $description;
@@ -40,25 +44,25 @@ class ExternalDocs extends ClassStructure {
 	/**
 	 * @param string $description
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setDescription($description)
 	{
 		$this->description = $description;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $url
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setUrl($url)
 	{
 		$this->url = $url;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 }
 

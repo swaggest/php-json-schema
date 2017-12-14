@@ -11,7 +11,12 @@ use Swaggest\JsonSchema\Schema as JsonBasicSchema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
+/**
+ * Built from #/definitions/basicAuthenticationSecurity
+ */
 class BasicAuthenticationSecurity extends ClassStructure {
+	const BASIC = 'basic';
+
 	/** @var string */
 	public $type;
 
@@ -25,8 +30,8 @@ class BasicAuthenticationSecurity extends ClassStructure {
 	public static function setUpProperties($properties, JsonBasicSchema $ownerSchema)
 	{
 		$properties->type = JsonBasicSchema::string();
-		$properties->type->enum = array (
-		  0 => 'basic',
+		$properties->type->enum = array(
+		    self::BASIC,
 		);
 		$properties->description = JsonBasicSchema::string();
 		$ownerSchema->type = 'object';
@@ -41,25 +46,25 @@ class BasicAuthenticationSecurity extends ClassStructure {
 	/**
 	 * @param string $type
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setType($type)
 	{
 		$this->type = $type;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $description
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setDescription($description)
 	{
 		$this->description = $description;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 }
 
