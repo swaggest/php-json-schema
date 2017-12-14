@@ -11,7 +11,20 @@ use Swaggest\JsonSchema\Schema as JsonBasicSchema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
+/**
+ * A JSON Schema for Swagger 2.0 API.
+ */
 class SwaggerSchema extends ClassStructure {
+	const CONST_2_0 = '2.0';
+
+	const HTTP = 'http';
+
+	const HTTPS = 'https';
+
+	const WS = 'ws';
+
+	const WSS = 'wss';
+
 	/** @var string The Swagger version of this document. */
 	public $swagger;
 
@@ -64,10 +77,10 @@ class SwaggerSchema extends ClassStructure {
 	public static function setUpProperties($properties, JsonBasicSchema $ownerSchema)
 	{
 		$properties->swagger = JsonBasicSchema::string();
-		$properties->swagger->description = 'The Swagger version of this document.';
-		$properties->swagger->enum = array (
-		  0 => '2.0',
+		$properties->swagger->enum = array(
+		    self::CONST_2_0,
 		);
+		$properties->swagger->description = 'The Swagger version of this document.';
 		$properties->info = Info::schema();
 		$properties->host = JsonBasicSchema::string();
 		$properties->host->description = 'The host (name or ip) of the API. Example: \'swagger.io\'';
@@ -77,11 +90,11 @@ class SwaggerSchema extends ClassStructure {
 		$properties->basePath->pattern = '^/';
 		$properties->schemes = JsonBasicSchema::arr();
 		$properties->schemes->items = JsonBasicSchema::string();
-		$properties->schemes->items->enum = array (
-		  0 => 'http',
-		  1 => 'https',
-		  2 => 'ws',
-		  3 => 'wss',
+		$properties->schemes->items->enum = array(
+		    self::HTTP,
+		    self::HTTPS,
+		    self::WS,
+		    self::WSS,
 		);
 		$properties->schemes->description = 'The transfer protocol of the API.';
 		$properties->schemes->uniqueItems = true;
@@ -158,181 +171,181 @@ class SwaggerSchema extends ClassStructure {
 	/**
 	 * @param string $swagger The Swagger version of this document.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setSwagger($swagger)
 	{
 		$this->swagger = $swagger;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param Info $info General information about the API.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setInfo($info)
 	{
 		$this->info = $info;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $host The host (name or ip) of the API. Example: 'swagger.io'
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setHost($host)
 	{
 		$this->host = $host;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $basePath The base path to the API. Example: '/api'.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setBasePath($basePath)
 	{
 		$this->basePath = $basePath;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string[]|array $schemes The transfer protocol of the API.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setSchemes($schemes)
 	{
 		$this->schemes = $schemes;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string[]|array $consumes A list of MIME types accepted by the API.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setConsumes($consumes)
 	{
 		$this->consumes = $consumes;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string[]|array $produces A list of MIME types the API can produce.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setProduces($produces)
 	{
 		$this->produces = $produces;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param PathItem[] $paths Relative paths to the individual endpoints. They must be relative to the 'basePath'.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setPaths($paths)
 	{
 		$this->paths = $paths;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param Schema[] $definitions One or more JSON objects describing the schemas being consumed and produced by the API.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setDefinitions($definitions)
 	{
 		$this->definitions = $definitions;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param BodyParameter[]|HeaderParameterSubSchema[]|FormDataParameterSubSchema[]|QueryParameterSubSchema[]|PathParameterSubSchema[] $parameters One or more JSON representations for parameters
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setParameters($parameters)
 	{
 		$this->parameters = $parameters;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param Response[] $responses One or more JSON representations for parameters
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setResponses($responses)
 	{
 		$this->responses = $responses;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string[][]|array[][]|array $security
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setSecurity($security)
 	{
 		$this->security = $security;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param BasicAuthenticationSecurity[]|ApiKeySecurity[]|Oauth2ImplicitSecurity[]|Oauth2PasswordSecurity[]|Oauth2ApplicationSecurity[]|Oauth2AccessCodeSecurity[] $securityDefinitions
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setSecurityDefinitions($securityDefinitions)
 	{
 		$this->securityDefinitions = $securityDefinitions;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param Tag[]|array $tags
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setTags($tags)
 	{
 		$this->tags = $tags;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param ExternalDocs $externalDocs information about external documentation
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setExternalDocs($externalDocs)
 	{
 		$this->externalDocs = $externalDocs;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 }
 

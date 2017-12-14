@@ -11,6 +11,9 @@ use Swaggest\JsonSchema\Schema as JsonBasicSchema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
+/**
+ * Built from #/definitions/license
+ */
 class License extends ClassStructure {
 	/** @var string The name of the license type. It's encouraged to use an OSI compatible license. */
 	public $name;
@@ -41,25 +44,25 @@ class License extends ClassStructure {
 	/**
 	 * @param string $name The name of the license type. It's encouraged to use an OSI compatible license.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setName($name)
 	{
 		$this->name = $name;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $url The URL pointing to the license.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setUrl($url)
 	{
 		$this->url = $url;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 }
 

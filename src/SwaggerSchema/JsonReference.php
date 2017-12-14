@@ -11,6 +11,9 @@ use Swaggest\JsonSchema\Schema as JsonBasicSchema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
+/**
+ * Built from #/definitions/jsonReference
+ */
 class JsonReference extends ClassStructure {
 	/** @var string */
 	public $ref;
@@ -33,13 +36,13 @@ class JsonReference extends ClassStructure {
 	/**
 	 * @param string $ref
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setRef($ref)
 	{
 		$this->ref = $ref;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 }
 

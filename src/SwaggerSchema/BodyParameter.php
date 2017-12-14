@@ -11,7 +11,12 @@ use Swaggest\JsonSchema\Schema as JsonBasicSchema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
+/**
+ * Built from #/definitions/bodyParameter
+ */
 class BodyParameter extends ClassStructure {
+	const BODY = 'body';
+
 	/** @var string A brief description of the parameter. This could contain examples of use.  GitHub Flavored Markdown is allowed. */
 	public $description;
 
@@ -38,10 +43,10 @@ class BodyParameter extends ClassStructure {
 		$properties->name = JsonBasicSchema::string();
 		$properties->name->description = 'The name of the parameter.';
 		$properties->in = JsonBasicSchema::string();
-		$properties->in->description = 'Determines the location of the parameter.';
-		$properties->in->enum = array (
-		  0 => 'body',
+		$properties->in->enum = array(
+		    self::BODY,
 		);
+		$properties->in->description = 'Determines the location of the parameter.';
 		$properties->required = JsonBasicSchema::boolean();
 		$properties->required->description = 'Determines whether or not this parameter is required or optional.';
 		$properties->required->default = false;
@@ -60,61 +65,61 @@ class BodyParameter extends ClassStructure {
 	/**
 	 * @param string $description A brief description of the parameter. This could contain examples of use.  GitHub Flavored Markdown is allowed.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setDescription($description)
 	{
 		$this->description = $description;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $name The name of the parameter.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setName($name)
 	{
 		$this->name = $name;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param string $in Determines the location of the parameter.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setIn($in)
 	{
 		$this->in = $in;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param bool $required Determines whether or not this parameter is required or optional.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setRequired($required)
 	{
 		$this->required = $required;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 
 	/**
 	 * @param Schema $schema A deterministic version of a JSON Schema object.
 	 * @return $this
-	 * @codeCoverageIgnoreStart 
+	 * @codeCoverageIgnoreStart
 	 */
 	public function setSchema($schema)
 	{
 		$this->schema = $schema;
 		return $this;
 	}
-	/** @codeCoverageIgnoreEnd  */
+	/** @codeCoverageIgnoreEnd */
 }
 
