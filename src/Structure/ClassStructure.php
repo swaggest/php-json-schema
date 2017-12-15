@@ -130,4 +130,9 @@ abstract class ClassStructure extends ObjectItem implements ClassStructureContra
     {
         return get_called_class();
     }
+
+    public function validate()
+    {
+        static::schema()->out($this);
+    }
 }

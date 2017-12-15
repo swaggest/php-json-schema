@@ -125,6 +125,12 @@ class Schema extends JsonSchema
     }
 
 
+    /**
+     * @param $data
+     * @param Context|null $options
+     * @return array|mixed|null|object|\stdClass
+     * @throws InvalidValue
+     */
     public function out($data, Context $options = null)
     {
         if ($options === null) {
@@ -136,6 +142,14 @@ class Schema extends JsonSchema
         return $this->process($data, $options);
     }
 
+    /**
+     * @param $data
+     * @param Context $options
+     * @param string $path
+     * @param null $result
+     * @return array|mixed|null|object|\stdClass
+     * @throws InvalidValue
+     */
     public function process($data, Context $options, $path = '#', $result = null)
     {
 
