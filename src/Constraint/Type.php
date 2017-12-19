@@ -4,6 +4,7 @@ namespace Swaggest\JsonSchema\Constraint;
 
 class Type implements Constraint
 {
+    // TODO deprecate in favour of JsonSchema::<TYPE> ?
     const OBJECT = 'object';
     const STRING = 'string';
     const INTEGER = 'integer';
