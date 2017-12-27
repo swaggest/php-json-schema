@@ -191,7 +191,12 @@ class Schema extends JsonSchema
         }
 
         if ($this->type !== null) {
-            if (!Type::isValid($this->type, $data)) {
+            if ($options->tolerateStrings && is_string($data)) {
+                $valid = Type::readString($this->type, $data);
+            } else {
+                $valid = Type::isValid($this->type, $data);
+            }
+            if (!$valid) {
                 $this->fail(new TypeException(ucfirst(
                         implode(', ', is_array($this->type) ? $this->type : array($this->type))
                         . ' expected, ' . json_encode($data) . ' received')
@@ -685,7 +690,12 @@ class Schema extends JsonSchema
         return $this;
     }
 
-    public function setProperty($name, Schema $schema)
+    /**
+     * @param $name
+     * @param Schema $schema
+     * @return $this
+     */
+    public function setProperty($name, $schema)
     {
         if (null === $this->properties) {
             $this->properties = new Properties();
