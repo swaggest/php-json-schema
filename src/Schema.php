@@ -82,11 +82,14 @@ class Schema extends JsonSchema
         return $this;
     }
 
-    private function preProcessReferences($data, Context $options = null)
+    private function preProcessReferences($data, Context $options = null, $nestingLevel = 0)
     {
+        if ($nestingLevel > 200) {
+            throw new Exception('Too deep nesting level', Exception::DEEP_NESTING);
+        }
         if (is_array($data)) {
             foreach ($data as $key => $item) {
-                $this->preProcessReferences($item, $options);
+                $this->preProcessReferences($item, $options, $nestingLevel + 1);
             }
         } elseif ($data instanceof \stdClass) {
             /** @var JsonSchema $data */
@@ -99,7 +102,7 @@ class Schema extends JsonSchema
             }
 
             foreach ((array)$data as $key => $value) {
-                $this->preProcessReferences($value, $options);
+                $this->preProcessReferences($value, $options, $nestingLevel + 1);
             }
         }
     }
@@ -161,11 +164,13 @@ class Schema extends JsonSchema
             if ($options->circularReferences->contains($data)) {
                 /** @noinspection PhpIllegalArrayKeyTypeInspection */
                 $path = $options->circularReferences[$data];
+                // @todo $path is not a valid json pointer $ref
                 $result->{self::REF} = $path;
                 return $result;
+//                return $options->circularReferences[$data];
             }
             $options->circularReferences->attach($data, $path);
-
+            //$options->circularReferences->attach($data, $result);
 
             $data = $data->jsonSerialize();
         }
