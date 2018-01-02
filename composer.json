@@ -35,7 +35,6 @@
     }
   },
   "scripts": {
-    "gen-swg-struct": "php ./tools/generate_swagger_structures.php",
     "gen-json-struct": "php ./tools/generate_json_structures.php"
   }
 }
