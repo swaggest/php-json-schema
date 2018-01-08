@@ -2,9 +2,7 @@
 
 namespace Swaggest\JsonSchema\Structure;
 
-use Swaggest\JsonSchema\MagicMap;
-
-class ObjectItem extends MagicMap implements ObjectItemContract
+class ObjectItem implements ObjectItemContract
 {
     use ObjectItemTrait;
 }
