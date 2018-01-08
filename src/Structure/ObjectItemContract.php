@@ -8,4 +8,5 @@ interface ObjectItemContract extends \ArrayAccess, \JsonSerializable, \Iterator
     public function getNestedObject($className);
     public function setNestedProperty($propertyName, $value, Egg $nestedEgg);
     public function addAdditionalPropertyName($name);
+    public function setDocumentPath($path);
 }

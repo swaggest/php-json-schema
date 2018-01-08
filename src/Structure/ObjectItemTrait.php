@@ -79,7 +79,7 @@ trait ObjectItemTrait
         if ($this->__nestedObjects) {
             $result = $this->__arrayOfData;
             foreach ($this->__nestedObjects as $object) {
-                foreach ($object->__arrayOfData as $key => $value) {
+                foreach ($object->toArray() as $key => $value) {
                     $result[$key] = $value;
                 }
             }
@@ -95,6 +95,12 @@ trait ObjectItemTrait
     public function getDocumentPath()
     {
         return $this->__documentPath;
+    }
+    
+    public function setDocumentPath($path)
+    {
+        $this->__documentPath = $path;
+        return $this;
     }
 
     /**

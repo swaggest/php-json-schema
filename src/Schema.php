@@ -411,7 +411,7 @@ class Schema extends JsonSchema implements MetaHolder
                     }
 
                     if ($result instanceof ObjectItemContract) {
-                        $result->__documentPath = $path;
+                        $result->setDocumentPath($path);
                     }
                 }
             }
