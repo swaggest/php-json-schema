@@ -1,6 +1,7 @@
 * text          eol=lf
 *.serialized    -text
 *.dat           -text
+/spec export-ignore
 /tests export-ignore
 /stubs export-ignore
 /tools export-ignore

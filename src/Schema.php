@@ -14,16 +14,21 @@ use Swaggest\JsonSchema\Exception\NumericException;
 use Swaggest\JsonSchema\Exception\ObjectException;
 use Swaggest\JsonSchema\Exception\StringException;
 use Swaggest\JsonSchema\Exception\TypeException;
+use Swaggest\JsonSchema\Meta\Meta;
+use Swaggest\JsonSchema\Meta\MetaHolder;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 use Swaggest\JsonSchema\Structure\Egg;
 use Swaggest\JsonSchema\Structure\ObjectItem;
+use Swaggest\JsonSchema\Structure\ObjectItemContract;
 
 /**
  * Class Schema
  * @package Swaggest\JsonSchema
  */
-class Schema extends JsonSchema
+class Schema extends JsonSchema implements MetaHolder
 {
+    const DEFAULT_MAPPING = 'default';
+
     const SCHEMA_DRAFT_04_URL = 'http://json-schema.org/draft-04/schema';
 
     const REF = '$ref';
@@ -41,7 +46,7 @@ class Schema extends JsonSchema
     //*/
 
     // Object
-    /** @var Properties|Schema[] */
+    /** @var Properties|Schema[]|Schema */
     public $properties;
     /** @var Schema|bool */
     public $additionalProperties;
@@ -75,10 +80,10 @@ class Schema extends JsonSchema
     private $__propertyToData = array();
 
 
-    public function addPropertyMapping($dataName, $propertyName)
+    public function addPropertyMapping($dataName, $propertyName, $mapping = self::DEFAULT_MAPPING)
     {
-        $this->__dataToProperty[$dataName] = $propertyName;
-        $this->__propertyToData[$propertyName] = $dataName;
+        $this->__dataToProperty[$mapping][$dataName] = $propertyName;
+        $this->__propertyToData[$mapping][$propertyName] = $dataName;
         return $this;
     }
 
@@ -159,7 +164,7 @@ class Schema extends JsonSchema
         $import = $options->import;
         //$pathTrace = explode('->', $path);
 
-        if (!$import && $data instanceof ObjectItem) {
+        if (!$import && $data instanceof ObjectItemContract) {
             $result = new \stdClass();
             if ($options->circularReferences->contains($data)) {
                 /** @noinspection PhpIllegalArrayKeyTypeInspection */
@@ -357,17 +362,42 @@ class Schema extends JsonSchema
 
         if ($data instanceof \stdClass) {
             if (!$options->skipValidation && $this->required !== null) {
-                foreach ($this->required as $item) {
-                    if (!property_exists($data, $item)) {
-                        $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
+
+                if (isset($this->__dataToProperty[$options->mapping])) {
+                    if ($import) {
+                        foreach ($this->required as $item) {
+                            if (isset($this->__propertyToData[$options->mapping][$item])) {
+                                $item = $this->__propertyToData[$options->mapping][$item];
+                            }
+                            if (!property_exists($data, $item)) {
+                                $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
+                            }
+                        }
+                    } else {
+                        foreach ($this->required as $item) {
+                            if (isset($this->__dataToProperty[$options->mapping][$item])) {
+                                $item = $this->__dataToProperty[$options->mapping][$item];
+                            }
+                            if (!property_exists($data, $item)) {
+                                $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
+                            }
+                        }
+                    }
+
+                } else {
+                    foreach ($this->required as $item) {
+                        if (!property_exists($data, $item)) {
+                            $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
+                        }
                     }
                 }
+
             }
 
             if ($import) {
                 if ($this->useObjectAsArray) {
                     $result = array();
-                } elseif (!$result instanceof ObjectItem) {
+                } elseif (!$result instanceof ObjectItemContract) {
                     $result = $this->makeObjectItem($options);
 
                     if ($result instanceof ClassStructure) {
@@ -380,7 +410,7 @@ class Schema extends JsonSchema
                         }
                     }
 
-                    if ($result instanceof ObjectItem) {
+                    if ($result instanceof ObjectItemContract) {
                         $result->__documentPath = $path;
                     }
                 }
@@ -407,7 +437,7 @@ class Schema extends JsonSchema
                             return $refResult;
                         }
                         $data = $ref->getData();
-                        if ($result instanceof ObjectItem) {
+                        if ($result instanceof ObjectItemContract) {
                             $result->__fromRef = $refString;
                         }
                         $ref->setImported($result);
@@ -443,15 +473,15 @@ class Schema extends JsonSchema
             }
 
             $array = array();
-            if (!empty($this->__dataToProperty)) {
+            if (!empty($this->__dataToProperty[$options->mapping])) {
                 foreach ((array)$data as $key => $value) {
                     if ($import) {
-                        if (isset($this->__dataToProperty[$key])) {
-                            $key = $this->__dataToProperty[$key];
+                        if (isset($this->__dataToProperty[$options->mapping][$key])) {
+                            $key = $this->__dataToProperty[$options->mapping][$key];
                         }
                     } else {
-                        if (isset($this->__propertyToData[$key])) {
-                            $key = $this->__propertyToData[$key];
+                        if (isset($this->__propertyToData[$options->mapping][$key])) {
+                            $key = $this->__propertyToData[$options->mapping][$key];
                         }
                     }
                     $array[$key] = $value;
@@ -616,7 +646,8 @@ class Schema extends JsonSchema
      * @param boolean $useObjectAsArray
      * @return Schema
      */
-    public function setUseObjectAsArray($useObjectAsArray)
+    public
+    function setUseObjectAsArray($useObjectAsArray)
     {
         $this->useObjectAsArray = $useObjectAsArray;
         return $this;
@@ -704,10 +735,10 @@ class Schema extends JsonSchema
         return $this;
     }
 
-    /** @var Meta[] */
+    /** @var AbstractMeta[] */
     private $metaItems = array();
 
-    public function meta(Meta $meta)
+    public function addMeta(Meta $meta)
     {
         $this->metaItems[get_class($meta)] = $meta;
         return $this;
@@ -723,7 +754,7 @@ class Schema extends JsonSchema
 
     /**
      * @param Context $options
-     * @return ObjectItem
+     * @return ObjectItemContract
      */
     public function makeObjectItem(Context $options = null)
     {
