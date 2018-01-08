@@ -5,8 +5,10 @@ namespace Swaggest\JsonSchema\Structure;
 use Swaggest\JsonSchema\Constraint\Properties;
 use Swaggest\JsonSchema\Context;
 use Swaggest\JsonSchema\NameMirror;
-use Swaggest\JsonSchema\Schema;
 
+/**
+ * @method static setupProperties($properties, $schema)
+ */
 trait ClassStructureTrait
 {
     use ObjectItemTrait;
@@ -41,7 +43,7 @@ trait ClassStructureTrait
 
     /**
      * @param mixed $data
-     * @param \Swaggest\JsonSchema\Context $options
+     * @param Context $options
      * @return static
      */
     public static function import($data, Context $options = null)

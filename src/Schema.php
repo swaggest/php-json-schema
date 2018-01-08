@@ -463,6 +463,7 @@ class Schema extends JsonSchema implements MetaHolder
                 });
             }
 
+            $nestedProperties = null;
             if ($this->properties !== null) {
                 /** @var Schema[] $properties */
                 $properties = &$this->properties->toArray(); // TODO check performance of pointer

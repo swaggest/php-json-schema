@@ -6,6 +6,11 @@ trait MagicMapTrait
 {
     protected $__arrayOfData = array();
 
+    /**
+     * @param string $name
+     * @param mixed $column
+     * @return $this
+     */
     public function __set($name, $column)
     {
         $this->__arrayOfData[$name] = $column;
