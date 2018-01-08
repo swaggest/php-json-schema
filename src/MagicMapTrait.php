@@ -9,7 +9,7 @@ trait MagicMapTrait
     /**
      * @param string $name
      * @param mixed $column
-     * @return $this
+     * @return static
      */
     public function __set($name, $column)
     {
