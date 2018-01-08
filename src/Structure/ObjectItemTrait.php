@@ -62,7 +62,7 @@ trait ObjectItemTrait
     }
 
     /**
-     * @param $pattern
+     * @param string $pattern
      * @return null|string[]
      */
     public function getPatternPropertyNames($pattern)
@@ -109,5 +109,11 @@ trait ObjectItemTrait
     public function getFromRef()
     {
         return $this->__fromRef;
+    }
+
+    public function setFromRef($ref)
+    {
+        $this->__fromRef = $ref;
+        return $this;
     }
 }

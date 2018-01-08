@@ -14,15 +14,17 @@ class Composition extends Schema
     /**
      * @param Schema... $schema
      */
-    public function __construct()
+    public function __construct($schema = null)
     {
         $this->type = Type::OBJECT;
         $properties = new Properties();
         $this->properties = $properties;
 
-        foreach (func_get_args() as $arg) {
-            if ($arg instanceof ClassSchema) {
-                $properties->__set($arg->objectItemClass, $arg->nested());
+        if ($schema !== null) {
+            foreach (func_get_args() as $arg) {
+                if ($arg instanceof ClassSchema) {
+                    $properties->__set($arg->objectItemClass, $arg->nested());
+                }
             }
         }
     }

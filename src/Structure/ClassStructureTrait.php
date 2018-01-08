@@ -40,7 +40,7 @@ trait ClassStructureTrait
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param \Swaggest\JsonSchema\Context $options
      * @return static
      */
@@ -50,7 +50,7 @@ trait ClassStructureTrait
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param Context $options
      * @return mixed
      * @throws \Swaggest\JsonSchema\InvalidValue

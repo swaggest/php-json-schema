@@ -18,7 +18,7 @@ class Egg
     /**
      * Egg constructor.
      * @param Schema $classSchema
-     * @param $name
+     * @param string $name
      * @param Schema $propertySchema
      */
     public function __construct(Schema $classSchema, $name, Schema $propertySchema)

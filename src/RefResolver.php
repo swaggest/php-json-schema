@@ -82,7 +82,7 @@ class RefResolver
 
     /**
      * RefResolver constructor.
-     * @param $rootData
+     * @param JsonSchema $rootData
      */
     public function __construct($rootData)
     {
@@ -106,7 +106,7 @@ class RefResolver
 
 
     /**
-     * @param $referencePath
+     * @param string $referencePath
      * @return Ref
      * @throws \Exception
      */

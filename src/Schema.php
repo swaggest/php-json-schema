@@ -134,7 +134,7 @@ class Schema extends JsonSchema implements MetaHolder
 
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param Context|null $options
      * @return array|mixed|null|object|\stdClass
      * @throws InvalidValue
@@ -151,12 +151,13 @@ class Schema extends JsonSchema implements MetaHolder
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param Context $options
      * @param string $path
      * @param null $result
      * @return array|mixed|null|object|\stdClass
      * @throws InvalidValue
+     * @throws \Exception
      */
     public function process($data, Context $options, $path = '#', $result = null)
     {
@@ -438,7 +439,7 @@ class Schema extends JsonSchema implements MetaHolder
                         }
                         $data = $ref->getData();
                         if ($result instanceof ObjectItemContract) {
-                            $result->__fromRef = $refString;
+                            $result->setFromRef($refString);
                         }
                         $ref->setImported($result);
                         $refResult = $this->process($data, $options, $path . '->ref:' . $refString, $result);
@@ -462,6 +463,7 @@ class Schema extends JsonSchema implements MetaHolder
                 });
             }
 
+            $properties = null;
             if ($this->properties !== null) {
                 /** @var Schema[] $properties */
                 $properties = &$this->properties->toArray(); // TODO check performance of pointer
@@ -533,6 +535,7 @@ class Schema extends JsonSchema implements MetaHolder
 
                 /** @var Egg[] $nestedEggs */
                 $nestedEggs = null;
+                $nestedProperties = null;
                 if (isset($nestedProperties[$key])) {
                     $found = true;
                     $nestedEggs = $nestedProperties[$key];
@@ -722,7 +725,7 @@ class Schema extends JsonSchema implements MetaHolder
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param Schema $schema
      * @return $this
      */
@@ -735,7 +738,7 @@ class Schema extends JsonSchema implements MetaHolder
         return $this;
     }
 
-    /** @var AbstractMeta[] */
+    /** @var Meta[] */
     private $metaItems = array();
 
     public function addMeta(Meta $meta)

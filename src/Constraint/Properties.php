@@ -78,7 +78,7 @@ class Properties extends ObjectItem implements Constraint
     }
 
     /**
-     * @return Egg[]
+     * @return Egg[][]
      */
     public function getNestedProperties()
     {
