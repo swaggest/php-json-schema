@@ -31,13 +31,20 @@ class Properties extends ObjectItem implements Constraint
         return $this->__schema;
     }
 
+    /**
+     * @param string $name
+     * @param mixed $column
+     * @return $this|static
+     * @throws Exception
+     */
     public function __set($name, $column)
     {
         if ($column instanceof Nested) {
             $this->addNested($column->schema, $name);
             return $this;
         }
-        return parent::__set($name, $column);
+        parent::__set($name, $column);
+        return $this;
     }
 
     public static function create()
@@ -45,7 +52,7 @@ class Properties extends ObjectItem implements Constraint
         return new static;
     }
 
-    /** @var Schema */
+    /** @var Schema|null */
     private $additionalProperties;
 
     /**
@@ -78,7 +85,7 @@ class Properties extends ObjectItem implements Constraint
     }
 
     /**
-     * @return Egg[]
+     * @return Egg[][]
      */
     public function getNestedProperties()
     {

@@ -29,8 +29,8 @@ class Helper
     }
 
     /**
-     * @param $parent
-     * @param $current
+     * @param string $parent
+     * @param string $current
      * @return string
      * @todo getaway from zeroes
      */

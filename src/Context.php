@@ -5,12 +5,14 @@ namespace Swaggest\JsonSchema;
 class Context extends MagicMap
 {
     public $import = true;
+
     /** @var DataPreProcessor */
     public $dataPreProcessor;
+
     /** @var RefResolver */
     public $refResolver;
 
-    /** @var RemoteRefProvider */
+    /** @var RemoteRefProvider|null */
     public $remoteRefProvider;
 
     /** @var string */
@@ -24,6 +26,12 @@ class Context extends MagicMap
 
     /** @var string[] map of from -> to class names */
     public $objectItemClassMapping;
+
+    /** @var bool allow soft cast from to/strings */
+    public $tolerateStrings = false;
+
+    /** @var string property mapping set name */
+    public $mapping = Schema::DEFAULT_MAPPING;
 
     /**
      * @param boolean $skipValidation
@@ -64,7 +72,7 @@ class Context extends MagicMap
     }
 
     /**
-     * @return RemoteRefProvider
+     * @return RemoteRefProvider|null
      */
     public function getRemoteRefProvider()
     {

@@ -6,8 +6,6 @@ namespace Swaggest\JsonSchema\Tests\PHPUnit\Example;
 use Swaggest\JsonSchema\Context;
 use Swaggest\JsonSchema\Exception\NumericException;
 use Swaggest\JsonSchema\Exception\ObjectException;
-use Swaggest\JsonSchema\Meta\FieldName;
-use Swaggest\JsonSchema\PreProcessor\NameMapper;
 use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\Structure\Composition;
 use Swaggest\JsonSchema\Tests\Helper\Order;
@@ -26,6 +24,7 @@ class ExampleTest extends \PHPUnit_Framework_TestCase
         $schemaJson = <<<'JSON'
 {
     "type": "object",
+    "x-custom-data": "Custom Value",
     "properties": {
         "id": {
             "type": "integer"
@@ -98,8 +97,6 @@ JSON
 
     public function testExample()
     {
-        $this->setExpectedException(get_class(new ObjectException()), 'Required property missing: id at #->properties:orders->items[0]');
-
         $example = new User();
         $example->id = 1;
         $example->name = 'John Doe';
@@ -108,23 +105,44 @@ JSON
         $order->dateTime = '2015-10-28T07:28:00Z';
         $example->orders[] = $order;
 
+        $this->setExpectedException(get_class(new ObjectException()), 'Required property missing: id at #->properties:orders->items[0]');
+        /** @noinspection PhpUnhandledExceptionInspection */
         User::export($example); // Exception: Required property missing: id at #->properties:orders->items[0]
     }
 
     public function testNameMapper()
     {
-        $mapper = new NameMapper();
-        $options = new Context();
-        $options->dataPreProcessor = $mapper;
 
         $order = new Order();
         $order->id = 1;
         $order->dateTime = '2015-10-28T07:28:00Z';
-        $exported = Order::export($order, $options);
+        $order->price = 2.2;
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $exported = Order::export($order);
         $json = <<<JSON
 {
     "id": 1,
-    "date_time": "2015-10-28T07:28:00Z"
+    "date_time": "2015-10-28T07:28:00Z",
+    "price": 2.2
+}
+JSON;
+        $this->assertSame($json, json_encode($exported, JSON_PRETTY_PRINT));
+
+        $imported = Order::import(json_decode($json));
+        $this->assertSame(1, $imported->id);
+        $this->assertSame('2015-10-28T07:28:00Z', $imported->dateTime);
+        $this->assertSame(2.2, $imported->price);
+
+        $options = new Context();
+        $options->mapping = Order::FANCY_MAPPING;
+
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $exported = Order::export($order, $options);
+        $json = <<<JSON
+{
+    "Id": 1,
+    "DaTe_TiMe": "2015-10-28T07:28:00Z",
+    "PrIcE": 2.2
 }
 JSON;
         $this->assertSame($json, json_encode($exported, JSON_PRETTY_PRINT));
@@ -189,16 +207,5 @@ JSON;
         $this->assertSame('John', $info->firstName);
         $this->assertSame('Doe', $info->lastName);
         $this->assertSame(2.66, $order->price);
-    }
-
-    public function testMeta()
-    {
-        $schema = new Schema();
-        // Setting meta
-        $schema->meta(new FieldName('my-value'));
-
-        // Retrieving meta
-        $myMeta = FieldName::get($schema);
-        $this->assertSame('my-value', $myMeta->name);
     }
 }
