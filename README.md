@@ -111,8 +111,15 @@ class User extends ClassStructure
      */
     public static function setUpProperties($properties, Schema $ownerSchema)
     {
+        // You can add custom meta to your schema
+        $dbTable = new DbTable;
+        $dbTable->tableName = 'users';
+        $ownerSchema->addMeta($dbTable);
+
         // Setup property schemas
         $properties->id = Schema::integer();
+        $properties->id->addMeta(new DbId($dbTable)); // You can add meta to property.
+
         $properties->name = Schema::string();
 
         // You can embed structures to main level with nested schemas
@@ -129,7 +136,6 @@ class User extends ClassStructure
         $ownerSchema->required = array(self::names()->id);
     }
 }
-
 
 class UserInfo extends ClassStructure {
     public $firstName;
@@ -149,9 +155,14 @@ class UserInfo extends ClassStructure {
 }
 
 
-class Order extends ClassStructure
+class Order implements ClassStructureContract
 {
+    use ClassStructureTrait; // You can use trait if you can't/don't want to extend ClassStructure
+
+    const FANCY_MAPPING = 'fAnCy'; // You can create additional mapping namespace
+
     public $id;
+    public $userId;
     public $dateTime;
     public $price;
 
@@ -161,12 +172,27 @@ class Order extends ClassStructure
      */
     public static function setUpProperties($properties, Schema $ownerSchema)
     {
+        // Add some meta data to your schema
+        $dbMeta = new DbTable();
+        $dbMeta->tableName = 'orders';
+        $ownerSchema->addMeta($dbMeta);
+
+        // Define properties
         $properties->id = Schema::integer();
-        $properties->dateTime = Schema::string()->meta(new FieldName('date_time'));
+        $properties->userId = User::properties()->id; // referencing property of another schema keeps meta
+        $properties->dateTime = Schema::string();
         $properties->dateTime->format = Schema::FORMAT_DATE_TIME;
         $properties->price = Schema::number();
 
         $ownerSchema->required[] = self::names()->id;
+
+        // Define default mapping if any
+        $ownerSchema->addPropertyMapping('date_time', Order::names()->dateTime);
+
+        // Define additional mapping
+        $ownerSchema->addPropertyMapping('DaTe_TiMe', Order::names()->dateTime, self::FANCY_MAPPING);
+        $ownerSchema->addPropertyMapping('Id', Order::names()->id, self::FANCY_MAPPING);
+        $ownerSchema->addPropertyMapping('PrIcE', Order::names()->price, self::FANCY_MAPPING);
     }
 }
 ```
@@ -261,26 +287,49 @@ $this->assertSame(2.66, $order->price);
 #### Keys mapping
 
 If property names of PHP objects should be different from raw data you 
-can apply `\Swaggest\JsonSchema\PreProcessor\NameMapper` during processing.
-It takes `Swaggest\JsonSchema\Meta\FieldName` as source of raw name.
+can call `->addPropertyMapping` on owner schema.
 
 ```php
-$properties->dateTime = Schema::string()->meta(new FieldName('date_time'));
+// Define default mapping if any
+$ownerSchema->addPropertyMapping('date_time', Order::names()->dateTime);
+
+// Define additional mapping
+$ownerSchema->addPropertyMapping('DaTe_TiMe', Order::names()->dateTime, self::FANCY_MAPPING);
+$ownerSchema->addPropertyMapping('Id', Order::names()->id, self::FANCY_MAPPING);
+$ownerSchema->addPropertyMapping('PrIcE', Order::names()->price, self::FANCY_MAPPING);
 ```
 
+It will affect data mapping:
 ```php
-$mapper = new NameMapper();
-$options = new Context();
-$options->dataPreProcessor = $mapper;
-
 $order = new Order();
 $order->id = 1;
 $order->dateTime = '2015-10-28T07:28:00Z';
-$exported = Order::export($order, $options);
+$order->price = 2.2;
+$exported = Order::export($order);
 $json = <<<JSON
 {
     "id": 1,
-    "date_time": "2015-10-28T07:28:00Z"
+    "date_time": "2015-10-28T07:28:00Z",
+    "price": 2.2
+}
+JSON;
+$this->assertSame($json, json_encode($exported, JSON_PRETTY_PRINT));
+
+$imported = Order::import(json_decode($json));
+$this->assertSame('2015-10-28T07:28:00Z', $imported->dateTime);
+```
+
+You can have multiple mapping namespaces, controlling with `mapping` property of `Context`
+```php
+$options = new Context();
+$options->mapping = Order::FANCY_MAPPING;
+
+$exported = Order::export($order, $options);
+$json = <<<JSON
+{
+    "Id": 1,
+    "DaTe_TiMe": "2015-10-28T07:28:00Z",
+    "PrIcE": 2.2
 }
 JSON;
 $this->assertSame($json, json_encode($exported, JSON_PRETTY_PRINT));
@@ -297,16 +346,16 @@ You can create your own pre-processor implementing `Swaggest\JsonSchema\DataPreP
 
 You can store it.
 ```php
-$schema = new Schema();
-// Setting meta
-$schema->meta(new FieldName('my-value'));
+$dbMeta = new DbTable();
+$dbMeta->tableName = 'orders';
+$ownerSchema->addMeta($dbMeta);
 ```
 
 And get back.
 ```php
 // Retrieving meta
-$myMeta = FieldName::get($schema);
-$this->assertSame('my-value', $myMeta->name);
+$dbTable = DbTable::get(Order::schema());
+$this->assertSame('orders', $dbTable->tableName);
 ```
 
 

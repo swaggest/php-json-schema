@@ -28,8 +28,15 @@ class User extends ClassStructure
      */
     public static function setUpProperties($properties, Schema $ownerSchema)
     {
+        // You can add custom meta to your schema
+        $dbTable = new DbTable;
+        $dbTable->tableName = 'users';
+        $ownerSchema->addMeta($dbTable);
+
         // Setup property schemas
         $properties->id = Schema::integer();
+        $properties->id->addMeta(new DbId($dbTable)); // You can add meta to property.
+
         $properties->name = Schema::string();
 
         // You can embed structures to main level with nested schemas

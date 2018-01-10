@@ -82,7 +82,7 @@ class RefResolver
 
     /**
      * RefResolver constructor.
-     * @param $rootData
+     * @param JsonSchema $rootData
      */
     public function __construct($rootData)
     {
@@ -106,7 +106,7 @@ class RefResolver
 
 
     /**
-     * @param $referencePath
+     * @param string $referencePath
      * @return Ref
      * @throws \Exception
      */
@@ -124,6 +124,7 @@ class RefResolver
             $referencePath = $refLocalPath;
         }
 
+        /** @var null|Ref $ref */
         $ref = &$this->refs[$referencePath];
 
         $refResolver = $this;
@@ -163,6 +164,7 @@ class RefResolver
             } else {
                 if ($url !== $this->url) {
                     $rootResolver = $this->rootResolver ? $this->rootResolver : $this;
+                    /** @var null|RefResolver $refResolver */
                     $refResolver = &$rootResolver->remoteRefResolvers[$url];
                     if (null === $refResolver) {
                         $rootData = $rootResolver->getRefProvider()->getSchemaData($url);

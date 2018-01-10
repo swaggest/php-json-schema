@@ -109,7 +109,7 @@ class JsonSchema extends ClassStructure {
 	/** @var array */
 	public $enum;
 
-	/** @var array */
+	/** @var array|string */
 	public $type;
 
 	/** @var string */
@@ -325,7 +325,7 @@ class JsonSchema extends ClassStructure {
 	/** @codeCoverageIgnoreEnd */
 
 	/**
-	 * @param $default
+	 * @param mixed $default
 	 * @return $this
 	 * @codeCoverageIgnoreStart
 	 */

@@ -2,8 +2,7 @@
 
 namespace Swaggest\JsonSchema\Constraint;
 
-
-use Swaggest\JsonSchema\Structure\ObjectItem;
+use Swaggest\JsonSchema\Structure\ObjectItemContract;
 
 class UniqueItems
 {
@@ -22,7 +21,7 @@ class UniqueItems
             if (is_bool($value)) {
                 $value = '_______BOOL' . $value;
             }
-            if ($value instanceof ObjectItem) {
+            if ($value instanceof ObjectItemContract) {
                 $value = json_encode($value);
             }
             $tmp = &$index[$value];

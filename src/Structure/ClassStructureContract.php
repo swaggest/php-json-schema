@@ -5,7 +5,7 @@ namespace Swaggest\JsonSchema\Structure;
 use Swaggest\JsonSchema\Constraint\Properties;
 use Swaggest\JsonSchema\Schema;
 
-interface ClassStructureContract
+interface ClassStructureContract extends ObjectItemContract
 {
     /**
      * @param Properties|static $properties

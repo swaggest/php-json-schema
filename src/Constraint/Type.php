@@ -13,6 +13,46 @@ class Type implements Constraint
     const BOOLEAN = 'boolean';
     const NULL = 'null';
 
+    public static function readString($types, &$data)
+    {
+        if (!is_array($types)) {
+            $types = array($types);
+        }
+        $ok = false;
+        foreach ($types as $type) {
+            switch ($type) {
+                case self::OBJECT:
+                    break;
+                case self::ARR:
+                    break;
+                case self::STRING:
+                    $ok = true;
+                    break;
+                case self::NUMBER:
+                    $newData = filter_var($data, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
+                    $ok = is_float($newData);
+                    break;
+                case self::INTEGER:
+                    $newData = filter_var($data, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+                    $ok = is_int($newData);
+                    break;
+                case self::BOOLEAN:
+                    $newData = filter_var($data, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+                    $ok = is_bool($data);
+                    break;
+                case self::NULL:
+                    break;
+            }
+            if ($ok) {
+                if (isset($newData)) {
+                    $data = $newData;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static function isValid($types, $data)
     {
         if (!is_array($types)) {

@@ -1,6 +1,7 @@
 * text          eol=lf
 *.serialized    -text
 *.dat           -text
+/spec export-ignore
 /tests export-ignore
 /stubs export-ignore
 /tools export-ignore
@@ -10,3 +11,4 @@
 /.scrutinizer.yml export-ignore
 /.travis.yml export-ignore
 /phpunit.xml export-ignore
+/phpstan.neon export-ignore

@@ -7,5 +7,5 @@ class Exception extends \Exception
 {
     const PROPERTIES_REQUIRED = 1;
     const UNDEFINED_NESTED_NAME = 2;
-
+    const DEEP_NESTING = 3;
 }

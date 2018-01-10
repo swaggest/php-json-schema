@@ -14,16 +14,21 @@ use Swaggest\JsonSchema\Exception\NumericException;
 use Swaggest\JsonSchema\Exception\ObjectException;
 use Swaggest\JsonSchema\Exception\StringException;
 use Swaggest\JsonSchema\Exception\TypeException;
+use Swaggest\JsonSchema\Meta\Meta;
+use Swaggest\JsonSchema\Meta\MetaHolder;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 use Swaggest\JsonSchema\Structure\Egg;
 use Swaggest\JsonSchema\Structure\ObjectItem;
+use Swaggest\JsonSchema\Structure\ObjectItemContract;
 
 /**
  * Class Schema
  * @package Swaggest\JsonSchema
  */
-class Schema extends JsonSchema
+class Schema extends JsonSchema implements MetaHolder
 {
+    const DEFAULT_MAPPING = 'default';
+
     const SCHEMA_DRAFT_04_URL = 'http://json-schema.org/draft-04/schema';
 
     const REF = '$ref';
@@ -41,19 +46,19 @@ class Schema extends JsonSchema
     //*/
 
     // Object
-    /** @var Properties|Schema[] */
+    /** @var Properties|Schema[]|Schema */
     public $properties;
     /** @var Schema|bool */
     public $additionalProperties;
     /** @var Schema[] */
     public $patternProperties;
-    /** @var string[][]|Schema[] */
+    /** @var string[][]|Schema[]|\stdClass */
     public $dependencies;
 
     // Array
-    /** @var Schema|Schema[] */
+    /** @var null|Schema|Schema[] */
     public $items;
-    /** @var Schema|bool */
+    /** @var null|Schema|bool */
     public $additionalItems;
 
     const FORMAT_DATE_TIME = 'date-time'; // todo implement
@@ -75,18 +80,21 @@ class Schema extends JsonSchema
     private $__propertyToData = array();
 
 
-    public function addPropertyMapping($dataName, $propertyName)
+    public function addPropertyMapping($dataName, $propertyName, $mapping = self::DEFAULT_MAPPING)
     {
-        $this->__dataToProperty[$dataName] = $propertyName;
-        $this->__propertyToData[$propertyName] = $dataName;
+        $this->__dataToProperty[$mapping][$dataName] = $propertyName;
+        $this->__propertyToData[$mapping][$propertyName] = $dataName;
         return $this;
     }
 
-    private function preProcessReferences($data, Context $options = null)
+    private function preProcessReferences($data, Context $options, $nestingLevel = 0)
     {
+        if ($nestingLevel > 200) {
+            throw new Exception('Too deep nesting level', Exception::DEEP_NESTING);
+        }
         if (is_array($data)) {
             foreach ($data as $key => $item) {
-                $this->preProcessReferences($item, $options);
+                $this->preProcessReferences($item, $options, $nestingLevel + 1);
             }
         } elseif ($data instanceof \stdClass) {
             /** @var JsonSchema $data */
@@ -99,7 +107,7 @@ class Schema extends JsonSchema
             }
 
             foreach ((array)$data as $key => $value) {
-                $this->preProcessReferences($value, $options);
+                $this->preProcessReferences($value, $options, $nestingLevel + 1);
             }
         }
     }
@@ -126,7 +134,7 @@ class Schema extends JsonSchema
 
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param Context|null $options
      * @return array|mixed|null|object|\stdClass
      * @throws InvalidValue
@@ -143,12 +151,13 @@ class Schema extends JsonSchema
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param Context $options
      * @param string $path
      * @param null $result
      * @return array|mixed|null|object|\stdClass
      * @throws InvalidValue
+     * @throws \Exception
      */
     public function process($data, Context $options, $path = '#', $result = null)
     {
@@ -156,16 +165,18 @@ class Schema extends JsonSchema
         $import = $options->import;
         //$pathTrace = explode('->', $path);
 
-        if (!$import && $data instanceof ObjectItem) {
+        if (!$import && $data instanceof ObjectItemContract) {
             $result = new \stdClass();
             if ($options->circularReferences->contains($data)) {
                 /** @noinspection PhpIllegalArrayKeyTypeInspection */
                 $path = $options->circularReferences[$data];
+                // @todo $path is not a valid json pointer $ref
                 $result->{self::REF} = $path;
                 return $result;
+//                return $options->circularReferences[$data];
             }
             $options->circularReferences->attach($data, $path);
-
+            //$options->circularReferences->attach($data, $result);
 
             $data = $data->jsonSerialize();
         }
@@ -186,7 +197,12 @@ class Schema extends JsonSchema
         }
 
         if ($this->type !== null) {
-            if (!Type::isValid($this->type, $data)) {
+            if ($options->tolerateStrings && is_string($data)) {
+                $valid = Type::readString($this->type, $data);
+            } else {
+                $valid = Type::isValid($this->type, $data);
+            }
+            if (!$valid) {
                 $this->fail(new TypeException(ucfirst(
                         implode(', ', is_array($this->type) ? $this->type : array($this->type))
                         . ' expected, ' . json_encode($data) . ' received')
@@ -347,17 +363,42 @@ class Schema extends JsonSchema
 
         if ($data instanceof \stdClass) {
             if (!$options->skipValidation && $this->required !== null) {
-                foreach ($this->required as $item) {
-                    if (!property_exists($data, $item)) {
-                        $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
+
+                if (isset($this->__dataToProperty[$options->mapping])) {
+                    if ($import) {
+                        foreach ($this->required as $item) {
+                            if (isset($this->__propertyToData[$options->mapping][$item])) {
+                                $item = $this->__propertyToData[$options->mapping][$item];
+                            }
+                            if (!property_exists($data, $item)) {
+                                $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
+                            }
+                        }
+                    } else {
+                        foreach ($this->required as $item) {
+                            if (isset($this->__dataToProperty[$options->mapping][$item])) {
+                                $item = $this->__dataToProperty[$options->mapping][$item];
+                            }
+                            if (!property_exists($data, $item)) {
+                                $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
+                            }
+                        }
+                    }
+
+                } else {
+                    foreach ($this->required as $item) {
+                        if (!property_exists($data, $item)) {
+                            $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
+                        }
                     }
                 }
+
             }
 
             if ($import) {
                 if ($this->useObjectAsArray) {
                     $result = array();
-                } elseif (!$result instanceof ObjectItem) {
+                } elseif (!$result instanceof ObjectItemContract) {
                     $result = $this->makeObjectItem($options);
 
                     if ($result instanceof ClassStructure) {
@@ -370,8 +411,8 @@ class Schema extends JsonSchema
                         }
                     }
 
-                    if ($result instanceof ObjectItem) {
-                        $result->__documentPath = $path;
+                    if ($result instanceof ObjectItemContract) {
+                        $result->setDocumentPath($path);
                     }
                 }
             }
@@ -397,8 +438,8 @@ class Schema extends JsonSchema
                             return $refResult;
                         }
                         $data = $ref->getData();
-                        if ($result instanceof ObjectItem) {
-                            $result->__fromRef = $refString;
+                        if ($result instanceof ObjectItemContract) {
+                            $result->setFromRef($refString);
                         }
                         $ref->setImported($result);
                         $refResult = $this->process($data, $options, $path . '->ref:' . $refString, $result);
@@ -422,8 +463,11 @@ class Schema extends JsonSchema
                 });
             }
 
+            /** @var Schema[] $properties */
+            $properties = null;
+
+            $nestedProperties = null;
             if ($this->properties !== null) {
-                /** @var Schema[] $properties */
                 $properties = &$this->properties->toArray(); // TODO check performance of pointer
                 if ($this->properties instanceof Properties) {
                     $nestedProperties = $this->properties->getNestedProperties();
@@ -433,15 +477,15 @@ class Schema extends JsonSchema
             }
 
             $array = array();
-            if (!empty($this->__dataToProperty)) {
+            if (!empty($this->__dataToProperty[$options->mapping])) {
                 foreach ((array)$data as $key => $value) {
                     if ($import) {
-                        if (isset($this->__dataToProperty[$key])) {
-                            $key = $this->__dataToProperty[$key];
+                        if (isset($this->__dataToProperty[$options->mapping][$key])) {
+                            $key = $this->__dataToProperty[$options->mapping][$key];
                         }
                     } else {
-                        if (isset($this->__propertyToData[$key])) {
-                            $key = $this->__propertyToData[$key];
+                        if (isset($this->__propertyToData[$options->mapping][$key])) {
+                            $key = $this->__propertyToData[$options->mapping][$key];
                         }
                     }
                     $array[$key] = $value;
@@ -485,6 +529,7 @@ class Schema extends JsonSchema
 
                 $propertyFound = false;
                 if (isset($properties[$key])) {
+                    /** @var Schema[] $properties */
                     $prop = $properties[$key];
                     $propertyFound = true;
                     $found = true;
@@ -518,7 +563,7 @@ class Schema extends JsonSchema
                         $this->fail(new ObjectException('Additional properties not allowed'), $path . ':' . $key);
                     }
 
-                    if ($this->additionalProperties !== false) {
+                    if ($this->additionalProperties instanceof Schema) {
                         $value = $this->additionalProperties->process($value, $options, $path . '->additionalProperties:' . $key);
                     }
 
@@ -574,22 +619,24 @@ class Schema extends JsonSchema
                 $pathItems = 'additionalItems';
             }
 
-            if ($items !== null || $additionalItems !== null) {
-                $itemsLen = is_array($items) ? count($items) : 0;
-                $index = 0;
-                foreach ($result as $key => $value) {
-                    if ($index < $itemsLen) {
-                        $result[$key] = $items[$index]->process($value, $options, $path . '->items:' . $index);
-                    } else {
-                        if ($additionalItems instanceof Schema) {
-                            $result[$key] = $additionalItems->process($value, $options, $path . '->' . $pathItems
-                                . '[' . $index . ']');
-                        } elseif (!$options->skipValidation && $additionalItems === false) {
-                            $this->fail(new ArrayException('Unexpected array item'), $path);
-                        }
+            /**
+             * @var Schema|Schema[] $items
+             * @var null|bool|Schema $additionalItems
+             */
+            $itemsLen = is_array($items) ? count($items) : 0;
+            $index = 0;
+            foreach ($result as $key => $value) {
+                if ($index < $itemsLen) {
+                    $result[$key] = $items[$index]->process($value, $options, $path . '->items:' . $index);
+                } else {
+                    if ($additionalItems instanceof Schema) {
+                        $result[$key] = $additionalItems->process($value, $options, $path . '->' . $pathItems
+                            . '[' . $index . ']');
+                    } elseif (!$options->skipValidation && $additionalItems === false) {
+                        $this->fail(new ArrayException('Unexpected array item'), $path);
                     }
-                    ++$index;
                 }
+                ++$index;
             }
 
             if (!$options->skipValidation && $this->uniqueItems) {
@@ -606,7 +653,8 @@ class Schema extends JsonSchema
      * @param boolean $useObjectAsArray
      * @return Schema
      */
-    public function setUseObjectAsArray($useObjectAsArray)
+    public
+    function setUseObjectAsArray($useObjectAsArray)
     {
         $this->useObjectAsArray = $useObjectAsArray;
         return $this;
@@ -680,7 +728,12 @@ class Schema extends JsonSchema
         return $this;
     }
 
-    public function setProperty($name, Schema $schema)
+    /**
+     * @param string $name
+     * @param Schema $schema
+     * @return $this
+     */
+    public function setProperty($name, $schema)
     {
         if (null === $this->properties) {
             $this->properties = new Properties();
@@ -692,7 +745,7 @@ class Schema extends JsonSchema
     /** @var Meta[] */
     private $metaItems = array();
 
-    public function meta(Meta $meta)
+    public function addMeta(Meta $meta)
     {
         $this->metaItems[get_class($meta)] = $meta;
         return $this;
@@ -708,7 +761,7 @@ class Schema extends JsonSchema
 
     /**
      * @param Context $options
-     * @return ObjectItem
+     * @return ObjectItemContract
      */
     public function makeObjectItem(Context $options = null)
     {
