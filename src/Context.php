@@ -12,7 +12,7 @@ class Context extends MagicMap
     /** @var RefResolver */
     public $refResolver;
 
-    /** @var RemoteRefProvider */
+    /** @var RemoteRefProvider|null */
     public $remoteRefProvider;
 
     /** @var string */
@@ -72,7 +72,7 @@ class Context extends MagicMap
     }
 
     /**
-     * @return RemoteRefProvider
+     * @return RemoteRefProvider|null
      */
     public function getRemoteRefProvider()
     {

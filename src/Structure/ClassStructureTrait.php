@@ -6,9 +6,6 @@ use Swaggest\JsonSchema\Constraint\Properties;
 use Swaggest\JsonSchema\Context;
 use Swaggest\JsonSchema\NameMirror;
 
-/**
- * @method static setupProperties($properties, $schema)
- */
 trait ClassStructureTrait
 {
     use ObjectItemTrait;

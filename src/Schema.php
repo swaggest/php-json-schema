@@ -52,13 +52,13 @@ class Schema extends JsonSchema implements MetaHolder
     public $additionalProperties;
     /** @var Schema[] */
     public $patternProperties;
-    /** @var string[][]|Schema[] */
+    /** @var string[][]|Schema[]|\stdClass */
     public $dependencies;
 
     // Array
-    /** @var Schema|Schema[] */
+    /** @var null|Schema|Schema[] */
     public $items;
-    /** @var Schema|bool */
+    /** @var null|Schema|bool */
     public $additionalItems;
 
     const FORMAT_DATE_TIME = 'date-time'; // todo implement
@@ -87,7 +87,7 @@ class Schema extends JsonSchema implements MetaHolder
         return $this;
     }
 
-    private function preProcessReferences($data, Context $options = null, $nestingLevel = 0)
+    private function preProcessReferences($data, Context $options, $nestingLevel = 0)
     {
         if ($nestingLevel > 200) {
             throw new Exception('Too deep nesting level', Exception::DEEP_NESTING);
@@ -463,9 +463,11 @@ class Schema extends JsonSchema implements MetaHolder
                 });
             }
 
+            /** @var Schema[] $properties */
+            $properties = null;
+
             $nestedProperties = null;
             if ($this->properties !== null) {
-                /** @var Schema[] $properties */
                 $properties = &$this->properties->toArray(); // TODO check performance of pointer
                 if ($this->properties instanceof Properties) {
                     $nestedProperties = $this->properties->getNestedProperties();
@@ -527,6 +529,7 @@ class Schema extends JsonSchema implements MetaHolder
 
                 $propertyFound = false;
                 if (isset($properties[$key])) {
+                    /** @var Schema[] $properties */
                     $prop = $properties[$key];
                     $propertyFound = true;
                     $found = true;
@@ -560,7 +563,7 @@ class Schema extends JsonSchema implements MetaHolder
                         $this->fail(new ObjectException('Additional properties not allowed'), $path . ':' . $key);
                     }
 
-                    if ($this->additionalProperties !== false) {
+                    if ($this->additionalProperties instanceof Schema) {
                         $value = $this->additionalProperties->process($value, $options, $path . '->additionalProperties:' . $key);
                     }
 
@@ -616,22 +619,24 @@ class Schema extends JsonSchema implements MetaHolder
                 $pathItems = 'additionalItems';
             }
 
-            if ($items !== null || $additionalItems !== null) {
-                $itemsLen = is_array($items) ? count($items) : 0;
-                $index = 0;
-                foreach ($result as $key => $value) {
-                    if ($index < $itemsLen) {
-                        $result[$key] = $items[$index]->process($value, $options, $path . '->items:' . $index);
-                    } else {
-                        if ($additionalItems instanceof Schema) {
-                            $result[$key] = $additionalItems->process($value, $options, $path . '->' . $pathItems
-                                . '[' . $index . ']');
-                        } elseif (!$options->skipValidation && $additionalItems === false) {
-                            $this->fail(new ArrayException('Unexpected array item'), $path);
-                        }
+            /**
+             * @var Schema|Schema[] $items
+             * @var null|bool|Schema $additionalItems
+             */
+            $itemsLen = is_array($items) ? count($items) : 0;
+            $index = 0;
+            foreach ($result as $key => $value) {
+                if ($index < $itemsLen) {
+                    $result[$key] = $items[$index]->process($value, $options, $path . '->items:' . $index);
+                } else {
+                    if ($additionalItems instanceof Schema) {
+                        $result[$key] = $additionalItems->process($value, $options, $path . '->' . $pathItems
+                            . '[' . $index . ']');
+                    } elseif (!$options->skipValidation && $additionalItems === false) {
+                        $this->fail(new ArrayException('Unexpected array item'), $path);
                     }
-                    ++$index;
                 }
+                ++$index;
             }
 
             if (!$options->skipValidation && $this->uniqueItems) {

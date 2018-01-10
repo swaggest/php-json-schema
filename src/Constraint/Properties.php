@@ -52,7 +52,7 @@ class Properties extends ObjectItem implements Constraint
         return new static;
     }
 
-    /** @var Schema */
+    /** @var Schema|null */
     private $additionalProperties;
 
     /**

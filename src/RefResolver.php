@@ -124,6 +124,7 @@ class RefResolver
             $referencePath = $refLocalPath;
         }
 
+        /** @var null|Ref $ref */
         $ref = &$this->refs[$referencePath];
 
         $refResolver = $this;
@@ -163,6 +164,7 @@ class RefResolver
             } else {
                 if ($url !== $this->url) {
                     $rootResolver = $this->rootResolver ? $this->rootResolver : $this;
+                    /** @var null|RefResolver $refResolver */
                     $refResolver = &$rootResolver->remoteRefResolvers[$url];
                     if (null === $refResolver) {
                         $rootData = $rootResolver->getRefProvider()->getSchemaData($url);

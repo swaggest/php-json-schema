@@ -29,10 +29,11 @@ matrix:
 
 script:
   - mkdir -p build/logs
+  - f [[ $(phpenv version-name) =~ 7.2 ]] ; then vendor/bin/phpstan analyze -l 7 -c phpstan.neon ./src; fi
   - ./vendor/bin/phpunit -v --configuration phpunit.xml --coverage-clover build/logs/clover.xml
 
 after_script:
  - wget https://scrutinizer-ci.com/ocular.phar
  - php ocular.phar code-coverage:upload --format=php-clover build/logs/coverage.clover
- - if [[ $(phpenv version-name) =~ 7.1 ]] ; then php vendor/bin/coveralls -v; fi
- - if [[ $(phpenv version-name) =~ 7.1 ]] ; then ./vendor/bin/test-reporter; fi
+ - if [[ $(phpenv version-name) =~ 7.2 ]] ; then php vendor/bin/coveralls -v; fi
+ - if [[ $(phpenv version-name) =~ 7.2 ]] ; then ./vendor/bin/test-reporter; fi
