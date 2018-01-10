@@ -38,4 +38,4 @@ script:
 
 after_script:
  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then php $HOME/.composer/cache/ocular.phar code-coverage:upload --format=php-clover build/logs/coverage.clover; fi
- - if [[ $(phpenv version-name) =~ 7.2 ]] ; then $HOME/.composer/cache/cctr after-build --exit-code $EXIT_CODE; fi
+ - if [[ $(phpenv version-name) =~ 7.2 ]] ; then $HOME/.composer/cache/cctr after-build --exit-code $TRAVIS_TEST_RESULT; fi
