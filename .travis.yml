@@ -20,6 +20,10 @@ cache:
 # execute any number of scripts before the test run, custom env's are available as variables
 before_script:
   - composer install --dev --no-interaction --prefer-dist
+  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then test -f $HOME/.composer/cache/phpstan.phar || wget https://github.com/phpstan/phpstan/releases/download/0.9.1/phpstan.phar -O $HOME/.composer/cache/phpstan.phar; fi
+  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then test -f $HOME/.composer/cache/ocular.phar || wget https://scrutinizer-ci.com/ocular.phar -O ocular.phar; fi
+  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then test -f $HOME/.composer/cache/cctr || wget https://codeclimate.com/downloads/test-reporter/test-reporter-0.1.4-linux-amd64 -O $HOME/.composer/cache/cctr && chmod +x $HOME/.composer/cache/cctr; fi
+  - if [[ $(phpenv version-name) =~ 7.2 ]] ; $HOME/.composer/cache/cctr before-build; fi
 
 matrix:
   allow_failures:
@@ -29,11 +33,9 @@ matrix:
 
 script:
   - mkdir -p build/logs
-  - f [[ $(phpenv version-name) =~ 7.2 ]] ; then vendor/bin/phpstan analyze -l 7 -c phpstan.neon ./src; fi
   - ./vendor/bin/phpunit -v --configuration phpunit.xml --coverage-clover build/logs/clover.xml
+  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then php $HOME/.composer/cache/phpstan.phar analyze -l 7 -c phpstan.neon ./src; fi
 
 after_script:
- - wget https://scrutinizer-ci.com/ocular.phar
- - php ocular.phar code-coverage:upload --format=php-clover build/logs/coverage.clover
- - if [[ $(phpenv version-name) =~ 7.2 ]] ; then php vendor/bin/coveralls -v; fi
- - if [[ $(phpenv version-name) =~ 7.2 ]] ; then ./vendor/bin/test-reporter; fi
+ - if [[ $(phpenv version-name) =~ 7.2 ]] ; then php $HOME/.composer/cache/ocular.phar code-coverage:upload --format=php-clover build/logs/coverage.clover; fi
+ - if [[ $(phpenv version-name) =~ 7.2 ]] ; $HOME/.composer/cache/cctr after-build --exit-code $EXIT_CODE; fi
