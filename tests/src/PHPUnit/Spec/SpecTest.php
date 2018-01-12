@@ -38,13 +38,28 @@ class SpecTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider provider
+     * @dataProvider spec4Provider
      * @param $schemaData
      * @param $data
      * @param $isValid
-     * @throws InvalidValue
      */
     public function testSpecDraft4($schemaData, $data, $isValid)
+    {
+        $this->runSpecTest($schemaData, $data, $isValid);
+    }
+
+    /**
+     * @dataProvider spec6Provider
+     * @param $schemaData
+     * @param $data
+     * @param $isValid
+     */
+    public function testSpecDraft6($schemaData, $data, $isValid)
+    {
+        $this->runSpecTest($schemaData, $data, $isValid);
+    }
+
+    private function runSpecTest($schemaData, $data, $isValid)
     {
         $refProvider = self::getProvider();
 
@@ -66,17 +81,34 @@ class SpecTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($isValid, $actualValid, "Schema:\n" . json_encode($schemaData, JSON_PRETTY_PRINT)
             . "\nData:\n" . json_encode($data, JSON_PRETTY_PRINT)
             . "\nError: " . $error . "\n");
+
     }
 
 
     /**
-     * @dataProvider provider
+     * @dataProvider spec4Provider
      * @param $schemaData
      * @param $data
      * @param $isValid
-     * @throws InvalidValue
      */
     public function testSpecDraft4SkipValidation($schemaData, $data, $isValid)
+    {
+        $this->runSpecTestSkipValidation($schemaData, $data, $isValid);
+    }
+
+    /**
+     * @dataProvider spec6Provider
+     * @param $schemaData
+     * @param $data
+     * @param $isValid
+     */
+    public function testSpecDraft6SkipValidation($schemaData, $data, $isValid)
+    {
+        $this->runSpecTestSkipValidation($schemaData, $data, $isValid);
+    }
+
+
+    private function runSpecTestSkipValidation($schemaData, $data, $isValid)
     {
         $refProvider = self::getProvider();
 
@@ -106,9 +138,20 @@ class SpecTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function provider()
+    public function spec4Provider()
     {
         $path = __DIR__ . '/../../../../spec/JSON-Schema-Test-Suite/tests/draft4';
+        return $this->provider($path);
+    }
+
+    public function spec6Provider()
+    {
+        $path = __DIR__ . '/../../../../spec/JSON-Schema-Test-Suite/tests/draft6';
+        return $this->provider($path);
+    }
+
+    public function provider($path)
+    {
         if (!file_exists($path)) {
             //$this->markTestSkipped('No spec tests found, please run `git submodule bla-bla`');
         }
@@ -123,7 +166,7 @@ class SpecTest extends \PHPUnit_Framework_TestCase
                     }
 
                     //if ($entry !== 'refRemote.json') {
-                        //continue;
+                    //continue;
                     //}
 
                     //echo "$entry\n";
