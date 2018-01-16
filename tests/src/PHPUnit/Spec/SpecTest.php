@@ -6,9 +6,13 @@ use Swaggest\JsonSchema\Context;
 use Swaggest\JsonSchema\InvalidValue;
 use Swaggest\JsonSchema\RemoteRef\Preloaded;
 use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\SchemaDraft6;
 
 class SpecTest extends \PHPUnit_Framework_TestCase
 {
+    const DRAFT_04 = 4;
+    const DRAFT_06 = 6;
+
     public static function getProvider()
     {
         static $refProvider = null;
@@ -42,10 +46,11 @@ class SpecTest extends \PHPUnit_Framework_TestCase
      * @param $schemaData
      * @param $data
      * @param $isValid
+     * @throws \Exception
      */
     public function testSpecDraft4($schemaData, $data, $isValid)
     {
-        $this->runSpecTest($schemaData, $data, $isValid);
+        $this->runSpecTest($schemaData, $data, $isValid, self::DRAFT_04);
     }
 
     /**
@@ -53,13 +58,21 @@ class SpecTest extends \PHPUnit_Framework_TestCase
      * @param $schemaData
      * @param $data
      * @param $isValid
+     * @throws \Exception
      */
     public function testSpecDraft6($schemaData, $data, $isValid)
     {
-        $this->runSpecTest($schemaData, $data, $isValid);
+        $this->runSpecTest($schemaData, $data, $isValid, self::DRAFT_06);
     }
 
-    private function runSpecTest($schemaData, $data, $isValid)
+    /**
+     * @param $schemaData
+     * @param $data
+     * @param $isValid
+     * @param $version
+     * @throws \Exception
+     */
+    private function runSpecTest($schemaData, $data, $isValid, $version)
     {
         $refProvider = self::getProvider();
 
@@ -68,8 +81,18 @@ class SpecTest extends \PHPUnit_Framework_TestCase
         try {
             $options = new Context();
             $options->setRemoteRefProvider($refProvider);
+
+            // TODO fix fix
+            if ($schemaData === true) {
+                $schemaData = (object)array();
+            } elseif ($schemaData === false) {
+                $schemaData = (object)array("not" => array());
+            }
+
             $schema = Schema::import($schemaData, $options);
+
             $res = $schema->in($data);
+
 
             $exported = $schema->out($res);
             $this->assertEquals($data, $exported);

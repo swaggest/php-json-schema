@@ -143,6 +143,9 @@ class RefResolver
                         if (isset($branch->id) && is_string($branch->id)) {
                             $refResolver->updateResolutionScope($branch->id);
                         }
+                        if (isset($branch->{'$id'}) && is_string($branch->{'$id'})) {
+                            $refResolver->updateResolutionScope($branch->{'$id'});
+                        }
 
                         $folder = array_shift($path);
 

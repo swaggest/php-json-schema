@@ -7,12 +7,16 @@
 namespace Swaggest\JsonSchema;
 
 use Swaggest\JsonSchema\Constraint\Properties;
+use Swaggest\JsonSchema\Constraint\Type;
 use Swaggest\JsonSchema\Schema as JsonBasicSchema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
 
 /**
  * Core schema meta-schema
+ *
+ * // draft6
+ * @property mixed $const
  */
 class JsonSchema extends ClassStructure {
 	const _ARRAY = 'array';
@@ -49,13 +53,13 @@ class JsonSchema extends ClassStructure {
 	/** @var float */
 	public $maximum;
 
-	/** @var bool */
+	/** @var bool|float */
 	public $exclusiveMaximum;
 
 	/** @var float */
 	public $minimum;
 
-	/** @var bool */
+	/** @var bool|float */
 	public $exclusiveMinimum;
 
 	/** @var int */
@@ -130,6 +134,14 @@ class JsonSchema extends ClassStructure {
 	/** @var JsonSchema Core schema meta-schema */
 	public $not;
 
+
+	// draft6
+    /** @var JsonSchema */
+    public $contains;
+
+    /** @var JsonSchema */
+    public $propertyNames;
+
 	/**
 	 * @param Properties|static $properties
 	 * @param JsonBasicSchema $ownerSchema
@@ -138,7 +150,7 @@ class JsonSchema extends ClassStructure {
 	{
 		$properties->id = JsonBasicSchema::string();
 		$properties->id->format = 'uri';
-		$properties->schema = JsonBasicSchema::string();
+        $properties->schema = JsonBasicSchema::string();
 		$properties->schema->format = 'uri';
 		$ownerSchema->addPropertyMapping('$schema', self::names()->schema);
 		$properties->title = JsonBasicSchema::string();
@@ -148,11 +160,15 @@ class JsonSchema extends ClassStructure {
 		$properties->multipleOf->minimum = 0;
 		$properties->multipleOf->exclusiveMinimum = true;
 		$properties->maximum = JsonBasicSchema::number();
-		$properties->exclusiveMaximum = JsonBasicSchema::boolean();
-		$properties->exclusiveMaximum->default = false;
+		$properties->exclusiveMaximum = new JsonBasicSchema(); // draft6
+		$properties->exclusiveMaximum->type = array(Type::BOOLEAN, Type::NUMBER); // draft6
+        //$properties->exclusiveMaximum = JsonBasicSchema::boolean(); // draft6
+        //$properties->exclusiveMaximum->default = false; // draft6
 		$properties->minimum = JsonBasicSchema::number();
-		$properties->exclusiveMinimum = JsonBasicSchema::boolean();
-		$properties->exclusiveMinimum->default = false;
+        $properties->exclusiveMinimum = new JsonBasicSchema(); // draft6
+        $properties->exclusiveMinimum->type = array(Type::BOOLEAN, Type::NUMBER); // draft6
+        //$properties->exclusiveMinimum = JsonBasicSchema::boolean(); // draft6
+		//$properties->exclusiveMinimum->default = false; // draft6
 		$properties->maxLength = JsonBasicSchema::integer();
 		$properties->maxLength->minimum = 0;
 		$properties->minLength = new JsonBasicSchema();
@@ -192,7 +208,7 @@ class JsonSchema extends ClassStructure {
 		$properties->minProperties->allOf[1]->default = 0;
 		$properties->required = JsonBasicSchema::arr();
 		$properties->required->items = JsonBasicSchema::string();
-		$properties->required->minItems = 1;
+		//$properties->required->minItems = 1; // disabled by draft6
 		$properties->required->uniqueItems = true;
 		$properties->additionalProperties = new JsonBasicSchema();
 		$properties->additionalProperties->anyOf[0] = JsonBasicSchema::boolean();
@@ -216,7 +232,7 @@ class JsonSchema extends ClassStructure {
 		$properties->dependencies->additionalProperties->anyOf[0] = JsonBasicSchema::schema();
 		$properties->dependencies->additionalProperties->anyOf[1] = JsonBasicSchema::arr();
 		$properties->dependencies->additionalProperties->anyOf[1]->items = JsonBasicSchema::string();
-		$properties->dependencies->additionalProperties->anyOf[1]->minItems = 1;
+		//$properties->dependencies->additionalProperties->anyOf[1]->minItems = 1; // disabled by draft6
 		$properties->dependencies->additionalProperties->anyOf[1]->uniqueItems = true;
 		$properties->enum = JsonBasicSchema::arr();
 		$properties->enum->minItems = 1;
@@ -258,12 +274,14 @@ class JsonSchema extends ClassStructure {
 		$properties->oneOf->items = JsonBasicSchema::schema();
 		$properties->oneOf->minItems = 1;
 		$properties->not = JsonBasicSchema::schema();
-		$ownerSchema->type = 'object';
+		$ownerSchema->type = array(self::OBJECT, self::BOOLEAN);
 		$ownerSchema->id = 'http://json-schema.org/draft-04/schema#';
 		$ownerSchema->schema = 'http://json-schema.org/draft-04/schema#';
 		$ownerSchema->description = 'Core schema meta-schema';
 		$ownerSchema->default = (object)array (
 		);
+		// disabled by draft6
+		/*
 		$ownerSchema->dependencies = (object)array (
 		  'exclusiveMaximum' => 
 		  array (
@@ -274,7 +292,14 @@ class JsonSchema extends ClassStructure {
 		    0 => 'minimum',
 		  ),
 		);
-	}
+		*/
+
+
+		// draft6
+        $properties->const = (object)array();
+        $properties->contains = JsonBasicSchema::schema();
+        $properties->propertyNames = JsonBasicSchema::schema();
+    }
 
 	/**
 	 * @param string $id
