@@ -82,13 +82,6 @@ class SpecTest extends \PHPUnit_Framework_TestCase
             $options = new Context();
             $options->setRemoteRefProvider($refProvider);
 
-            // TODO fix fix
-            if ($schemaData === true) {
-                $schemaData = (object)array();
-            } elseif ($schemaData === false) {
-                $schemaData = (object)array("not" => array());
-            }
-
             $schema = Schema::import($schemaData, $options);
 
             $res = $schema->in($data);
@@ -152,6 +145,7 @@ class SpecTest extends \PHPUnit_Framework_TestCase
         } catch (InvalidValue $exception) {
             $actualValid = false;
             $error = $exception->getMessage();
+            throw $exception;
         }
 
 

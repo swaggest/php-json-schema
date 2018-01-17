@@ -33,7 +33,7 @@ class Context extends MagicMap
     /** @var string property mapping set name */
     public $mapping = Schema::DEFAULT_MAPPING;
 
-    public $version = Schema::DRAFT_04;
+    public $version = Schema::VERSION_AUTO;
 
     /**
      * @param boolean $skipValidation

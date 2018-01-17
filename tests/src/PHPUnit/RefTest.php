@@ -433,4 +433,93 @@ JSON
 
     }
 
+
+    public function testDraft6RefRemoteBaseUriChangeInvalid()
+    {
+        $testData = json_decode(<<<'JSON'
+    {
+        "description": "base URI change",
+        "schema": {
+            "$id": "http://localhost:1234/",
+            "items": {
+                "$id": "folder/",
+                "items": {"$ref": "folderInteger.json"}
+            }
+        },
+        "tests": [
+            {
+                "description": "base URI change ref valid",
+                "data": [[1]],
+                "valid": true
+            },
+            {
+                "description": "base URI change ref invalid",
+                "data": [["a"]],
+                "valid": false
+            }
+        ]
+    }
+JSON
+        );
+        $schema = Schema::import($testData->schema, new Context(
+                SpecTest::getProvider())
+        );
+        $schema->in($testData->tests[0]->data);
+        $this->setExpectedException(get_class(new InvalidValue()));
+        $schema->in($testData->tests[1]->data);
+
+    }
+
+
+    public function testDraft4RefRemoteBaseUriChangeInvalid()
+    {
+        $testData = json_decode(<<<'JSON'
+    {
+        "description": "base URI change",
+        "schema": {
+            "id": "http://localhost:1234/",
+            "items": {
+                "id": "folder/",
+                "items": {"$ref": "folderInteger.json"}
+            }
+        },
+        "tests": [
+            {
+                "description": "base URI change ref valid",
+                "data": [[1]],
+                "valid": true
+            },
+            {
+                "description": "base URI change ref invalid",
+                "data": [["a"]],
+                "valid": false
+            }
+        ]
+    }
+JSON
+        );
+        $schema = Schema::import($testData->schema, new Context(
+                SpecTest::getProvider())
+        );
+        $schema->in($testData->tests[0]->data);
+        $this->setExpectedException(get_class(new InvalidValue()));
+        $schema->in($testData->tests[1]->data);
+
+    }
+
+
+    public function testBoolSchema()
+    {
+        $schema = Schema::import(json_decode(<<<'JSON'
+{
+    "$ref": "#\/definitions\/bool",
+    "definitions": {
+        "bool": false
+    }
+}
+JSON
+));
+        $this->setExpectedException(get_class(new InvalidValue()));
+        $schema->in("foo");
+    }
 }

@@ -33,12 +33,14 @@ class Schema extends JsonSchema implements MetaHolder
 
     const DEFAULT_MAPPING = 'default';
 
-    const DRAFT_04 = 4;
-    const DRAFT_06 = 6;
+    const VERSION_AUTO = 'a';
+    const VERSION_DRAFT_04 = 4;
+    const VERSION_DRAFT_06 = 6;
 
     const SCHEMA_DRAFT_04_URL = 'http://json-schema.org/draft-04/schema';
 
     const REF = '$ref';
+    const ID = '$id';
 
 
     /*
@@ -105,7 +107,11 @@ class Schema extends JsonSchema implements MetaHolder
             }
         } elseif ($data instanceof \stdClass) {
             /** @var JsonSchema $data */
-            if (isset($data->id) && is_string($data->id)) {
+            if (
+                isset($data->id)
+                && is_string($data->id)
+                && ($options->version === self::VERSION_DRAFT_04 || $options->version === self::VERSION_AUTO)
+            ) {
                 $prev = $options->refResolver->setupResolutionScope($data->id, $data);
                 /** @noinspection PhpUnusedLocalVariableInspection */
                 $_ = new ScopeExit(function () use ($prev, $options) {
@@ -113,8 +119,11 @@ class Schema extends JsonSchema implements MetaHolder
                 });
             }
 
-            if (isset($data->{'$id'}) && is_string($data->{'$id'})) {
-                $prev = $options->refResolver->setupResolutionScope($data->{'$id'}, $data);
+            if (isset($data->{self::ID})
+                && is_string($data->{self::ID})
+                && ($options->version >= self::VERSION_DRAFT_06 || $options->version === self::VERSION_AUTO)
+            ) {
+                $prev = $options->refResolver->setupResolutionScope($data->{self::ID}, $data);
                 /** @noinspection PhpUnusedLocalVariableInspection */
                 $_ = new ScopeExit(function () use ($prev, $options) {
                     $options->refResolver->setResolutionScope($prev);
@@ -126,6 +135,12 @@ class Schema extends JsonSchema implements MetaHolder
                 $this->preProcessReferences($value, $options, $nestingLevel + 1);
             }
         }
+    }
+
+    public static function import($data, Context $options = null)
+    {
+        $data = self::unboolSchemaData($data);
+        return parent::import($data, $options);
     }
 
     public function in($data, Context $options = null)
@@ -412,7 +427,11 @@ class Schema extends JsonSchema implements MetaHolder
                 if ($item === true) {
                     $result = $data;
                 } elseif ($item === false) {
-                    $this->fail(new InvalidValue('False schema'), $path);
+                    if (!$options->skipValidation) {
+                        $this->fail(new InvalidValue('False schema'), $path);
+                    } else {
+                        return $result;
+                    }
                 } else {
                     $result = $item->process($data, $options, $path . '->allOf' . $index);
                 }
@@ -495,7 +514,7 @@ class Schema extends JsonSchema implements MetaHolder
                             $refResult = $ref->getImported();
                             return $refResult;
                         }
-                        $data = $ref->getData();
+                        $data = self::unboolSchemaData($ref->getData());
                         if ($result instanceof ObjectItemContract) {
                             $result->setFromRef($refString);
                         }
@@ -511,8 +530,24 @@ class Schema extends JsonSchema implements MetaHolder
 
             // @todo better check for schema id
 
-            if ($import && isset($data->id) && is_string($data->id) /*&& (!isset($this->properties['id']))/* && $this->isMetaSchema($data)*/) {
+            if ($import
+                && isset($data->id)
+                && ($options->version === Schema::VERSION_DRAFT_04 || $options->version === Schema::VERSION_AUTO)
+                && is_string($data->id) /*&& (!isset($this->properties['id']))/* && $this->isMetaSchema($data)*/) {
                 $id = $data->id;
+                $refResolver = $options->refResolver;
+                $parentScope = $refResolver->updateResolutionScope($id);
+                /** @noinspection PhpUnusedLocalVariableInspection */
+                $defer = new ScopeExit(function () use ($parentScope, $refResolver) {
+                    $refResolver->setResolutionScope($parentScope);
+                });
+            }
+
+            if ($import
+                && isset($data->{self::ID})
+                && ($options->version >= Schema::VERSION_DRAFT_06 || $options->version === Schema::VERSION_AUTO)
+                && is_string($data->{self::ID}) /*&& (!isset($this->properties['id']))/* && $this->isMetaSchema($data)*/) {
+                $id = $data->{self::ID};
                 $refResolver = $options->refResolver;
                 $parentScope = $refResolver->updateResolutionScope($id);
                 /** @noinspection PhpUnusedLocalVariableInspection */
@@ -897,4 +932,29 @@ class Schema extends JsonSchema implements MetaHolder
             return $schema;
         }
     }
+
+    /**
+     * @param $data
+     * @return \stdClass
+     */
+    private static function unboolSchemaData($data)
+    {
+        static $trueSchema;
+        static $falseSchema;
+
+        if (null === $trueSchema) {
+            $trueSchema = new \stdClass();
+            $falseSchema = new \stdClass();
+            $falseSchema->not = $trueSchema;
+        }
+
+        if ($data === true) {
+            return $trueSchema;
+        } elseif ($data === false) {
+            return $falseSchema;
+        } else {
+            return $data;
+        }
+    }
+
 }
