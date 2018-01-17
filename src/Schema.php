@@ -256,7 +256,8 @@ class Schema extends JsonSchema implements MetaHolder
 
         if (array_key_exists(self::CONST_PROPERTY, $this->__arrayOfData)) {
             if ($this->const !== $data) {
-                if (is_object($this->const) && is_object($data)) {
+                if ((is_object($this->const) && is_object($data))
+                    || (is_array($this->const) && is_array($data))) {
                     $diff = new JsonDiff($this->const, $data,
                         JsonDiff::SKIP_REARRANGE_ARRAY + JsonDiff::STOP_ON_DIFF);
                     if ($diff->getDiffCnt() != 0) {
@@ -401,13 +402,7 @@ class Schema extends JsonSchema implements MetaHolder
             $failures = '';
             foreach ($this->anyOf as $index => $item) {
                 try {
-                    if ($item === true) {
-                        $result = $data;
-                    } elseif ($item === false) {
-                        $this->fail(new InvalidValue('False schema'), $path);
-                    } else {
-                        $result = self::unboolSchema($item)->process($data, $options, $path . '->anyOf:' . $index);
-                    }
+                    $result = self::unboolSchema($item)->process($data, $options, $path . '->anyOf:' . $index);
                     $successes++;
                     if ($successes) {
                         break;
@@ -424,17 +419,7 @@ class Schema extends JsonSchema implements MetaHolder
 
         if ($this->allOf !== null) {
             foreach ($this->allOf as $index => $item) {
-                if ($item === true) {
-                    $result = $data;
-                } elseif ($item === false) {
-                    if (!$options->skipValidation) {
-                        $this->fail(new InvalidValue('False schema'), $path);
-                    } else {
-                        return $result;
-                    }
-                } else {
-                    $result = $item->process($data, $options, $path . '->allOf' . $index);
-                }
+                $result = self::unboolSchema($item)->process($data, $options, $path . '->allOf' . $index);
             }
         }
 
@@ -751,14 +736,14 @@ class Schema extends JsonSchema implements MetaHolder
             }
 
             if (!$options->skipValidation && $this->contains !== null) {
-                if ($this->contains === false) {
+                /** @var Schema|bool $contains */
+                $contains = $this->contains;
+                if ($contains === false) {
                     $this->fail(new ArrayException('Contains is false'), $path);
                 }
                 if ($count === 0) {
                     $this->fail(new ArrayException('Empty array fails contains constraint'), $path);
                 }
-                /** @var Schema $contains */
-                $contains = $this->contains;
                 if ($contains === true) {
                     $contains = self::unboolSchema($contains);
                 }
@@ -910,7 +895,7 @@ class Schema extends JsonSchema implements MetaHolder
     }
 
     /**
-     * @param $schema
+     * @param mixed $schema
      * @return mixed|Schema
      */
     private static function unboolSchema($schema)
@@ -934,7 +919,7 @@ class Schema extends JsonSchema implements MetaHolder
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @return \stdClass
      */
     private static function unboolSchemaData($data)
