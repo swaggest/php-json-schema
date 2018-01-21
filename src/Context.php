@@ -30,8 +30,15 @@ class Context extends MagicMap
     /** @var bool allow soft cast from to/strings */
     public $tolerateStrings = false;
 
+    /** @var bool do not tolerate special symbols even if base64_decode accepts string */
+    public $strictBase64Validation = false;
+
+    public $unpackContentMediaType = true;
+
     /** @var string property mapping set name */
     public $mapping = Schema::DEFAULT_MAPPING;
+
+    public $version = Schema::VERSION_AUTO;
 
     /**
      * @param boolean $skipValidation

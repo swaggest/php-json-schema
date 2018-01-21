@@ -2,6 +2,8 @@
 
 namespace Swaggest\JsonSchema\Constraint;
 
+use Swaggest\JsonSchema\Schema;
+
 class Type implements Constraint
 {
     // TODO deprecate in favour of JsonSchema::<TYPE> ?
@@ -53,7 +55,7 @@ class Type implements Constraint
         return false;
     }
 
-    public static function isValid($types, $data)
+    public static function isValid($types, $data, $version)
     {
         if (!is_array($types)) {
             $types = array($types);
@@ -71,7 +73,10 @@ class Type implements Constraint
                     $ok = is_string($data);
                     break;
                 case self::INTEGER:
-                    $ok = is_int($data);
+                    $ok = is_int($data)
+                        || (is_float($data)
+                            && ((ceil($data) === $data && $version !== Schema::VERSION_DRAFT_04) // float without fraction is int
+                                || abs($data) > PHP_INT_MAX)); // big float accepted for int
                     break;
                 case self::NUMBER:
                     $ok = is_int($data) || is_float($data);

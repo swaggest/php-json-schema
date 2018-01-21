@@ -54,16 +54,27 @@ class RefResolver
     {
         $rootResolver = $this->rootResolver ? $this->rootResolver : $this;
 
-        $prev = $this->updateResolutionScope($id);
+        $prev = $rootResolver->updateResolutionScope($id);
 
         $refParts = explode('#', $rootResolver->resolutionScope, 2);
-        if ($refParts[0] && empty($refParts[1])) {
-            if (!isset($rootResolver->remoteRefResolvers[$refParts[0]])) {
-                $resolver = new RefResolver($data);
+
+        if ($refParts[0]) { // external uri
+            $resolver = &$rootResolver->remoteRefResolvers[$refParts[0]];
+            if ($resolver === null) {
+                $resolver = new RefResolver();
                 $resolver->rootResolver = $rootResolver;
                 $resolver->url = $refParts[0];
                 $this->remoteRefResolvers[$refParts[0]] = $resolver;
             }
+        } else { // local uri
+            $resolver = $this;
+        }
+
+        if (empty($refParts[1])) {
+            $resolver->rootData = $data;
+        } else {
+            $refPath = '#' . $refParts[1];
+            $resolver->refs[$refPath] = new Ref($refPath, $data);
         }
 
         return $prev;
@@ -74,7 +85,7 @@ class RefResolver
     /** @var Ref[] */
     private $refs = array();
 
-    /** @var RefResolver[] */
+    /** @var RefResolver[]|null[] */
     private $remoteRefResolvers = array();
 
     /** @var RemoteRefProvider */
@@ -84,7 +95,7 @@ class RefResolver
      * RefResolver constructor.
      * @param JsonSchema $rootData
      */
-    public function __construct($rootData)
+    public function __construct($rootData = null)
     {
         $this->rootData = $rootData;
     }
@@ -102,6 +113,11 @@ class RefResolver
             $this->refProvider = new BasicFetcher();
         }
         return $this->refProvider;
+    }
+
+    private function registerIdData($id, $data)
+    {
+
     }
 
 
@@ -140,8 +156,11 @@ class RefResolver
                     /** @var JsonSchema $branch */
                     $branch = &$refResolver->rootData;
                     while (!empty($path)) {
-                        if (isset($branch->id) && is_string($branch->id)) {
-                            $refResolver->updateResolutionScope($branch->id);
+                        if (isset($branch->{Schema::ID_D4}) && is_string($branch->{Schema::ID_D4})) {
+                            $refResolver->updateResolutionScope($branch->{Schema::ID_D4});
+                        }
+                        if (isset($branch->{Schema::ID}) && is_string($branch->{Schema::ID})) {
+                            $refResolver->updateResolutionScope($branch->{Schema::ID});
                         }
 
                         $folder = array_shift($path);

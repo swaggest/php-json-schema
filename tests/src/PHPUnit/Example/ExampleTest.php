@@ -160,7 +160,7 @@ JSON;
         $info = new UserInfo();
         $info->firstName = 'John';
         $info->lastName = 'Doe';
-        $info->birthDay = '1970-01-01';
+        $info->birthDay = '1970-01-01T00:00:00Z';
         $user->info = $info;
 
         $json = <<<JSON
@@ -168,7 +168,7 @@ JSON;
     "id": 1,
     "firstName": "John",
     "lastName": "Doe",
-    "birthDay": "1970-01-01"
+    "birthDay": "1970-01-01T00:00:00Z"
 }
 JSON;
         $exported = User::export($user);

@@ -4,10 +4,14 @@ namespace Swaggest\JsonSchema;
 
 
 use PhpLang\ScopeExit;
+use Swaggest\JsonDiff\JsonDiff;
+use Swaggest\JsonSchema\Constraint\Content;
+use Swaggest\JsonSchema\Constraint\Format;
 use Swaggest\JsonSchema\Constraint\Properties;
 use Swaggest\JsonSchema\Constraint\Type;
 use Swaggest\JsonSchema\Constraint\UniqueItems;
 use Swaggest\JsonSchema\Exception\ArrayException;
+use Swaggest\JsonSchema\Exception\ConstException;
 use Swaggest\JsonSchema\Exception\EnumException;
 use Swaggest\JsonSchema\Exception\LogicException;
 use Swaggest\JsonSchema\Exception\NumericException;
@@ -27,11 +31,20 @@ use Swaggest\JsonSchema\Structure\ObjectItemContract;
  */
 class Schema extends JsonSchema implements MetaHolder
 {
+    const CONST_PROPERTY = 'const';
+
     const DEFAULT_MAPPING = 'default';
+
+    const VERSION_AUTO = 'a';
+    const VERSION_DRAFT_04 = 4;
+    const VERSION_DRAFT_06 = 6;
+    const VERSION_DRAFT_07 = 7;
 
     const SCHEMA_DRAFT_04_URL = 'http://json-schema.org/draft-04/schema';
 
     const REF = '$ref';
+    const ID = '$id';
+    const ID_D4 = 'id';
 
 
     /*
@@ -73,6 +86,14 @@ class Schema extends JsonSchema implements MetaHolder
     /** @var Schema[] */
     public $oneOf;
 
+    /** @var Schema */
+    public $if;
+    /** @var Schema */
+    public $then;
+    /** @var Schema */
+    public $else;
+
+
     public $objectItemClass;
     private $useObjectAsArray = false;
 
@@ -98,18 +119,45 @@ class Schema extends JsonSchema implements MetaHolder
             }
         } elseif ($data instanceof \stdClass) {
             /** @var JsonSchema $data */
-            if (isset($data->id) && is_string($data->id)) {
-                $prev = $options->refResolver->setupResolutionScope($data->id, $data);
+            if (
+                isset($data->{Schema::ID_D4})
+                && is_string($data->{Schema::ID_D4})
+                && (($options->version === self::VERSION_AUTO) || $options->version === self::VERSION_DRAFT_04)
+            ) {
+                $prev = $options->refResolver->setupResolutionScope($data->{Schema::ID_D4}, $data);
                 /** @noinspection PhpUnusedLocalVariableInspection */
                 $_ = new ScopeExit(function () use ($prev, $options) {
                     $options->refResolver->setResolutionScope($prev);
                 });
             }
 
+            if (isset($data->{self::ID})
+                && is_string($data->{self::ID})
+                && (($options->version === self::VERSION_AUTO) || $options->version >= self::VERSION_DRAFT_06)
+            ) {
+                $prev = $options->refResolver->setupResolutionScope($data->{self::ID}, $data);
+                /** @noinspection PhpUnusedLocalVariableInspection */
+                $_ = new ScopeExit(function () use ($prev, $options) {
+                    $options->refResolver->setResolutionScope($prev);
+                });
+            }
+
+
             foreach ((array)$data as $key => $value) {
                 $this->preProcessReferences($value, $options, $nestingLevel + 1);
             }
         }
+    }
+
+    public static function import($data, Context $options = null)
+    {
+        // string $data is expected to be $ref uri
+        if (is_string($data)) {
+            $data = (object)array(self::REF => $data);
+        }
+
+        $data = self::unboolSchemaData($data);
+        return parent::import($data, $options);
     }
 
     public function in($data, Context $options = null)
@@ -138,6 +186,7 @@ class Schema extends JsonSchema implements MetaHolder
      * @param Context|null $options
      * @return array|mixed|null|object|\stdClass
      * @throws InvalidValue
+     * @throws \Exception
      */
     public function out($data, Context $options = null)
     {
@@ -200,7 +249,7 @@ class Schema extends JsonSchema implements MetaHolder
             if ($options->tolerateStrings && is_string($data)) {
                 $valid = Type::readString($this->type, $data);
             } else {
-                $valid = Type::isValid($this->type, $data);
+                $valid = Type::isValid($this->type, $data, $options->version);
             }
             if (!$valid) {
                 $this->fail(new TypeException(ucfirst(
@@ -223,10 +272,25 @@ class Schema extends JsonSchema implements MetaHolder
             }
         }
 
+        if (array_key_exists(self::CONST_PROPERTY, $this->__arrayOfData)) {
+            if ($this->const !== $data) {
+                if ((is_object($this->const) && is_object($data))
+                    || (is_array($this->const) && is_array($data))) {
+                    $diff = new JsonDiff($this->const, $data,
+                        JsonDiff::SKIP_REARRANGE_ARRAY + JsonDiff::STOP_ON_DIFF);
+                    if ($diff->getDiffCnt() != 0) {
+                        $this->fail(new ConstException('Const failed'), $path);
+                    }
+                } else {
+                    $this->fail(new ConstException('Const failed'), $path);
+                }
+            }
+        }
+
         if ($this->not !== null) {
             $exception = false;
             try {
-                $this->not->process($data, $options, $path . '->not');
+                self::unboolSchema($this->not)->process($data, $options, $path . '->not');
             } catch (InvalidValue $exception) {
                 // Expected exception
             }
@@ -252,6 +316,15 @@ class Schema extends JsonSchema implements MetaHolder
                         . $this->pattern, StringException::PATTERN_MISMATCH), $path);
                 }
             }
+            if ($this->format !== null) {
+                $validationError = Format::validationError($this->format, $data);
+                if ($validationError !== null) {
+                    if ($this->format === "uri" && substr($path, -3) === ':id') {
+                    } else {
+                        $this->fail(new StringException($validationError), $path);
+                    }
+                }
+            }
         }
 
         if (is_int($data) || is_float($data)) {
@@ -262,11 +335,27 @@ class Schema extends JsonSchema implements MetaHolder
                 }
             }
 
+            if ($this->exclusiveMaximum !== null && !is_bool($this->exclusiveMaximum)) {
+                if ($data >= $this->exclusiveMaximum) {
+                    $this->fail(new NumericException(
+                        'Value less or equal than ' . $this->exclusiveMaximum . ' expected, ' . $data . ' received',
+                        NumericException::MAXIMUM), $path);
+                }
+            }
+
+            if ($this->exclusiveMinimum !== null && !is_bool($this->exclusiveMinimum)) {
+                if ($data <= $this->exclusiveMinimum) {
+                    $this->fail(new NumericException(
+                        'Value more or equal than ' . $this->exclusiveMinimum . ' expected, ' . $data . ' received',
+                        NumericException::MINIMUM), $path);
+                }
+            }
+
             if ($this->maximum !== null) {
                 if ($this->exclusiveMaximum === true) {
                     if ($data >= $this->maximum) {
                         $this->fail(new NumericException(
-                            'Value less or equal than ' . $this->minimum . ' expected, ' . $data . ' received',
+                            'Value less or equal than ' . $this->maximum . ' expected, ' . $data . ' received',
                             NumericException::MAXIMUM), $path);
                     }
                 } else {
@@ -308,7 +397,7 @@ class Schema extends JsonSchema implements MetaHolder
 
             foreach ($this->oneOf as $index => $item) {
                 try {
-                    $result = $item->process($data, $options, $path . '->oneOf:' . $index);
+                    $result = self::unboolSchema($item)->process($data, $options, $path . '->oneOf:' . $index);
                     $successes++;
                     if ($successes > 1 || $options->skipValidation) {
                         break;
@@ -321,7 +410,7 @@ class Schema extends JsonSchema implements MetaHolder
             if ($skipValidation) {
                 $options->skipValidation = true;
                 if ($successes === 0) {
-                    $result = $this->oneOf[0]->process($data, $options, $path . '->oneOf:' . 0);
+                    $result = self::unboolSchema($this->oneOf[0])->process($data, $options, $path . '->oneOf:' . 0);
                 }
             }
 
@@ -340,7 +429,7 @@ class Schema extends JsonSchema implements MetaHolder
             $failures = '';
             foreach ($this->anyOf as $index => $item) {
                 try {
-                    $result = $item->process($data, $options, $path . '->anyOf:' . $index);
+                    $result = self::unboolSchema($item)->process($data, $options, $path . '->anyOf:' . $index);
                     $successes++;
                     if ($successes) {
                         break;
@@ -357,7 +446,25 @@ class Schema extends JsonSchema implements MetaHolder
 
         if ($this->allOf !== null) {
             foreach ($this->allOf as $index => $item) {
-                $result = $item->process($data, $options, $path . '->allOf' . $index);
+                $result = self::unboolSchema($item)->process($data, $options, $path . '->allOf' . $index);
+            }
+        }
+
+        if ($this->if !== null) {
+            $valid = true;
+            try {
+                self::unboolSchema($this->if)->process($data, $options, $path . '->if');
+            } catch (InvalidValue $exception) {
+                $valid = false;
+            }
+            if ($valid) {
+                if ($this->then !== null) {
+                    $result = self::unboolSchema($this->then)->process($data, $options, $path . '->then');
+                }
+            } else {
+                if ($this->else !== null) {
+                    $result = self::unboolSchema($this->else)->process($data, $options, $path . '->else');
+                }
             }
         }
 
@@ -417,6 +524,34 @@ class Schema extends JsonSchema implements MetaHolder
                 }
             }
 
+            // @todo better check for schema id
+
+            if ($import
+                && isset($data->{Schema::ID_D4})
+                && ($options->version === Schema::VERSION_DRAFT_04 || $options->version === Schema::VERSION_AUTO)
+                && is_string($data->{Schema::ID_D4}) /*&& (!isset($this->properties['id']))/* && $this->isMetaSchema($data)*/) {
+                $id = $data->{Schema::ID_D4};
+                $refResolver = $options->refResolver;
+                $parentScope = $refResolver->updateResolutionScope($id);
+                /** @noinspection PhpUnusedLocalVariableInspection */
+                $defer = new ScopeExit(function () use ($parentScope, $refResolver) {
+                    $refResolver->setResolutionScope($parentScope);
+                });
+            }
+
+            if ($import
+                && isset($data->{self::ID})
+                && ($options->version >= Schema::VERSION_DRAFT_06 || $options->version === Schema::VERSION_AUTO)
+                && is_string($data->{self::ID}) /*&& (!isset($this->properties['id']))/* && $this->isMetaSchema($data)*/) {
+                $id = $data->{self::ID};
+                $refResolver = $options->refResolver;
+                $parentScope = $refResolver->updateResolutionScope($id);
+                /** @noinspection PhpUnusedLocalVariableInspection */
+                $defer = new ScopeExit(function () use ($parentScope, $refResolver) {
+                    $refResolver->setResolutionScope($parentScope);
+                });
+            }
+
             if ($import) {
                 try {
                     while (
@@ -437,7 +572,7 @@ class Schema extends JsonSchema implements MetaHolder
                             $refResult = $ref->getImported();
                             return $refResult;
                         }
-                        $data = $ref->getData();
+                        $data = self::unboolSchemaData($ref->getData());
                         if ($result instanceof ObjectItemContract) {
                             $result->setFromRef($refString);
                         }
@@ -449,18 +584,6 @@ class Schema extends JsonSchema implements MetaHolder
                 } catch (InvalidValue $exception) {
                     $this->fail($exception, $path);
                 }
-            }
-
-            // @todo better check for schema id
-
-            if ($import && isset($data->id) && is_string($data->id) /*&& (!isset($this->properties['id']))/* && $this->isMetaSchema($data)*/) {
-                $id = $data->id;
-                $refResolver = $options->refResolver;
-                $parentScope = $refResolver->updateResolutionScope($id);
-                /** @noinspection PhpUnusedLocalVariableInspection */
-                $defer = new ScopeExit(function () use ($parentScope, $refResolver) {
-                    $refResolver->setResolutionScope($parentScope);
-                });
             }
 
             /** @var Schema[] $properties */
@@ -501,6 +624,12 @@ class Schema extends JsonSchema implements MetaHolder
                 if ($this->maxProperties !== null && count($array) > $this->maxProperties) {
                     $this->fail(new ObjectException("Too many properties", ObjectException::TOO_MANY), $path);
                 }
+                if ($this->propertyNames !== null) {
+                    $propertyNames = self::unboolSchema($this->propertyNames);
+                    foreach ($array as $key => $tmp) {
+                        $propertyNames->process($key, $options, $path . '->propertyNames:' . $key);
+                    }
+                }
             }
 
             foreach ($array as $key => $value) {
@@ -514,6 +643,7 @@ class Schema extends JsonSchema implements MetaHolder
                     $deps = $this->dependencies;
                     if (isset($deps->$key)) {
                         $dependencies = $deps->$key;
+                        $dependencies = self::unboolSchema($dependencies);
                         if ($dependencies instanceof Schema) {
                             $dependencies->process($data, $options, $path . '->dependencies:' . $key);
                         } else {
@@ -530,10 +660,13 @@ class Schema extends JsonSchema implements MetaHolder
                 $propertyFound = false;
                 if (isset($properties[$key])) {
                     /** @var Schema[] $properties */
-                    $prop = $properties[$key];
+                    $prop = self::unboolSchema($properties[$key]);
                     $propertyFound = true;
                     $found = true;
-                    $value = $prop->process($value, $options, $path . '->properties:' . $key);
+                    if ($prop instanceof Schema) {
+                        $value = $prop->process($value, $options, $path . '->properties:' . $key);
+                    }
+                    // @todo process $prop === false
                 }
 
                 /** @var Egg[] $nestedEggs */
@@ -542,14 +675,14 @@ class Schema extends JsonSchema implements MetaHolder
                     $found = true;
                     $nestedEggs = $nestedProperties[$key];
                     // todo iterate all nested props?
-                    $value = $nestedEggs[0]->propertySchema->process($value, $options, $path . '->nestedProperties:' . $key);
+                    $value = self::unboolSchema($nestedEggs[0]->propertySchema)->process($value, $options, $path . '->nestedProperties:' . $key);
                 }
 
                 if ($this->patternProperties !== null) {
                     foreach ($this->patternProperties as $pattern => $propertySchema) {
                         if (preg_match(Helper::toPregPattern($pattern), $key)) {
                             $found = true;
-                            $value = $propertySchema->process($value, $options,
+                            $value = self::unboolSchema($propertySchema)->process($value, $options,
                                 $path . '->patternProperties[' . $pattern . ']:' . $key);
                             if ($import) {
                                 $result->addPatternPropertyName($pattern, $key);
@@ -595,18 +728,19 @@ class Schema extends JsonSchema implements MetaHolder
         }
 
         if (is_array($data)) {
-
+            $count = count($data);
             if (!$options->skipValidation) {
-                if ($this->minItems !== null && count($data) < $this->minItems) {
+                if ($this->minItems !== null && $count < $this->minItems) {
                     $this->fail(new ArrayException("Not enough items in array"), $path);
                 }
 
-                if ($this->maxItems !== null && count($data) > $this->maxItems) {
+                if ($this->maxItems !== null && $count > $this->maxItems) {
                     $this->fail(new ArrayException("Too many items in array"), $path);
                 }
             }
 
             $pathItems = 'items';
+            $this->items = self::unboolSchema($this->items);
             if ($this->items instanceof Schema) {
                 $items = array();
                 $additionalItems = $this->items;
@@ -627,7 +761,8 @@ class Schema extends JsonSchema implements MetaHolder
             $index = 0;
             foreach ($result as $key => $value) {
                 if ($index < $itemsLen) {
-                    $result[$key] = $items[$index]->process($value, $options, $path . '->items:' . $index);
+                    $itemSchema = self::unboolSchema($items[$index]);
+                    $result[$key] = $itemSchema->process($value, $options, $path . '->items:' . $index);
                 } else {
                     if ($additionalItems instanceof Schema) {
                         $result[$key] = $additionalItems->process($value, $options, $path . '->' . $pathItems
@@ -643,6 +778,44 @@ class Schema extends JsonSchema implements MetaHolder
                 if (!UniqueItems::isValid($data)) {
                     $this->fail(new ArrayException('Array is not unique'), $path);
                 }
+            }
+
+            if (!$options->skipValidation && $this->contains !== null) {
+                /** @var Schema|bool $contains */
+                $contains = $this->contains;
+                if ($contains === false) {
+                    $this->fail(new ArrayException('Contains is false'), $path);
+                }
+                if ($count === 0) {
+                    $this->fail(new ArrayException('Empty array fails contains constraint'), $path);
+                }
+                if ($contains === true) {
+                    $contains = self::unboolSchema($contains);
+                }
+                $containsOk = false;
+                foreach ($data as $key => $item) {
+                    try {
+                        $contains->process($item, $options, $path . '->' . $key);
+                        $containsOk = true;
+                        break;
+                    } catch (InvalidValue $exception) {
+                    }
+                }
+                if (!$containsOk) {
+                    $this->fail(new ArrayException('Array fails contains constraint'), $path);
+                }
+            }
+        }
+
+        if ($this->contentEncoding !== null || $this->contentMediaType !== null) {
+            try {
+                if ($options->unpackContentMediaType) {
+                    $result = Content::process($options, $this->contentEncoding, $this->contentMediaType, $data, $import);
+                } else {
+                    Content::process($options, $this->contentEncoding, $this->contentMediaType, $data, true);
+                }
+            } catch (InvalidValue $exception) {
+                $this->fail($exception, $path);
             }
         }
 
@@ -777,4 +950,53 @@ class Schema extends JsonSchema implements MetaHolder
             return new $className;
         }
     }
+
+    /**
+     * @param mixed $schema
+     * @return mixed|Schema
+     */
+    private static function unboolSchema($schema)
+    {
+        static $trueSchema;
+        static $falseSchema;
+
+        if (null === $trueSchema) {
+            $trueSchema = new Schema();
+            $falseSchema = new Schema();
+            $falseSchema->not = $trueSchema;
+        }
+
+        if ($schema === true) {
+            return $trueSchema;
+        } elseif ($schema === false) {
+            return $falseSchema;
+        } else {
+            return $schema;
+        }
+    }
+
+    /**
+     * @param mixed $data
+     * @return \stdClass
+     */
+    private static function unboolSchemaData($data)
+    {
+        static $trueSchema;
+        static $falseSchema;
+
+        if (null === $trueSchema) {
+            $trueSchema = new \stdClass();
+            $falseSchema = new \stdClass();
+            $falseSchema->not = $trueSchema;
+        }
+
+        if ($data === true) {
+            return $trueSchema;
+        } elseif ($data === false) {
+            return $falseSchema;
+        } else {
+            return $data;
+        }
+    }
+
 }
