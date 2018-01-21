@@ -11,7 +11,7 @@ use Swaggest\JsonSchema\InvalidValue;
 use Swaggest\JsonSchema\RefResolver;
 use Swaggest\JsonSchema\RemoteRef\Preloaded;
 use Swaggest\JsonSchema\Schema;
-use Swaggest\JsonSchema\Tests\PHPUnit\Spec\SpecTest;
+use Swaggest\JsonSchema\Tests\PHPUnit\Spec\Draft4Test;
 
 class RefTest extends \PHPUnit_Framework_TestCase
 {
@@ -308,7 +308,7 @@ JSON
         );
 
         $options = new Context();
-        $options->remoteRefProvider = SpecTest::getProvider();
+        $options->remoteRefProvider = Draft4Test::getProvider();
         $schema = Schema::import($testData->schema, $options);
 
         $schema->in($testData->tests[0]->data);
@@ -356,7 +356,7 @@ JSON
 JSON
 );
         $options = new Context();
-        $options->remoteRefProvider = SpecTest::getProvider();
+        $options->remoteRefProvider = Draft4Test::getProvider();
         $schema = Schema::import($testData->schema, $options);
 
         $schema->in($testData->tests[0]->data);
@@ -392,7 +392,7 @@ JSON
         );
 
         $schema = Schema::import($testData->schema, new Context(
-                SpecTest::getProvider())
+                Draft4Test::getProvider())
         );
         $schema->in($testData->tests[0]->data);
         $this->setExpectedException(get_class(new InvalidValue()));
@@ -425,7 +425,7 @@ JSON
 JSON
 );
         $schema = Schema::import($testData->schema, new Context(
-                SpecTest::getProvider())
+                Draft4Test::getProvider())
         );
         $schema->in($testData->tests[0]->data);
         $this->setExpectedException(get_class(new InvalidValue()));
@@ -433,4 +433,93 @@ JSON
 
     }
 
+
+    public function testDraft6RefRemoteBaseUriChangeInvalid()
+    {
+        $testData = json_decode(<<<'JSON'
+    {
+        "description": "base URI change",
+        "schema": {
+            "$id": "http://localhost:1234/",
+            "items": {
+                "$id": "folder/",
+                "items": {"$ref": "folderInteger.json"}
+            }
+        },
+        "tests": [
+            {
+                "description": "base URI change ref valid",
+                "data": [[1]],
+                "valid": true
+            },
+            {
+                "description": "base URI change ref invalid",
+                "data": [["a"]],
+                "valid": false
+            }
+        ]
+    }
+JSON
+        );
+        $schema = Schema::import($testData->schema, new Context(
+                Draft4Test::getProvider())
+        );
+        $schema->in($testData->tests[0]->data);
+        $this->setExpectedException(get_class(new InvalidValue()));
+        $schema->in($testData->tests[1]->data);
+
+    }
+
+
+    public function testDraft4RefRemoteBaseUriChangeInvalid()
+    {
+        $testData = json_decode(<<<'JSON'
+    {
+        "description": "base URI change",
+        "schema": {
+            "id": "http://localhost:1234/",
+            "items": {
+                "id": "folder/",
+                "items": {"$ref": "folderInteger.json"}
+            }
+        },
+        "tests": [
+            {
+                "description": "base URI change ref valid",
+                "data": [[1]],
+                "valid": true
+            },
+            {
+                "description": "base URI change ref invalid",
+                "data": [["a"]],
+                "valid": false
+            }
+        ]
+    }
+JSON
+        );
+        $schema = Schema::import($testData->schema, new Context(
+                Draft4Test::getProvider())
+        );
+        $schema->in($testData->tests[0]->data);
+        $this->setExpectedException(get_class(new InvalidValue()));
+        $schema->in($testData->tests[1]->data);
+
+    }
+
+
+    public function testBoolSchema()
+    {
+        $schema = Schema::import(json_decode(<<<'JSON'
+{
+    "$ref": "#\/definitions\/bool",
+    "definitions": {
+        "bool": false
+    }
+}
+JSON
+));
+        $this->setExpectedException(get_class(new InvalidValue()));
+        $schema->in("foo");
+    }
 }
