@@ -3,6 +3,7 @@
 namespace Swaggest\JsonSchema\Tests\PHPUnit\Spec;
 
 
+use Swaggest\JsonSchema\RefResolver;
 use Swaggest\JsonSchema\RemoteRef\Preloaded;
 use Swaggest\JsonSchema\Schema;
 
@@ -40,7 +41,7 @@ class AjvTest extends SchemaTestSuite
 
             $dir = __DIR__ . '/../../../../spec/ajv/spec/remotes/';
             foreach (new \DirectoryIterator($dir) as $path) {
-                if ($path === '.' || $path === '..') {
+                if ($path->getFilename() === '.' || $path->getFilename() === '..') {
                     continue;
                 }
                 $refProvider->setSchemaData('http://localhost:1234/'
@@ -55,16 +56,32 @@ class AjvTest extends SchemaTestSuite
     protected function skipTest($name)
     {
         static $skip = array(
-            'format.json validation of uuid strings: not valid uuid' => 1,
-            'format.json validation of JSON-pointer URI fragment strings: not a valid JSON-pointer as uri fragment (% not URL-encoded)' => 1,
-            'format.json validation of URL strings: an invalid URL string' => 1,
-            '62_resolution_scope_change.json change resolution scope - change filename (#62): string is valid' => 1,
+            //'format.json validation of uuid strings: not valid uuid [2]' => 1,
+            //'format.json validation of JSON-pointer URI fragment strings: not a valid JSON-pointer as uri fragment (% not URL-encoded) [1]' => 1,
+            //'62_resolution_scope_change.json change resolution scope - change filename (#62): string is valid [0]' => 1,
         );
 
-        // debug particular test
-        //return '1_ids_in_refs.json IDs in refs with root id: valid' !== $name;
+        // debug single test case
+        //return '13_root_ref_in_ref_in_remote_ref.json root ref in remote ref (#13): string is valid [0]' !== $name;
 
         return isset($skip[$name]);
+    }
+
+    /**
+     * @param $schemaData
+     * @param $data
+     * @param $isValid
+     * @param $name
+     * @param $version
+     * @throws \Exception
+     */
+    protected function runSpecTest($schemaData, $data, $isValid, $name, $version)
+    {
+        if (isset($schemaData->format) && in_array($schemaData->format, array('url', 'uuid', 'json-pointer-uri-fragment'))) {
+            $this->markTestSkipped($schemaData->format . ' format is not supported');
+            return;
+        }
+        parent::runSpecTest($schemaData, $data, $isValid, $name, $version);
     }
 
 
@@ -85,6 +102,16 @@ class AjvTest extends SchemaTestSuite
     {
         $path = __DIR__ . '/../../../../spec/ajv/spec/extras';
         return $this->provider($path);
+    }
+
+    protected function makeOptions($version)
+    {
+        $options = parent::makeOptions($version);
+        $options->refResolver = new RefResolver();
+        if ($options->remoteRefProvider instanceof Preloaded) {
+            $options->remoteRefProvider->populateSchemas($options->refResolver, $options);
+        }
+        return $options;
     }
 
     /**

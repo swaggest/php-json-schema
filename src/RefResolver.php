@@ -2,6 +2,7 @@
 
 namespace Swaggest\JsonSchema;
 
+use PhpLang\ScopeExit;
 use Swaggest\JsonSchema\Constraint\Ref;
 use Swaggest\JsonSchema\RemoteRef\BasicFetcher;
 
@@ -100,6 +101,12 @@ class RefResolver
         $this->rootData = $rootData;
     }
 
+    public function setRootData($rootData)
+    {
+        $this->rootData = $rootData;
+        return $this;
+    }
+
 
     public function setRemoteRefProvider(RemoteRefProvider $provider)
     {
@@ -115,16 +122,10 @@ class RefResolver
         return $this->refProvider;
     }
 
-    private function registerIdData($id, $data)
-    {
-
-    }
-
-
     /**
      * @param string $referencePath
      * @return Ref
-     * @throws \Exception
+     * @throws InvalidValue
      */
     public function resolveReference($referencePath)
     {
@@ -185,6 +186,7 @@ class RefResolver
                     $rootResolver = $this->rootResolver ? $this->rootResolver : $this;
                     /** @var null|RefResolver $refResolver */
                     $refResolver = &$rootResolver->remoteRefResolvers[$url];
+                    $this->setResolutionScope($url);
                     if (null === $refResolver) {
                         $rootData = $rootResolver->getRefProvider()->getSchemaData($url);
                         $refResolver = new RefResolver($rootData);
@@ -200,6 +202,54 @@ class RefResolver
         }
 
         return $ref;
+    }
+
+
+    /**
+     * @param mixed $data
+     * @param Context $options
+     * @param int $nestingLevel
+     * @throws Exception
+     */
+    public function preProcessReferences($data, Context $options, $nestingLevel = 0)
+    {
+        if ($nestingLevel > 200) {
+            throw new Exception('Too deep nesting level', Exception::DEEP_NESTING);
+        }
+        if (is_array($data)) {
+            foreach ($data as $key => $item) {
+                $this->preProcessReferences($item, $options, $nestingLevel + 1);
+            }
+        } elseif ($data instanceof \stdClass) {
+            /** @var JsonSchema $data */
+            if (
+                isset($data->{Schema::ID_D4})
+                && is_string($data->{Schema::ID_D4})
+                && (($options->version === Schema::VERSION_AUTO) || $options->version === Schema::VERSION_DRAFT_04)
+            ) {
+                $prev = $this->setupResolutionScope($data->{Schema::ID_D4}, $data);
+                /** @noinspection PhpUnusedLocalVariableInspection */
+                $_ = new ScopeExit(function () use ($prev) {
+                    $this->setResolutionScope($prev);
+                });
+            }
+
+            if (isset($data->{Schema::ID})
+                && is_string($data->{Schema::ID})
+                && (($options->version === Schema::VERSION_AUTO) || $options->version >= Schema::VERSION_DRAFT_06)
+            ) {
+                $prev = $this->setupResolutionScope($data->{Schema::ID}, $data);
+                /** @noinspection PhpUnusedLocalVariableInspection */
+                $_ = new ScopeExit(function () use ($prev) {
+                    $this->setResolutionScope($prev);
+                });
+            }
+
+
+            foreach ((array)$data as $key => $value) {
+                $this->preProcessReferences($value, $options, $nestingLevel + 1);
+            }
+        }
     }
 
 

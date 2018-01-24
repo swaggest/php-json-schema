@@ -40,8 +40,6 @@ class Schema extends JsonSchema implements MetaHolder
     const VERSION_DRAFT_06 = 6;
     const VERSION_DRAFT_07 = 7;
 
-    const SCHEMA_DRAFT_04_URL = 'http://json-schema.org/draft-04/schema';
-
     const REF = '$ref';
     const ID = '$id';
     const ID_D4 = 'id';
@@ -108,47 +106,6 @@ class Schema extends JsonSchema implements MetaHolder
         return $this;
     }
 
-    private function preProcessReferences($data, Context $options, $nestingLevel = 0)
-    {
-        if ($nestingLevel > 200) {
-            throw new Exception('Too deep nesting level', Exception::DEEP_NESTING);
-        }
-        if (is_array($data)) {
-            foreach ($data as $key => $item) {
-                $this->preProcessReferences($item, $options, $nestingLevel + 1);
-            }
-        } elseif ($data instanceof \stdClass) {
-            /** @var JsonSchema $data */
-            if (
-                isset($data->{Schema::ID_D4})
-                && is_string($data->{Schema::ID_D4})
-                && (($options->version === self::VERSION_AUTO) || $options->version === self::VERSION_DRAFT_04)
-            ) {
-                $prev = $options->refResolver->setupResolutionScope($data->{Schema::ID_D4}, $data);
-                /** @noinspection PhpUnusedLocalVariableInspection */
-                $_ = new ScopeExit(function () use ($prev, $options) {
-                    $options->refResolver->setResolutionScope($prev);
-                });
-            }
-
-            if (isset($data->{self::ID})
-                && is_string($data->{self::ID})
-                && (($options->version === self::VERSION_AUTO) || $options->version >= self::VERSION_DRAFT_06)
-            ) {
-                $prev = $options->refResolver->setupResolutionScope($data->{self::ID}, $data);
-                /** @noinspection PhpUnusedLocalVariableInspection */
-                $_ = new ScopeExit(function () use ($prev, $options) {
-                    $options->refResolver->setResolutionScope($prev);
-                });
-            }
-
-
-            foreach ((array)$data as $key => $value) {
-                $this->preProcessReferences($value, $options, $nestingLevel + 1);
-            }
-        }
-    }
-
     public static function import($data, Context $options = null)
     {
         // string $data is expected to be $ref uri
@@ -160,6 +117,14 @@ class Schema extends JsonSchema implements MetaHolder
         return parent::import($data, $options);
     }
 
+    /**
+     * @param mixed $data
+     * @param Context|null $options
+     * @return array|mixed|null|object|\stdClass
+     * @throws Exception
+     * @throws InvalidValue
+     * @throws \Exception
+     */
     public function in($data, Context $options = null)
     {
         if ($options === null) {
@@ -168,13 +133,18 @@ class Schema extends JsonSchema implements MetaHolder
 
         $options->import = true;
 
-        $options->refResolver = new RefResolver($data);
+        if ($options->refResolver === null) {
+            $options->refResolver = new RefResolver($data);
+        } else {
+            $options->refResolver->setRootData($data);
+        }
+
         if ($options->remoteRefProvider) {
             $options->refResolver->setRemoteRefProvider($options->remoteRefProvider);
         }
 
         if ($options->import) {
-            $this->preProcessReferences($data, $options);
+            $options->refResolver->preProcessReferences($data, $options);
         }
 
         return $this->process($data, $options, '#');

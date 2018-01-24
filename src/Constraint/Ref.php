@@ -56,7 +56,6 @@ class Ref implements Constraint
 
     /**
      * @return mixed
-     * @throws \Exception
      */
     public function getData()
     {

@@ -77,13 +77,13 @@ abstract class SchemaTestSuite extends \PHPUnit_Framework_TestCase
                     $tests = json_decode(file_get_contents($path . '/' . $entry));
 
                     foreach ($tests as $test) {
-                        foreach ($test->tests as $case) {
+                        foreach ($test->tests as $c => $case) {
                             /*if ($case->description !== 'changed scope ref invalid') {
                                 continue;
                             }
                             */
 
-                            $name = $entry . ' ' . $test->description . ': ' . $case->description;
+                            $name = $entry . ' ' . $test->description . ': ' . $case->description . ' [' . $c . ']';
                             if (!isset($test->schema)) {
                                 if (isset($test->schemas)) {
                                     foreach ($test->schemas as $i => $schema) {
@@ -150,6 +150,18 @@ abstract class SchemaTestSuite extends \PHPUnit_Framework_TestCase
         $this->runSpecTest($schemaData, $data, $isValid, $name, static::SCHEMA_VERSION);
     }
 
+    protected function makeOptions($version)
+    {
+        $refProvider = static::getProvider();
+
+        $options = new Context();
+        $options->setRemoteRefProvider($refProvider);
+        $options->version = $version;
+        $options->strictBase64Validation = true;
+
+        return $options;
+    }
+
     /**
      * @param $schemaData
      * @param $data
@@ -160,16 +172,11 @@ abstract class SchemaTestSuite extends \PHPUnit_Framework_TestCase
      */
     protected function runSpecTest($schemaData, $data, $isValid, $name, $version)
     {
-        $refProvider = static::getProvider();
 
         $actualValid = true;
         $error = '';
         try {
-            $options = new Context();
-            $options->setRemoteRefProvider($refProvider);
-            $options->version = $version;
-            $options->strictBase64Validation = true;
-
+            $options = $this->makeOptions($version);
             $schema = Schema::import($schemaData, $options);
 
             $res = $schema->in($data, $options);
@@ -203,6 +210,10 @@ abstract class SchemaTestSuite extends \PHPUnit_Framework_TestCase
      */
     public function testSpecSkipValidation($schemaData, $data, $isValid, $name)
     {
+        if ($this->skipTest($name)) {
+            $this->markTestSkipped();
+            return;
+        }
         $this->runSpecTestSkipValidation($schemaData, $data, $isValid, $name);
     }
 
