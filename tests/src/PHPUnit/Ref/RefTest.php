@@ -1,7 +1,6 @@
 <?php
 
-namespace Swaggest\JsonSchema\Tests\PHPUnit;
-
+namespace Swaggest\JsonSchema\Tests\PHPUnit\Ref;
 
 use Swaggest\JsonSchema\Context;
 use Swaggest\JsonSchema\Exception\LogicException;
@@ -135,7 +134,7 @@ class RefTest extends \PHPUnit_Framework_TestCase
         $refProvider->setSchemaData(
             'http://localhost:1234/subSchemas.json',
             json_decode(file_get_contents(
-                __DIR__ . '/../../../spec/JSON-Schema-Test-Suite/remotes/subSchemas.json'
+                __DIR__ . '/../../../../spec/JSON-Schema-Test-Suite/remotes/subSchemas.json'
             ))
         );
 

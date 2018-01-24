@@ -12,9 +12,10 @@ class Draft7Test extends Draft4Test
     protected function skipTest($name)
     {
         static $skip = array(
-            'iri.json validation of IRIs: a valid IRI based on IPv6' => 1,
+            'iri.json validation of IRIs: a valid IRI based on IPv6 [4]' =>
+                'invalid case, see https://github.com/json-schema-org/JSON-Schema-Test-Suite/pull/213',
         );
-        return isset($skip[$name]);
+        return isset($skip[$name]) ? $skip[$name] : false;
     }
 
     public function specProvider()
@@ -46,8 +47,8 @@ class Draft7Test extends Draft4Test
      */
     public function testSpecFormat($schemaData, $data, $isValid, $name)
     {
-        if ($this->skipTest($name)) {
-            $this->markTestSkipped();
+        if (false !== $skip = $this->skipTest($name)) {
+            $this->markTestSkipped($skip);
             return;
         }
         $this->runSpecTest($schemaData, $data, $isValid, $name, static::SCHEMA_VERSION);

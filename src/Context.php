@@ -33,6 +33,7 @@ class Context extends MagicMap
     /** @var bool do not tolerate special symbols even if base64_decode accepts string */
     public $strictBase64Validation = false;
 
+    /** @var bool pack/unpack application/json in string content */
     public $unpackContentMediaType = true;
 
     /** @var string property mapping set name */
