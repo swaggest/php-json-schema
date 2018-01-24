@@ -118,7 +118,7 @@ class Schema extends JsonSchema implements MetaHolder
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param Context|null $options
      * @return array|mixed|null|object|\stdClass
      * @throws Exception

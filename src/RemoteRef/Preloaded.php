@@ -11,18 +11,23 @@ class Preloaded implements RemoteRefProvider
 {
     private $storage;
 
-    private $cachePaths = array(
-        'http://json-schema.org/draft-04/schema' => __DIR__ . '/../../spec/json-schema.json',
-        'http://json-schema.org/draft-06/schema' => __DIR__ . '/../../spec/json-schema-draft6.json',
-        'http://json-schema.org/draft-07/schema' => __DIR__ . '/../../spec/json-schema-draft7.json',
-    );
+    private $schemaFiles;
+
+    public function __construct()
+    {
+        $this->schemaFiles = array(
+            'http://json-schema.org/draft-04/schema' => __DIR__ . '/../../spec/json-schema.json',
+            'http://json-schema.org/draft-06/schema' => __DIR__ . '/../../spec/json-schema-draft6.json',
+            'http://json-schema.org/draft-07/schema' => __DIR__ . '/../../spec/json-schema-draft7.json',
+        );
+    }
 
     public function getSchemaData($url)
     {
         if (isset($this->storage[$url])) {
             return $this->storage[$url];
-        } elseif (isset($this->cachePaths[$url])) {
-            $this->storage[$url] = json_decode(file_get_contents($this->cachePaths[$url]));
+        } elseif (isset($this->schemaFiles[$url])) {
+            $this->storage[$url] = json_decode(file_get_contents($this->schemaFiles[$url]));
             return $this->storage[$url];
         }
         return false;
@@ -53,6 +58,12 @@ class Preloaded implements RemoteRefProvider
     public function setSchemaData($url, $schemaData)
     {
         $this->storage[$url] = $schemaData;
+        return $this;
+    }
+
+    public function setSchemaFile($url, $path)
+    {
+        $this->schemaFiles[$url] = $path;
         return $this;
     }
 

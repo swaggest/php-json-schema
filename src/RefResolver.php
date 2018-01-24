@@ -206,7 +206,7 @@ class RefResolver
 
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param Context $options
      * @param int $nestingLevel
      * @throws Exception
@@ -229,7 +229,7 @@ class RefResolver
             ) {
                 $prev = $this->setupResolutionScope($data->{Schema::ID_D4}, $data);
                 /** @noinspection PhpUnusedLocalVariableInspection */
-                $_ = new ScopeExit(function () use ($prev, $options) {
+                $_ = new ScopeExit(function () use ($prev) {
                     $this->setResolutionScope($prev);
                 });
             }
@@ -240,7 +240,7 @@ class RefResolver
             ) {
                 $prev = $this->setupResolutionScope($data->{Schema::ID}, $data);
                 /** @noinspection PhpUnusedLocalVariableInspection */
-                $_ = new ScopeExit(function () use ($prev, $options) {
+                $_ = new ScopeExit(function () use ($prev) {
                     $this->setResolutionScope($prev);
                 });
             }
