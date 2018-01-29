@@ -247,7 +247,7 @@ class Schema extends JsonSchema implements MetaHolder
                 if ((is_object($this->const) && is_object($data))
                     || (is_array($this->const) && is_array($data))) {
                     $diff = new JsonDiff($this->const, $data,
-                        JsonDiff::SKIP_REARRANGE_ARRAY + JsonDiff::STOP_ON_DIFF);
+                        JsonDiff::STOP_ON_DIFF);
                     if ($diff->getDiffCnt() != 0) {
                         $this->fail(new ConstException('Const failed'), $path);
                     }
