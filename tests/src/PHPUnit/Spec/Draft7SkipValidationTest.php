@@ -5,7 +5,7 @@ namespace Swaggest\JsonSchema\Tests\PHPUnit\Spec;
 
 use Swaggest\JsonSchema\Schema;
 
-class Draft7Test extends Draft4Test
+class Draft7SkipValidationTest extends Draft4SkipValidationTest
 {
     const SCHEMA_VERSION = Schema::VERSION_DRAFT_07;
 

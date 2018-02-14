@@ -86,6 +86,18 @@ JSON
         $example->quantity = -1; // Exception: Value more than 0 expected, -1 received
     }
 
+    /**
+     * @throws \Exception
+     * @throws \Swaggest\JsonSchema\Exception
+     * @throws \Swaggest\JsonSchema\InvalidValue
+     */
+    public function testDefaultValue()
+    {
+        $user = User::import(json_decode('{"id":1}'));
+        $this->assertSame(true, $user->options->autoLogin);
+        $this->assertSame('guest', $user->options->groupName);
+    }
+
     public function testMissingRequiredProperty()
     {
         $this->setExpectedException(get_class(new ObjectException()), 'Required property missing: id');

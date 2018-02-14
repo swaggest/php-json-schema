@@ -2,8 +2,6 @@
 
 namespace Swaggest\JsonSchema\Constraint\Format;
 
-use Swaggest\JsonSchema\Constraint\Format;
-
 class IdnHostname
 {
     /**
@@ -18,6 +16,6 @@ class IdnHostname
         if ($error !== null) {
             return $error;
         }
-        return preg_match(Format::HOSTNAME_REGEX, $sanitized) ? null : 'Invalid idn-hostname: ' . $data;
+        return preg_match(Uri::HOSTNAME_REGEX, $sanitized) ? null : 'Invalid idn-hostname: ' . $data;
     }
 }

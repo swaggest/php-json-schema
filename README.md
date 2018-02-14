@@ -7,9 +7,9 @@
 High definition PHP structures with JSON-schema based validation.
 
 Supported schemas:
-[JSON Schema Draft 7](http://json-schema.org/specification-links.html#draft-7)
-[JSON Schema Draft 6](http://json-schema.org/specification-links.html#draft-6)
-[JSON Schema Draft 4](http://json-schema.org/specification-links.html#draft-4)
+* [JSON Schema Draft 7](http://json-schema.org/specification-links.html#draft-7)
+* [JSON Schema Draft 6](http://json-schema.org/specification-links.html#draft-6)
+* [JSON Schema Draft 4](http://json-schema.org/specification-links.html#draft-4)
 
 ## Installation
 
@@ -140,6 +140,12 @@ class User extends ClassStructure
         // You can embed structures to main level with nested schemas
         $properties->info = UserInfo::schema()->nested();
 
+        // You can set default value for property
+        $defaultOptions = new UserOptions();
+        $defaultOptions->autoLogin = true;
+        $defaultOptions->groupName = 'guest';
+        $properties->options = (clone UserOptions::schema())->setDefault(UserOptions::export($defaultOptions));
+
         // Dynamic (phpdoc-defined) properties can be used as well
         $properties->quantity = Schema::integer();
         $properties->quantity->minimum = 0;
@@ -169,6 +175,21 @@ class UserInfo extends ClassStructure {
     }
 }
 
+class UserOptions extends ClassStructure
+{
+    public $autoLogin;
+    public $groupName;
+
+    /**
+     * @param Properties|static $properties
+     * @param Schema $ownerSchema
+     */
+    public static function setUpProperties($properties, Schema $ownerSchema)
+    {
+        $properties->autoLogin = Schema::boolean();
+        $properties->groupName = Schema::string();
+    }
+}
 
 class Order implements ClassStructureContract
 {
@@ -196,7 +217,7 @@ class Order implements ClassStructureContract
         $properties->id = Schema::integer();
         $properties->userId = User::properties()->id; // referencing property of another schema keeps meta
         $properties->dateTime = Schema::string();
-        $properties->dateTime->format = Schema::FORMAT_DATE_TIME;
+        $properties->dateTime->format = Format::DATE_TIME;
         $properties->price = Schema::number();
 
         $ownerSchema->required[] = self::names()->id;
@@ -422,7 +443,7 @@ $this->assertInstanceOf(CustomSchema::className(), $schema->definitions['User'])
 
 ## Code quality and test coverage
 
-Some code quality best practices are intentionally violated here 
+Some code quality best practices are deliberately violated here
 (see [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/swaggest/php-json-schema/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/swaggest/php-json-schema/?branch=master)
 ) to allow best performance at maintenance cost.
 

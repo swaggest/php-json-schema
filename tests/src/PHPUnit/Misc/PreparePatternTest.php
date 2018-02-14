@@ -12,10 +12,4 @@ class PreparePatternTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(get_class(new InvalidValue()), 'Failed to prepare preg pattern');
         Helper::toPregPattern('/#+~%');
     }
-
-    public function testInvalidPattern()
-    {
-        $this->setExpectedException(get_class(new InvalidValue()), 'Regex pattern is invalid: ((');
-        Helper::toPregPattern('((');
-    }
 }

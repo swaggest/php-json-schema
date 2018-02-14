@@ -32,7 +32,7 @@ class Content
                             throw new ContentException('Invalid base64 string');
                         }
                         $data = base64_decode($data);
-                        if ($data === false) {
+                        if ($data === false && !$options->skipValidation) {
                             throw new ContentException('Unable to decode base64');
                         }
                         break;
@@ -44,7 +44,7 @@ class Content
                     case self::MEDIA_TYPE_APPLICATION_JSON:
                         $data = json_decode($data);
                         $lastErrorCode = json_last_error();
-                        if ($lastErrorCode !== JSON_ERROR_NONE) {
+                        if (($lastErrorCode !== JSON_ERROR_NONE) && !$options->skipValidation) {
                             // TODO add readable error message
                             throw new ContentException('Unable to decode json, err code: ' . $lastErrorCode);
                         }
@@ -62,7 +62,7 @@ class Content
                     case self::MEDIA_TYPE_APPLICATION_JSON:
                         $data = json_encode($data);
                         $lastErrorCode = json_last_error();
-                        if ($lastErrorCode !== JSON_ERROR_NONE) {
+                        if (($lastErrorCode !== JSON_ERROR_NONE) && !$options->skipValidation) {
                             // TODO add readable error message
                             throw new ContentException('Unable to encode json, err code: ' . $lastErrorCode);
                         }
@@ -75,7 +75,6 @@ class Content
                     case self::ENCODING_BASE64:
                         $data = base64_encode($data);
                         break;
-
                 }
             }
 

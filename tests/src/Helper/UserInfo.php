@@ -2,6 +2,7 @@
 
 namespace Swaggest\JsonSchema\Tests\Helper;
 
+use Swaggest\JsonSchema\Constraint\Format;
 use Swaggest\JsonSchema\Constraint\Properties;
 use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\Structure\ClassStructure;
@@ -24,7 +25,7 @@ class UserInfo extends ClassStructure
         $properties->firstName = Schema::string();
         $properties->lastName = Schema::string();
         $properties->birthDay = Schema::string();
-        $properties->birthDay->format = Schema::FORMAT_DATE_TIME;
+        $properties->birthDay->format = Format::DATE_TIME;
 
         $ownerSchema->required[] = self::names()->id;
     }

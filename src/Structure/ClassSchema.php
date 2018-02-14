@@ -2,7 +2,6 @@
 
 namespace Swaggest\JsonSchema\Structure;
 
-
 use Swaggest\JsonSchema\Schema;
 
 class ClassSchema extends Schema
@@ -11,5 +10,4 @@ class ClassSchema extends Schema
     {
         return new Nested($this);
     }
-
 }

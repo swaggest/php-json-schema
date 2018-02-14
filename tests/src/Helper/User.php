@@ -22,9 +22,13 @@ class User extends ClassStructure
     /** @var UserInfo */
     public $info;
 
+    /** @var UserOptions */
+    public $options;
+
     /**
      * @param Properties|static $properties
      * @param Schema $ownerSchema
+     * @throws \Exception
      */
     public static function setUpProperties($properties, Schema $ownerSchema)
     {
@@ -41,6 +45,12 @@ class User extends ClassStructure
 
         // You can embed structures to main level with nested schemas
         $properties->info = UserInfo::schema()->nested();
+
+        // You can set default value for property
+        $defaultOptions = new UserOptions();
+        $defaultOptions->autoLogin = true;
+        $defaultOptions->groupName = 'guest';
+        $properties->options = (clone UserOptions::schema())->setDefault(UserOptions::export($defaultOptions));
 
         // Dynamic (phpdoc-defined) properties can be used as well
         $properties->quantity = Schema::integer();
