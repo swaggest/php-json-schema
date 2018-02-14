@@ -44,18 +44,6 @@ class Schema extends JsonSchema implements MetaHolder
     const ID = '$id';
     const ID_D4 = 'id';
 
-
-    /*
-    public $__seqId;
-    public static $seq = 0;
-
-    public function __construct()
-    {
-        self::$seq++;
-        $this->__seqId = self::$seq;
-    }
-    //*/
-
     // Object
     /** @var Properties|Schema[]|Schema */
     public $properties;
@@ -71,9 +59,6 @@ class Schema extends JsonSchema implements MetaHolder
     public $items;
     /** @var null|Schema|bool */
     public $additionalItems;
-
-    const FORMAT_DATE_TIME = 'date-time'; // todo implement
-
 
     /** @var Schema[] */
     public $allOf;
@@ -98,6 +83,7 @@ class Schema extends JsonSchema implements MetaHolder
     private $__dataToProperty = array();
     private $__propertyToData = array();
 
+    private $__booleanSchema;
 
     public function addPropertyMapping($dataName, $propertyName, $mapping = self::DEFAULT_MAPPING)
     {
@@ -106,14 +92,42 @@ class Schema extends JsonSchema implements MetaHolder
         return $this;
     }
 
+    /**
+     * @param mixed $data
+     * @param Context|null $options
+     * @return static|JsonSchema
+     * @throws Exception
+     * @throws InvalidValue
+     * @throws \Exception
+     */
     public static function import($data, Context $options = null)
     {
+        if (null === $options) {
+            $options = new Context();
+        }
+
+        //$options->applyDefaults = false; // todo check infinite recursion on items, additionalProperties, etc...
+
+        if (isset($options->schemasCache) && is_object($data)) {
+            if ($options->schemasCache->contains($data)) {
+                return $options->schemasCache->offsetGet($data);
+            } else {
+                $schema = parent::import($data, $options);
+                $options->schemasCache->attach($data, $schema);
+                return $schema;
+            }
+        }
+
         // string $data is expected to be $ref uri
         if (is_string($data)) {
             $data = (object)array(self::REF => $data);
         }
 
-        $data = self::unboolSchemaData($data);
+        $data = self::unboolSchema($data);
+        if ($data instanceof Schema) {
+            return $data;
+        }
+
         return parent::import($data, $options);
     }
 
@@ -127,6 +141,14 @@ class Schema extends JsonSchema implements MetaHolder
      */
     public function in($data, Context $options = null)
     {
+        if (null !== $this->__booleanSchema) {
+            if ($this->__booleanSchema) {
+                return $data;
+            } elseif (empty($options->skipValidation)) {
+                $this->fail(new InvalidValue('Denied by false schema'), '#');
+            }
+        }
+
         if ($options === null) {
             $options = new Context();
         }
@@ -173,10 +195,775 @@ class Schema extends JsonSchema implements MetaHolder
      * @param mixed $data
      * @param Context $options
      * @param string $path
+     * @throws InvalidValue
+     * @throws \Exception
+     */
+    private function processType($data, Context $options, $path = '#')
+    {
+        if ($options->tolerateStrings && is_string($data)) {
+            $valid = Type::readString($this->type, $data);
+        } else {
+            $valid = Type::isValid($this->type, $data, $options->version);
+        }
+        if (!$valid) {
+            $this->fail(new TypeException(ucfirst(
+                    implode(', ', is_array($this->type) ? $this->type : array($this->type))
+                    . ' expected, ' . json_encode($data) . ' received')
+            ), $path);
+        }
+    }
+
+    /**
+     * @param mixed $data
+     * @param string $path
+     * @throws InvalidValue
+     * @throws \Exception
+     */
+    private function processEnum($data, $path = '#')
+    {
+        $enumOk = false;
+        foreach ($this->enum as $item) {
+            if ($item === $data) { // todo support complex structures here
+                $enumOk = true;
+                break;
+            }
+        }
+        if (!$enumOk) {
+            $this->fail(new EnumException('Enum failed'), $path);
+        }
+    }
+
+    /**
+     * @param mixed $data
+     * @param string $path
+     * @throws InvalidValue
+     * @throws \Swaggest\JsonDiff\Exception
+     */
+    private function processConst($data, $path)
+    {
+        if ($this->const !== $data) {
+            if ((is_object($this->const) && is_object($data))
+                || (is_array($this->const) && is_array($data))) {
+                $diff = new JsonDiff($this->const, $data,
+                    JsonDiff::STOP_ON_DIFF);
+                if ($diff->getDiffCnt() != 0) {
+                    $this->fail(new ConstException('Const failed'), $path);
+                }
+            } else {
+                $this->fail(new ConstException('Const failed'), $path);
+            }
+        }
+    }
+
+    /**
+     * @param mixed $data
+     * @param Context $options
+     * @param string $path
+     * @throws InvalidValue
+     * @throws \Exception
+     * @throws \Swaggest\JsonDiff\Exception
+     */
+    private function processNot($data, Context $options, $path)
+    {
+        $exception = false;
+        try {
+            self::unboolSchema($this->not)->process($data, $options, $path . '->not');
+        } catch (InvalidValue $exception) {
+            // Expected exception
+        }
+        if ($exception === false) {
+            $this->fail(new LogicException('Failed due to logical constraint: not'), $path);
+        }
+    }
+
+    /**
+     * @param string $data
+     * @param string $path
+     * @throws InvalidValue
+     */
+    private function processString($data, $path)
+    {
+        if ($this->minLength !== null) {
+            if (mb_strlen($data, 'UTF-8') < $this->minLength) {
+                $this->fail(new StringException('String is too short', StringException::TOO_SHORT), $path);
+            }
+        }
+        if ($this->maxLength !== null) {
+            if (mb_strlen($data, 'UTF-8') > $this->maxLength) {
+                $this->fail(new StringException('String is too long', StringException::TOO_LONG), $path);
+            }
+        }
+        if ($this->pattern !== null) {
+            if (0 === preg_match(Helper::toPregPattern($this->pattern), $data)) {
+                $this->fail(new StringException(json_encode($data) . ' does not match to '
+                    . $this->pattern, StringException::PATTERN_MISMATCH), $path);
+            }
+        }
+        if ($this->format !== null) {
+            $validationError = Format::validationError($this->format, $data);
+            if ($validationError !== null) {
+                if ($this->format === "uri" && substr($path, -3) === ':id') {
+                } else {
+                    $this->fail(new StringException($validationError), $path);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param float|int $data
+     * @param string $path
+     * @throws InvalidValue
+     */
+    private function processNumeric($data, $path)
+    {
+        if ($this->multipleOf !== null) {
+            $div = $data / $this->multipleOf;
+            if ($div != (int)$div) {
+                $this->fail(new NumericException($data . ' is not multiple of ' . $this->multipleOf, NumericException::MULTIPLE_OF), $path);
+            }
+        }
+
+        if ($this->exclusiveMaximum !== null && !is_bool($this->exclusiveMaximum)) {
+            if ($data >= $this->exclusiveMaximum) {
+                $this->fail(new NumericException(
+                    'Value less or equal than ' . $this->exclusiveMaximum . ' expected, ' . $data . ' received',
+                    NumericException::MAXIMUM), $path);
+            }
+        }
+
+        if ($this->exclusiveMinimum !== null && !is_bool($this->exclusiveMinimum)) {
+            if ($data <= $this->exclusiveMinimum) {
+                $this->fail(new NumericException(
+                    'Value more or equal than ' . $this->exclusiveMinimum . ' expected, ' . $data . ' received',
+                    NumericException::MINIMUM), $path);
+            }
+        }
+
+        if ($this->maximum !== null) {
+            if ($this->exclusiveMaximum === true) {
+                if ($data >= $this->maximum) {
+                    $this->fail(new NumericException(
+                        'Value less or equal than ' . $this->maximum . ' expected, ' . $data . ' received',
+                        NumericException::MAXIMUM), $path);
+                }
+            } else {
+                if ($data > $this->maximum) {
+                    $this->fail(new NumericException(
+                        'Value less than ' . $this->minimum . ' expected, ' . $data . ' received',
+                        NumericException::MAXIMUM), $path);
+                }
+            }
+        }
+
+        if ($this->minimum !== null) {
+            if ($this->exclusiveMinimum === true) {
+                if ($data <= $this->minimum) {
+                    $this->fail(new NumericException(
+                        'Value more or equal than ' . $this->minimum . ' expected, ' . $data . ' received',
+                        NumericException::MINIMUM), $path);
+                }
+            } else {
+                if ($data < $this->minimum) {
+                    $this->fail(new NumericException(
+                        'Value more than ' . $this->minimum . ' expected, ' . $data . ' received',
+                        NumericException::MINIMUM), $path);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param mixed $data
+     * @param Context $options
+     * @param string $path
+     * @return array|mixed|null|object|\stdClass
+     * @throws InvalidValue
+     * @throws \Exception
+     * @throws \Swaggest\JsonDiff\Exception
+     */
+    private function processOneOf($data, Context $options, $path)
+    {
+        $successes = 0;
+        $failures = '';
+        $skipValidation = false;
+        if ($options->skipValidation) {
+            $skipValidation = true;
+            $options->skipValidation = false;
+        }
+
+        $result = $data;
+        foreach ($this->oneOf as $index => $item) {
+            try {
+                $result = self::unboolSchema($item)->process($data, $options, $path . '->oneOf:' . $index);
+                $successes++;
+                if ($successes > 1 || $options->skipValidation) {
+                    break;
+                }
+            } catch (InvalidValue $exception) {
+                $failures .= ' ' . $index . ': ' . Helper::padLines(' ', $exception->getMessage()) . "\n";
+                // Expected exception
+            }
+        }
+        if ($skipValidation) {
+            $options->skipValidation = true;
+            if ($successes === 0) {
+                $result = self::unboolSchema($this->oneOf[0])->process($data, $options, $path . '->oneOf:' . 0);
+            }
+        }
+
+        if (!$options->skipValidation) {
+            if ($successes === 0) {
+                $this->fail(new LogicException('Failed due to logical constraint: no valid results for oneOf {' . "\n" . substr($failures, 0, -1) . "\n}"), $path);
+            } elseif ($successes > 1) {
+                $this->fail(new LogicException('Failed due to logical constraint: '
+                    . $successes . '/' . count($this->oneOf) . ' valid results for oneOf'), $path);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param mixed $data
+     * @param Context $options
+     * @param string $path
+     * @return array|mixed|null|object|\stdClass
+     * @throws InvalidValue
+     * @throws \Exception
+     * @throws \Swaggest\JsonDiff\Exception
+     */
+    private function processAnyOf($data, Context $options, $path)
+    {
+        $successes = 0;
+        $failures = '';
+        $result = $data;
+        foreach ($this->anyOf as $index => $item) {
+            try {
+                $result = self::unboolSchema($item)->process($data, $options, $path . '->anyOf:' . $index);
+                $successes++;
+                if ($successes) {
+                    break;
+                }
+            } catch (InvalidValue $exception) {
+                $failures .= ' ' . $index . ': ' . $exception->getMessage() . "\n";
+                // Expected exception
+            }
+        }
+        if (!$successes && !$options->skipValidation) {
+            $this->fail(new LogicException('Failed due to logical constraint: no valid results for anyOf {' . "\n" . substr(Helper::padLines(' ', $failures), 0, -1) . "\n}"), $path);
+        }
+        return $result;
+    }
+
+    /**
+     * @param mixed $data
+     * @param Context $options
+     * @param string $path
+     * @return array|mixed|null|object|\stdClass
+     * @throws InvalidValue
+     * @throws \Exception
+     * @throws \Swaggest\JsonDiff\Exception
+     */
+    private function processAllOf($data, Context $options, $path)
+    {
+        $result = $data;
+        foreach ($this->allOf as $index => $item) {
+            $result = self::unboolSchema($item)->process($data, $options, $path . '->allOf' . $index);
+        }
+        return $result;
+    }
+
+    /**
+     * @param mixed $data
+     * @param Context $options
+     * @param string $path
+     * @return array|mixed|null|object|\stdClass
+     * @throws InvalidValue
+     * @throws \Exception
+     * @throws \Swaggest\JsonDiff\Exception
+     */
+    private function processIf($data, Context $options, $path)
+    {
+        $valid = true;
+        try {
+            self::unboolSchema($this->if)->process($data, $options, $path . '->if');
+        } catch (InvalidValue $exception) {
+            $valid = false;
+        }
+        if ($valid) {
+            if ($this->then !== null) {
+                return self::unboolSchema($this->then)->process($data, $options, $path . '->then');
+            }
+        } else {
+            if ($this->else !== null) {
+                return self::unboolSchema($this->else)->process($data, $options, $path . '->else');
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param \stdClass $data
+     * @param Context $options
+     * @param string $path
+     * @throws InvalidValue
+     */
+    private function processObjectRequired($data, Context $options, $path)
+    {
+        if (isset($this->__dataToProperty[$options->mapping])) {
+            if ($options->import) {
+                foreach ($this->required as $item) {
+                    if (isset($this->__propertyToData[$options->mapping][$item])) {
+                        $item = $this->__propertyToData[$options->mapping][$item];
+                    }
+                    if (!property_exists($data, $item)) {
+                        $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
+                    }
+                }
+            } else {
+                foreach ($this->required as $item) {
+                    if (isset($this->__dataToProperty[$options->mapping][$item])) {
+                        $item = $this->__dataToProperty[$options->mapping][$item];
+                    }
+                    if (!property_exists($data, $item)) {
+                        $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
+                    }
+                }
+            }
+
+        } else {
+            foreach ($this->required as $item) {
+                if (!property_exists($data, $item)) {
+                    $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param \stdClass $data
+     * @param Context $options
+     * @param string $path
+     * @param ObjectItemContract|null $result
+     * @return array|null|ClassStructure|ObjectItemContract
+     * @throws InvalidValue
+     * @throws \Exception
+     * @throws \Swaggest\JsonDiff\Exception
+     */
+    private function processObject($data, Context $options, $path, $result = null)
+    {
+        $import = $options->import;
+
+        if (!$options->skipValidation && $this->required !== null) {
+            $this->processObjectRequired($data, $options, $path);
+        }
+
+        if ($import) {
+            if (!$options->validateOnly) {
+
+                if ($this->useObjectAsArray) {
+                    $result = array();
+                } elseif (!$result instanceof ObjectItemContract) {
+                    //$result = $this->makeObjectItem($options);
+                    //* todo check performance impact
+                    if (null === $this->objectItemClass) {
+                        $result = new ObjectItem();
+                    } else {
+                        $className = $this->objectItemClass;
+                        if ($options->objectItemClassMapping !== null) {
+                            if (isset($options->objectItemClassMapping[$className])) {
+                                $className = $options->objectItemClassMapping[$className];
+                            }
+                        }
+                        $result = new $className;
+                    }
+                    //*/
+
+
+                    if ($result instanceof ClassStructure) {
+                        if ($result->__validateOnSet) {
+                            $result->__validateOnSet = false;
+                            /** @noinspection PhpUnusedLocalVariableInspection */
+                            /* todo check performance impact
+                            $validateOnSetHandler = new ScopeExit(function () use ($result) {
+                                $result->__validateOnSet = true;
+                            });
+                            //*/
+                        }
+                    }
+
+                    //* todo check performance impact
+                    if ($result instanceof ObjectItemContract) {
+                        $result->setDocumentPath($path);
+                    }
+                    //*/
+                }
+            }
+        }
+
+        // @todo better check for schema id
+
+        if ($import
+            && isset($data->{Schema::ID_D4})
+            && ($options->version === Schema::VERSION_DRAFT_04 || $options->version === Schema::VERSION_AUTO)
+            && is_string($data->{Schema::ID_D4}) /*&& (!isset($this->properties['id']))/* && $this->isMetaSchema($data)*/) {
+            $id = $data->{Schema::ID_D4};
+            $refResolver = $options->refResolver;
+            $parentScope = $refResolver->updateResolutionScope($id);
+            /** @noinspection PhpUnusedLocalVariableInspection */
+            $defer = new ScopeExit(function () use ($parentScope, $refResolver) {
+                $refResolver->setResolutionScope($parentScope);
+            });
+        }
+
+        if ($import
+            && isset($data->{self::ID})
+            && ($options->version >= Schema::VERSION_DRAFT_06 || $options->version === Schema::VERSION_AUTO)
+            && is_string($data->{self::ID}) /*&& (!isset($this->properties['id']))/* && $this->isMetaSchema($data)*/) {
+            $id = $data->{self::ID};
+            $refResolver = $options->refResolver;
+            $parentScope = $refResolver->updateResolutionScope($id);
+            /** @noinspection PhpUnusedLocalVariableInspection */
+            $defer = new ScopeExit(function () use ($parentScope, $refResolver) {
+                $refResolver->setResolutionScope($parentScope);
+            });
+        }
+
+        if ($import) {
+            try {
+                while (
+                    isset($data->{self::REF})
+                    && is_string($data->{self::REF})
+                    && !isset($this->properties[self::REF])
+                ) {
+                    $refString = $data->{self::REF};
+
+                    // todo check performance impact
+                    if ($refString === 'http://json-schema.org/draft-04/schema#'
+                        || $refString === 'http://json-schema.org/draft-06/schema#'
+                        || $refString === 'http://json-schema.org/draft-07/schema#') {
+                        return Schema::schema();
+                    }
+
+                    // TODO consider process # by reference here ?
+                    $refResolver = $options->refResolver;
+                    $preRefScope = $refResolver->getResolutionScope();
+                    /** @noinspection PhpUnusedLocalVariableInspection */
+                    $deferRefScope = new ScopeExit(function () use ($preRefScope, $refResolver) {
+                        $refResolver->setResolutionScope($preRefScope);
+                    });
+
+                    $ref = $refResolver->resolveReference($refString);
+                    $data = self::unboolSchemaData($ref->getData());
+                    //$data = $ref->getData();
+                    if (!$options->validateOnly) {
+                        if ($ref->isImported()) {
+                            $refResult = $ref->getImported();
+                            return $refResult;
+                        }
+                        if ($result instanceof ObjectItemContract) {
+                            $result->setFromRef($refString);
+                        }
+                        $ref->setImported($result);
+                        $refResult = $this->process($data, $options, $path . '->ref:' . $refString, $result);
+                        $ref->setImported($refResult);
+                        return $refResult;
+                    } else {
+                        $this->process($data, $options, $path . '->ref:' . $refString);
+                    }
+                }
+            } catch (InvalidValue $exception) {
+                $this->fail($exception, $path);
+            }
+        }
+
+        /** @var Schema[]|null $properties */
+        $properties = null;
+
+        $nestedProperties = null;
+        if ($this->properties !== null) {
+            $properties = $this->properties->toArray(); // todo call directly
+            if ($this->properties instanceof Properties) {
+                $nestedProperties = $this->properties->nestedProperties;
+            } else {
+                $nestedProperties = array();
+            }
+        }
+
+        $array = array();
+        if (!empty($this->__dataToProperty[$options->mapping])) { // todo skip on $options->validateOnly
+            foreach ((array)$data as $key => $value) {
+                if ($import) {
+                    if (isset($this->__dataToProperty[$options->mapping][$key])) {
+                        $key = $this->__dataToProperty[$options->mapping][$key];
+                    }
+                } else {
+                    if (isset($this->__propertyToData[$options->mapping][$key])) {
+                        $key = $this->__propertyToData[$options->mapping][$key];
+                    }
+                }
+                $array[$key] = $value;
+            }
+        } else {
+            $array = (array)$data;
+        }
+
+        if (!$options->skipValidation) {
+            if ($this->minProperties !== null && count($array) < $this->minProperties) {
+                $this->fail(new ObjectException("Not enough properties", ObjectException::TOO_FEW), $path);
+            }
+            if ($this->maxProperties !== null && count($array) > $this->maxProperties) {
+                $this->fail(new ObjectException("Too many properties", ObjectException::TOO_MANY), $path);
+            }
+            if ($this->propertyNames !== null) {
+                $propertyNames = self::unboolSchema($this->propertyNames);
+                foreach ($array as $key => $tmp) {
+                    $propertyNames->process($key, $options, $path . '->propertyNames:' . $key);
+                }
+            }
+        }
+
+        $defaultApplied = array();
+        if ($import
+            && !$options->validateOnly
+            && $options->applyDefaults
+            && $properties !== null
+            && $this->objectItemClass !== 'Swaggest\JsonSchema\Schema' // todo replace literal
+        ) {
+            foreach ($properties as $key => $property) {
+                if (isset($property->default)) {
+                    if (isset($this->__dataToProperty[$options->mapping][$key])) {
+                        $key = $this->__dataToProperty[$options->mapping][$key];
+                    }
+                    if (!array_key_exists($key, $array)) {
+                        $defaultApplied[$key] = true;
+                        $array[$key] = $property->default;
+                    }
+                }
+            }
+        }
+
+        foreach ($array as $key => $value) {
+            if ($key === '' && PHP_VERSION_ID < 71000) {
+                $this->fail(new InvalidValue('Empty property name'), $path);
+            }
+
+            $found = false;
+
+            if (!$options->skipValidation && !empty($this->dependencies)) {
+                $deps = $this->dependencies;
+                if (isset($deps->$key)) {
+                    $dependencies = $deps->$key;
+                    $dependencies = self::unboolSchema($dependencies);
+                    if ($dependencies instanceof Schema) {
+                        $dependencies->process($data, $options, $path . '->dependencies:' . $key);
+                    } else {
+                        foreach ($dependencies as $item) {
+                            if (!property_exists($data, $item)) {
+                                $this->fail(new ObjectException('Dependency property missing: ' . $item,
+                                    ObjectException::DEPENDENCY_MISSING), $path);
+                            }
+                        }
+                    }
+                }
+            }
+
+            $propertyFound = false;
+            if (isset($properties[$key])) {
+                /** @var Schema[] $properties */
+                $prop = self::unboolSchema($properties[$key]);
+                $propertyFound = true;
+                $found = true;
+                if ($prop instanceof Schema) {
+                    $value = $prop->process(
+                        $value,
+                        isset($defaultApplied[$key]) ? $options->withSkipValidation() : $options,
+                        $path . '->properties:' . $key
+                    );
+                }
+            }
+
+            /** @var Egg[] $nestedEggs */
+            $nestedEggs = null;
+            if (isset($nestedProperties[$key])) {
+                $found = true;
+                $nestedEggs = $nestedProperties[$key];
+                // todo iterate all nested props?
+                $value = self::unboolSchema($nestedEggs[0]->propertySchema)->process($value, $options, $path . '->nestedProperties:' . $key);
+            }
+
+            if ($this->patternProperties !== null) {
+                foreach ($this->patternProperties as $pattern => $propertySchema) {
+                    if (preg_match(Helper::toPregPattern($pattern), $key)) {
+                        $found = true;
+                        $value = self::unboolSchema($propertySchema)->process($value, $options,
+                            $path . '->patternProperties[' . $pattern . ']:' . $key);
+                        if (!$options->validateOnly && $import) {
+                            $result->addPatternPropertyName($pattern, $key);
+                        }
+                        //break; // todo manage multiple import data properly (pattern accessor)
+                    }
+                }
+            }
+            if (!$found && $this->additionalProperties !== null) {
+                if (!$options->skipValidation && $this->additionalProperties === false) {
+                    $this->fail(new ObjectException('Additional properties not allowed'), $path . ':' . $key);
+                }
+
+                if ($this->additionalProperties instanceof Schema) {
+                    $value = $this->additionalProperties->process($value, $options, $path . '->additionalProperties:' . $key);
+                }
+
+                if ($import && !$this->useObjectAsArray && !$options->validateOnly) {
+                    $result->addAdditionalPropertyName($key);
+                }
+            }
+
+            if (!$options->validateOnly && $nestedEggs && $import) {
+                foreach ($nestedEggs as $nestedEgg) {
+                    $result->setNestedProperty($key, $value, $nestedEgg);
+                }
+                if ($propertyFound) {
+                    $result->$key = $value;
+                }
+            } else {
+                if ($this->useObjectAsArray && $import) {
+                    $result[$key] = $value;
+                } else {
+                    if ($found || !$import) {
+                        $result->$key = $value;
+                    } elseif (!isset($result->$key)) {
+                        $result->$key = $value;
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $data
+     * @param Context $options
+     * @param string $path
+     * @param array $result
+     * @return mixed
+     * @throws InvalidValue
+     * @throws \Exception
+     * @throws \Swaggest\JsonDiff\Exception
+     */
+    private function processArray($data, Context $options, $path, $result)
+    {
+        $count = count($data);
+        if (!$options->skipValidation) {
+            if ($this->minItems !== null && $count < $this->minItems) {
+                $this->fail(new ArrayException("Not enough items in array"), $path);
+            }
+
+            if ($this->maxItems !== null && $count > $this->maxItems) {
+                $this->fail(new ArrayException("Too many items in array"), $path);
+            }
+        }
+
+        $pathItems = 'items';
+        $this->items = self::unboolSchema($this->items);
+        if ($this->items instanceof Schema) {
+            $items = array();
+            $additionalItems = $this->items;
+        } elseif ($this->items === null) { // items defaults to empty schema so everything is valid
+            $items = array();
+            $additionalItems = true;
+        } else { // listed items
+            $items = $this->items;
+            $additionalItems = $this->additionalItems;
+            $pathItems = 'additionalItems';
+        }
+
+        /**
+         * @var Schema|Schema[] $items
+         * @var null|bool|Schema $additionalItems
+         */
+        $itemsLen = is_array($items) ? count($items) : 0;
+        $index = 0;
+        foreach ($result as $key => $value) {
+            if ($index < $itemsLen) {
+                $itemSchema = self::unboolSchema($items[$index]);
+                $result[$key] = $itemSchema->process($value, $options, $path . '->items:' . $index);
+            } else {
+                if ($additionalItems instanceof Schema) {
+                    $result[$key] = $additionalItems->process($value, $options, $path . '->' . $pathItems
+                        . '[' . $index . ']');
+                } elseif (!$options->skipValidation && $additionalItems === false) {
+                    $this->fail(new ArrayException('Unexpected array item'), $path);
+                }
+            }
+            ++$index;
+        }
+
+        if (!$options->skipValidation && $this->uniqueItems) {
+            if (!UniqueItems::isValid($data)) {
+                $this->fail(new ArrayException('Array is not unique'), $path);
+            }
+        }
+
+        if (!$options->skipValidation && $this->contains !== null) {
+            /** @var Schema|bool $contains */
+            $contains = $this->contains;
+            if ($contains === false) {
+                $this->fail(new ArrayException('Contains is false'), $path);
+            }
+            if ($count === 0) {
+                $this->fail(new ArrayException('Empty array fails contains constraint'), $path);
+            }
+            if ($contains === true) {
+                $contains = self::unboolSchema($contains);
+            }
+            $containsOk = false;
+            foreach ($data as $key => $item) {
+                try {
+                    $contains->process($item, $options, $path . '->' . $key);
+                    $containsOk = true;
+                    break;
+                } catch (InvalidValue $exception) {
+                }
+            }
+            if (!$containsOk) {
+                $this->fail(new ArrayException('Array fails contains constraint'), $path);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param mixed|string $data
+     * @param Context $options
+     * @param string $path
+     * @return bool|mixed|string
+     * @throws InvalidValue
+     */
+    private function processContent($data, Context $options, $path)
+    {
+        try {
+            if ($options->unpackContentMediaType) {
+                return Content::process($options, $this->contentEncoding, $this->contentMediaType, $data, $options->import);
+            } else {
+                Content::process($options, $this->contentEncoding, $this->contentMediaType, $data, true);
+            }
+        } catch (InvalidValue $exception) {
+            $this->fail($exception, $path);
+        }
+        return $data;
+    }
+
+    /**
+     * @param mixed $data
+     * @param Context $options
+     * @param string $path
      * @param null $result
      * @return array|mixed|null|object|\stdClass
      * @throws InvalidValue
      * @throws \Exception
+     * @throws \Swaggest\JsonDiff\Exception
      */
     public function process($data, Context $options, $path = '#', $result = null)
     {
@@ -216,577 +1003,57 @@ class Schema extends JsonSchema implements MetaHolder
         }
 
         if ($this->type !== null) {
-            if ($options->tolerateStrings && is_string($data)) {
-                $valid = Type::readString($this->type, $data);
-            } else {
-                $valid = Type::isValid($this->type, $data, $options->version);
-            }
-            if (!$valid) {
-                $this->fail(new TypeException(ucfirst(
-                        implode(', ', is_array($this->type) ? $this->type : array($this->type))
-                        . ' expected, ' . json_encode($data) . ' received')
-                ), $path);
-            }
+            $this->processType($data, $options, $path);
         }
 
         if ($this->enum !== null) {
-            $enumOk = false;
-            foreach ($this->enum as $item) {
-                if ($item === $data) { // todo support complex structures here
-                    $enumOk = true;
-                    break;
-                }
-            }
-            if (!$enumOk) {
-                $this->fail(new EnumException('Enum failed'), $path);
-            }
+            $this->processEnum($data, $path);
         }
 
         if (array_key_exists(self::CONST_PROPERTY, $this->__arrayOfData)) {
-            if ($this->const !== $data) {
-                if ((is_object($this->const) && is_object($data))
-                    || (is_array($this->const) && is_array($data))) {
-                    $diff = new JsonDiff($this->const, $data,
-                        JsonDiff::STOP_ON_DIFF);
-                    if ($diff->getDiffCnt() != 0) {
-                        $this->fail(new ConstException('Const failed'), $path);
-                    }
-                } else {
-                    $this->fail(new ConstException('Const failed'), $path);
-                }
-            }
+            $this->processConst($data, $path);
         }
 
         if ($this->not !== null) {
-            $exception = false;
-            try {
-                self::unboolSchema($this->not)->process($data, $options, $path . '->not');
-            } catch (InvalidValue $exception) {
-                // Expected exception
-            }
-            if ($exception === false) {
-                $this->fail(new LogicException('Failed due to logical constraint: not'), $path);
-            }
+            $this->processNot($data, $options, $path);
         }
 
         if (is_string($data)) {
-            if ($this->minLength !== null) {
-                if (mb_strlen($data, 'UTF-8') < $this->minLength) {
-                    $this->fail(new StringException('String is too short', StringException::TOO_SHORT), $path);
-                }
-            }
-            if ($this->maxLength !== null) {
-                if (mb_strlen($data, 'UTF-8') > $this->maxLength) {
-                    $this->fail(new StringException('String is too long', StringException::TOO_LONG), $path);
-                }
-            }
-            if ($this->pattern !== null) {
-                if (0 === preg_match(Helper::toPregPattern($this->pattern), $data)) {
-                    $this->fail(new StringException(json_encode($data) . ' does not match to '
-                        . $this->pattern, StringException::PATTERN_MISMATCH), $path);
-                }
-            }
-            if ($this->format !== null) {
-                $validationError = Format::validationError($this->format, $data);
-                if ($validationError !== null) {
-                    if ($this->format === "uri" && substr($path, -3) === ':id') {
-                    } else {
-                        $this->fail(new StringException($validationError), $path);
-                    }
-                }
-            }
+            $this->processString($data, $path);
         }
 
         if (is_int($data) || is_float($data)) {
-            if ($this->multipleOf !== null) {
-                $div = $data / $this->multipleOf;
-                if ($div != (int)$div) {
-                    $this->fail(new NumericException($data . ' is not multiple of ' . $this->multipleOf, NumericException::MULTIPLE_OF), $path);
-                }
-            }
+            $this->processNumeric($data, $path);
+        }
 
-            if ($this->exclusiveMaximum !== null && !is_bool($this->exclusiveMaximum)) {
-                if ($data >= $this->exclusiveMaximum) {
-                    $this->fail(new NumericException(
-                        'Value less or equal than ' . $this->exclusiveMaximum . ' expected, ' . $data . ' received',
-                        NumericException::MAXIMUM), $path);
-                }
-            }
-
-            if ($this->exclusiveMinimum !== null && !is_bool($this->exclusiveMinimum)) {
-                if ($data <= $this->exclusiveMinimum) {
-                    $this->fail(new NumericException(
-                        'Value more or equal than ' . $this->exclusiveMinimum . ' expected, ' . $data . ' received',
-                        NumericException::MINIMUM), $path);
-                }
-            }
-
-            if ($this->maximum !== null) {
-                if ($this->exclusiveMaximum === true) {
-                    if ($data >= $this->maximum) {
-                        $this->fail(new NumericException(
-                            'Value less or equal than ' . $this->maximum . ' expected, ' . $data . ' received',
-                            NumericException::MAXIMUM), $path);
-                    }
-                } else {
-                    if ($data > $this->maximum) {
-                        $this->fail(new NumericException(
-                            'Value less than ' . $this->minimum . ' expected, ' . $data . ' received',
-                            NumericException::MAXIMUM), $path);
-                    }
-                }
-            }
-
-            if ($this->minimum !== null) {
-                if ($this->exclusiveMinimum === true) {
-                    if ($data <= $this->minimum) {
-                        $this->fail(new NumericException(
-                            'Value more or equal than ' . $this->minimum . ' expected, ' . $data . ' received',
-                            NumericException::MINIMUM), $path);
-                    }
-                } else {
-                    if ($data < $this->minimum) {
-                        $this->fail(new NumericException(
-                            'Value more than ' . $this->minimum . ' expected, ' . $data . ' received',
-                            NumericException::MINIMUM), $path);
-                    }
-                }
-            }
+        if ($this->if !== null) {
+            $result = $this->processIf($data, $options, $path);
         }
 
         skipValidation:
 
         if ($this->oneOf !== null) {
-            $successes = 0;
-            $failures = '';
-            $skipValidation = false;
-            if ($options->skipValidation) {
-                $skipValidation = true;
-                $options->skipValidation = false;
-            }
-
-            foreach ($this->oneOf as $index => $item) {
-                try {
-                    $result = self::unboolSchema($item)->process($data, $options, $path . '->oneOf:' . $index);
-                    $successes++;
-                    if ($successes > 1 || $options->skipValidation) {
-                        break;
-                    }
-                } catch (InvalidValue $exception) {
-                    $failures .= ' ' . $index . ': ' . Helper::padLines(' ', $exception->getMessage()) . "\n";
-                    // Expected exception
-                }
-            }
-            if ($skipValidation) {
-                $options->skipValidation = true;
-                if ($successes === 0) {
-                    $result = self::unboolSchema($this->oneOf[0])->process($data, $options, $path . '->oneOf:' . 0);
-                }
-            }
-
-            if (!$options->skipValidation) {
-                if ($successes === 0) {
-                    $this->fail(new LogicException('Failed due to logical constraint: no valid results for oneOf {' . "\n" . substr($failures, 0, -1) . "\n}"), $path);
-                } elseif ($successes > 1) {
-                    $this->fail(new LogicException('Failed due to logical constraint: '
-                        . $successes . '/' . count($this->oneOf) . ' valid results for oneOf'), $path);
-                }
-            }
+            $result = $this->processOneOf($data, $options, $path);
         }
 
         if ($this->anyOf !== null) {
-            $successes = 0;
-            $failures = '';
-            foreach ($this->anyOf as $index => $item) {
-                try {
-                    $result = self::unboolSchema($item)->process($data, $options, $path . '->anyOf:' . $index);
-                    $successes++;
-                    if ($successes) {
-                        break;
-                    }
-                } catch (InvalidValue $exception) {
-                    $failures .= ' ' . $index . ': ' . $exception->getMessage() . "\n";
-                    // Expected exception
-                }
-            }
-            if (!$successes && !$options->skipValidation) {
-                $this->fail(new LogicException('Failed due to logical constraint: no valid results for anyOf {' . "\n" . substr(Helper::padLines(' ', $failures), 0, -1) . "\n}"), $path);
-            }
+            $result = $this->processAnyOf($data, $options, $path);
         }
 
         if ($this->allOf !== null) {
-            foreach ($this->allOf as $index => $item) {
-                $result = self::unboolSchema($item)->process($data, $options, $path . '->allOf' . $index);
-            }
-        }
-
-        if ($this->if !== null) {
-            $valid = true;
-            try {
-                self::unboolSchema($this->if)->process($data, $options, $path . '->if');
-            } catch (InvalidValue $exception) {
-                $valid = false;
-            }
-            if ($valid) {
-                if ($this->then !== null) {
-                    $result = self::unboolSchema($this->then)->process($data, $options, $path . '->then');
-                }
-            } else {
-                if ($this->else !== null) {
-                    $result = self::unboolSchema($this->else)->process($data, $options, $path . '->else');
-                }
-            }
+            $result = $this->processAllOf($data, $options, $path);
         }
 
         if ($data instanceof \stdClass) {
-            if (!$options->skipValidation && $this->required !== null) {
-
-                if (isset($this->__dataToProperty[$options->mapping])) {
-                    if ($import) {
-                        foreach ($this->required as $item) {
-                            if (isset($this->__propertyToData[$options->mapping][$item])) {
-                                $item = $this->__propertyToData[$options->mapping][$item];
-                            }
-                            if (!property_exists($data, $item)) {
-                                $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
-                            }
-                        }
-                    } else {
-                        foreach ($this->required as $item) {
-                            if (isset($this->__dataToProperty[$options->mapping][$item])) {
-                                $item = $this->__dataToProperty[$options->mapping][$item];
-                            }
-                            if (!property_exists($data, $item)) {
-                                $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
-                            }
-                        }
-                    }
-
-                } else {
-                    foreach ($this->required as $item) {
-                        if (!property_exists($data, $item)) {
-                            $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
-                        }
-                    }
-                }
-
-            }
-
-            if ($import) {
-                if ($this->useObjectAsArray) {
-                    $result = array();
-                } elseif (!$result instanceof ObjectItemContract) {
-                    $result = $this->makeObjectItem($options);
-
-                    if ($result instanceof ClassStructure) {
-                        if ($result->__validateOnSet) {
-                            $result->__validateOnSet = false;
-                            /** @noinspection PhpUnusedLocalVariableInspection */
-                            $validateOnSetHandler = new ScopeExit(function () use ($result) {
-                                $result->__validateOnSet = true;
-                            });
-                        }
-                    }
-
-                    if ($result instanceof ObjectItemContract) {
-                        $result->setDocumentPath($path);
-                    }
-                }
-            }
-
-            // @todo better check for schema id
-
-            if ($import
-                && isset($data->{Schema::ID_D4})
-                && ($options->version === Schema::VERSION_DRAFT_04 || $options->version === Schema::VERSION_AUTO)
-                && is_string($data->{Schema::ID_D4}) /*&& (!isset($this->properties['id']))/* && $this->isMetaSchema($data)*/) {
-                $id = $data->{Schema::ID_D4};
-                $refResolver = $options->refResolver;
-                $parentScope = $refResolver->updateResolutionScope($id);
-                /** @noinspection PhpUnusedLocalVariableInspection */
-                $defer = new ScopeExit(function () use ($parentScope, $refResolver) {
-                    $refResolver->setResolutionScope($parentScope);
-                });
-            }
-
-            if ($import
-                && isset($data->{self::ID})
-                && ($options->version >= Schema::VERSION_DRAFT_06 || $options->version === Schema::VERSION_AUTO)
-                && is_string($data->{self::ID}) /*&& (!isset($this->properties['id']))/* && $this->isMetaSchema($data)*/) {
-                $id = $data->{self::ID};
-                $refResolver = $options->refResolver;
-                $parentScope = $refResolver->updateResolutionScope($id);
-                /** @noinspection PhpUnusedLocalVariableInspection */
-                $defer = new ScopeExit(function () use ($parentScope, $refResolver) {
-                    $refResolver->setResolutionScope($parentScope);
-                });
-            }
-
-            if ($import) {
-                try {
-                    while (
-                        isset($data->{self::REF})
-                        && is_string($data->{self::REF})
-                        && !isset($this->properties[self::REF])
-                    ) {
-                        $refString = $data->{self::REF};
-                        // TODO consider process # by reference here ?
-                        $refResolver = $options->refResolver;
-                        $preRefScope = $refResolver->getResolutionScope();
-                        /** @noinspection PhpUnusedLocalVariableInspection */
-                        $deferRefScope = new ScopeExit(function () use ($preRefScope, $refResolver) {
-                            $refResolver->setResolutionScope($preRefScope);
-                        });
-                        $ref = $refResolver->resolveReference($refString);
-                        if ($ref->isImported()) {
-                            $refResult = $ref->getImported();
-                            return $refResult;
-                        }
-                        $data = self::unboolSchemaData($ref->getData());
-                        if ($result instanceof ObjectItemContract) {
-                            $result->setFromRef($refString);
-                        }
-                        $ref->setImported($result);
-                        $refResult = $this->process($data, $options, $path . '->ref:' . $refString, $result);
-                        $ref->setImported($refResult);
-                        return $refResult;
-                    }
-                } catch (InvalidValue $exception) {
-                    $this->fail($exception, $path);
-                }
-            }
-
-            /** @var Schema[] $properties */
-            $properties = null;
-
-            $nestedProperties = null;
-            if ($this->properties !== null) {
-                $properties = &$this->properties->toArray(); // TODO check performance of pointer
-                if ($this->properties instanceof Properties) {
-                    $nestedProperties = $this->properties->getNestedProperties();
-                } else {
-                    $nestedProperties = array();
-                }
-            }
-
-            $array = array();
-            if (!empty($this->__dataToProperty[$options->mapping])) {
-                foreach ((array)$data as $key => $value) {
-                    if ($import) {
-                        if (isset($this->__dataToProperty[$options->mapping][$key])) {
-                            $key = $this->__dataToProperty[$options->mapping][$key];
-                        }
-                    } else {
-                        if (isset($this->__propertyToData[$options->mapping][$key])) {
-                            $key = $this->__propertyToData[$options->mapping][$key];
-                        }
-                    }
-                    $array[$key] = $value;
-                }
-            } else {
-                $array = (array)$data;
-            }
-
-            if (!$options->skipValidation) {
-                if ($this->minProperties !== null && count($array) < $this->minProperties) {
-                    $this->fail(new ObjectException("Not enough properties", ObjectException::TOO_FEW), $path);
-                }
-                if ($this->maxProperties !== null && count($array) > $this->maxProperties) {
-                    $this->fail(new ObjectException("Too many properties", ObjectException::TOO_MANY), $path);
-                }
-                if ($this->propertyNames !== null) {
-                    $propertyNames = self::unboolSchema($this->propertyNames);
-                    foreach ($array as $key => $tmp) {
-                        $propertyNames->process($key, $options, $path . '->propertyNames:' . $key);
-                    }
-                }
-            }
-
-            foreach ($array as $key => $value) {
-                if ($key === '' && PHP_VERSION_ID < 71000) {
-                    $this->fail(new InvalidValue('Empty property name'), $path);
-                }
-
-                $found = false;
-
-                if (!$options->skipValidation && !empty($this->dependencies)) {
-                    $deps = $this->dependencies;
-                    if (isset($deps->$key)) {
-                        $dependencies = $deps->$key;
-                        $dependencies = self::unboolSchema($dependencies);
-                        if ($dependencies instanceof Schema) {
-                            $dependencies->process($data, $options, $path . '->dependencies:' . $key);
-                        } else {
-                            foreach ($dependencies as $item) {
-                                if (!property_exists($data, $item)) {
-                                    $this->fail(new ObjectException('Dependency property missing: ' . $item,
-                                        ObjectException::DEPENDENCY_MISSING), $path);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                $propertyFound = false;
-                if (isset($properties[$key])) {
-                    /** @var Schema[] $properties */
-                    $prop = self::unboolSchema($properties[$key]);
-                    $propertyFound = true;
-                    $found = true;
-                    if ($prop instanceof Schema) {
-                        $value = $prop->process($value, $options, $path . '->properties:' . $key);
-                    }
-                    // @todo process $prop === false
-                }
-
-                /** @var Egg[] $nestedEggs */
-                $nestedEggs = null;
-                if (isset($nestedProperties[$key])) {
-                    $found = true;
-                    $nestedEggs = $nestedProperties[$key];
-                    // todo iterate all nested props?
-                    $value = self::unboolSchema($nestedEggs[0]->propertySchema)->process($value, $options, $path . '->nestedProperties:' . $key);
-                }
-
-                if ($this->patternProperties !== null) {
-                    foreach ($this->patternProperties as $pattern => $propertySchema) {
-                        if (preg_match(Helper::toPregPattern($pattern), $key)) {
-                            $found = true;
-                            $value = self::unboolSchema($propertySchema)->process($value, $options,
-                                $path . '->patternProperties[' . $pattern . ']:' . $key);
-                            if ($import) {
-                                $result->addPatternPropertyName($pattern, $key);
-                            }
-                            //break; // todo manage multiple import data properly (pattern accessor)
-                        }
-                    }
-                }
-                if (!$found && $this->additionalProperties !== null) {
-                    if (!$options->skipValidation && $this->additionalProperties === false) {
-                        $this->fail(new ObjectException('Additional properties not allowed'), $path . ':' . $key);
-                    }
-
-                    if ($this->additionalProperties instanceof Schema) {
-                        $value = $this->additionalProperties->process($value, $options, $path . '->additionalProperties:' . $key);
-                    }
-
-                    if ($import && !$this->useObjectAsArray) {
-                        $result->addAdditionalPropertyName($key);
-                    }
-                }
-
-                if ($nestedEggs && $import) {
-                    foreach ($nestedEggs as $nestedEgg) {
-                        $result->setNestedProperty($key, $value, $nestedEgg);
-                    }
-                    if ($propertyFound) {
-                        $result->$key = $value;
-                    }
-                } else {
-                    if ($this->useObjectAsArray && $import) {
-                        $result[$key] = $value;
-                    } else {
-                        if ($found || !$import) {
-                            $result->$key = $value;
-                        } elseif (!isset($result->$key)) {
-                            $result->$key = $value;
-                        }
-                    }
-                }
-            }
-
+            $result = $this->processObject($data, $options, $path, $result);
         }
 
         if (is_array($data)) {
-            $count = count($data);
-            if (!$options->skipValidation) {
-                if ($this->minItems !== null && $count < $this->minItems) {
-                    $this->fail(new ArrayException("Not enough items in array"), $path);
-                }
-
-                if ($this->maxItems !== null && $count > $this->maxItems) {
-                    $this->fail(new ArrayException("Too many items in array"), $path);
-                }
-            }
-
-            $pathItems = 'items';
-            $this->items = self::unboolSchema($this->items);
-            if ($this->items instanceof Schema) {
-                $items = array();
-                $additionalItems = $this->items;
-            } elseif ($this->items === null) { // items defaults to empty schema so everything is valid
-                $items = array();
-                $additionalItems = true;
-            } else { // listed items
-                $items = $this->items;
-                $additionalItems = $this->additionalItems;
-                $pathItems = 'additionalItems';
-            }
-
-            /**
-             * @var Schema|Schema[] $items
-             * @var null|bool|Schema $additionalItems
-             */
-            $itemsLen = is_array($items) ? count($items) : 0;
-            $index = 0;
-            foreach ($result as $key => $value) {
-                if ($index < $itemsLen) {
-                    $itemSchema = self::unboolSchema($items[$index]);
-                    $result[$key] = $itemSchema->process($value, $options, $path . '->items:' . $index);
-                } else {
-                    if ($additionalItems instanceof Schema) {
-                        $result[$key] = $additionalItems->process($value, $options, $path . '->' . $pathItems
-                            . '[' . $index . ']');
-                    } elseif (!$options->skipValidation && $additionalItems === false) {
-                        $this->fail(new ArrayException('Unexpected array item'), $path);
-                    }
-                }
-                ++$index;
-            }
-
-            if (!$options->skipValidation && $this->uniqueItems) {
-                if (!UniqueItems::isValid($data)) {
-                    $this->fail(new ArrayException('Array is not unique'), $path);
-                }
-            }
-
-            if (!$options->skipValidation && $this->contains !== null) {
-                /** @var Schema|bool $contains */
-                $contains = $this->contains;
-                if ($contains === false) {
-                    $this->fail(new ArrayException('Contains is false'), $path);
-                }
-                if ($count === 0) {
-                    $this->fail(new ArrayException('Empty array fails contains constraint'), $path);
-                }
-                if ($contains === true) {
-                    $contains = self::unboolSchema($contains);
-                }
-                $containsOk = false;
-                foreach ($data as $key => $item) {
-                    try {
-                        $contains->process($item, $options, $path . '->' . $key);
-                        $containsOk = true;
-                        break;
-                    } catch (InvalidValue $exception) {
-                    }
-                }
-                if (!$containsOk) {
-                    $this->fail(new ArrayException('Array fails contains constraint'), $path);
-                }
-            }
+            $result = $this->processArray($data, $options, $path, $result);
         }
 
         if ($this->contentEncoding !== null || $this->contentMediaType !== null) {
-            try {
-                if ($options->unpackContentMediaType) {
-                    $result = Content::process($options, $this->contentEncoding, $this->contentMediaType, $data, $import);
-                } else {
-                    Content::process($options, $this->contentEncoding, $this->contentMediaType, $data, true);
-                }
-            } catch (InvalidValue $exception) {
-                $this->fail($exception, $path);
-            }
+            $result = $this->processContent($data, $options, $path);
         }
 
         return $result;
@@ -796,13 +1063,17 @@ class Schema extends JsonSchema implements MetaHolder
      * @param boolean $useObjectAsArray
      * @return Schema
      */
-    public
-    function setUseObjectAsArray($useObjectAsArray)
+    public function setUseObjectAsArray($useObjectAsArray)
     {
         $this->useObjectAsArray = $useObjectAsArray;
         return $this;
     }
 
+    /**
+     * @param InvalidValue $exception
+     * @param string $path
+     * @throws InvalidValue
+     */
     private function fail(InvalidValue $exception, $path)
     {
         if ($path !== '#') {
@@ -932,8 +1203,10 @@ class Schema extends JsonSchema implements MetaHolder
 
         if (null === $trueSchema) {
             $trueSchema = new Schema();
+            $trueSchema->__booleanSchema = true;
             $falseSchema = new Schema();
             $falseSchema->not = $trueSchema;
+            $falseSchema->__booleanSchema = false;
         }
 
         if ($schema === true) {

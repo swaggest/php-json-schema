@@ -15,6 +15,12 @@ class Context extends MagicMap
     /** @var RemoteRefProvider|null */
     public $remoteRefProvider;
 
+    /** @var bool Skip result mapping, only validate data */
+    public $validateOnly = false;
+
+    /** @var bool Apply default values */
+    public $applyDefaults = true;
+
     /** @var string */
     public $propagateObjectItemClass;
 
@@ -35,6 +41,9 @@ class Context extends MagicMap
 
     /** @var bool pack/unpack application/json in string content */
     public $unpackContentMediaType = true;
+
+    /** @var \SplObjectStorage optional schemas cache */
+    public $schemasCache;
 
     /** @var string property mapping set name */
     public $mapping = Schema::DEFAULT_MAPPING;
@@ -95,6 +104,26 @@ class Context extends MagicMap
     {
         $this->remoteRefProvider = $remoteRefProvider;
         return $this;
+    }
+
+    /** @var self */
+    private $withSkipValidation;
+
+    /**
+     * @return Context
+     */
+    public function withSkipValidation()
+    {
+        if (null === $this->withSkipValidation) {
+            if ($this->skipValidation) {
+                $this->withSkipValidation = $this;
+            } else {
+                $this->withSkipValidation = clone $this;
+                $this->withSkipValidation->skipValidation = true;
+            }
+        }
+
+        return $this->withSkipValidation;
     }
 
 

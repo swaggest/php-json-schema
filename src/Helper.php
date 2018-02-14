@@ -5,6 +5,11 @@ namespace Swaggest\JsonSchema;
 
 class Helper
 {
+    /**
+     * @param string $jsonPattern
+     * @return bool|string
+     * @throws InvalidValue
+     */
     public static function toPregPattern($jsonPattern)
     {
         static $delimiters = array('/', '#', '+', '~', '%');
@@ -19,10 +24,6 @@ class Helper
 
         if (false === $pattern) {
             throw new InvalidValue('Failed to prepare preg pattern');
-        }
-
-        if (@preg_match($pattern, '') === false) {
-            throw new InvalidValue('Regex pattern is invalid: ' . $jsonPattern);
         }
 
         return $pattern;

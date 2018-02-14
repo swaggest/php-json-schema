@@ -2,6 +2,7 @@
 
 namespace Swaggest\JsonSchema\Tests\Helper;
 
+use Swaggest\JsonSchema\Constraint\Format;
 use Swaggest\JsonSchema\Constraint\Properties;
 use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\Structure\ClassStructureContract;
@@ -33,7 +34,7 @@ class Order implements ClassStructureContract
         $properties->id = Schema::integer();
         $properties->userId = User::properties()->id; // referencing property of another schema keeps meta
         $properties->dateTime = Schema::string();
-        $properties->dateTime->format = Schema::FORMAT_DATE_TIME;
+        $properties->dateTime->format = Format::DATE_TIME;
         $properties->price = Schema::number();
 
         $ownerSchema->required[] = self::names()->id;

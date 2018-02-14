@@ -4,3 +4,5 @@ composer.lock
 composer.phar
 clover.xml
 build
+/xhprof_report.*
+benchmark-result.json

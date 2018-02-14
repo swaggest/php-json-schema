@@ -8,59 +8,66 @@ use Swaggest\JsonSchema\Constraint\Format\Uri;
 
 class Format
 {
-    const DATE_REGEX_PART = '(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])';
-    const TIME_REGEX_PART = '([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)([01][0-9]|2[0-3]):([0-5][0-9]))?';
-    /**
-     * @see http://stackoverflow.com/a/1420225
-     */
-    const HOSTNAME_REGEX = '/^
-      (?=.{1,255}$)
-      [0-9a-z]
-      (([0-9a-z]|-){0,61}[0-9a-z])?
-      (\.[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?)*
-      \.?
-    $/ix';
+    const DATE_TIME = 'date-time';
+    const DATE = 'date';
+    const TIME = 'time';
+    const URI = 'uri';
+    const IRI = 'iri';
+    const EMAIL = 'email';
+    const IDN_EMAIL = 'idn-email';
+    const IPV4 = 'ipv4';
+    const IPV6 = 'ipv6';
+    const HOSTNAME = 'hostname';
+    const IDN_HOSTNAME = 'idn-hostname';
+    const REGEX = 'regex';
+    const JSON_POINTER = 'json-pointer';
+    const RELATIVE_JSON_POINTER = 'relative-json-pointer';
+    const URI_REFERENCE = 'uri-reference';
+    const IRI_REFERENCE = 'iri-reference';
+    const URI_TEMPLATE = 'uri-template';
 
-    const JSON_POINTER_REGEX = '_^(?:/|(?:/[^/#]*)*)$_';
-    const JSON_POINTER_RELATIVE_REGEX = '~^(0|[1-9][0-9]*)((?:/[^/#]*)*)(#?)$~';
-    const JSON_POINTER_UNESCAPED_TILDE = '/~([^01]|$)/';
+    private static $dateRegexPart = '(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])';
+    private static $timeRegexPart = '([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)([01][0-9]|2[0-3]):([0-5][0-9]))?';
+    private static $jsonPointerRegex = '_^(?:/|(?:/[^/#]*)*)$_';
+    private static $jsonPointerRelativeRegex = '~^(0|[1-9][0-9]*)((?:/[^/#]*)*)(#?)$~';
+    private static $jsonPointerUnescapedTilde = '/~([^01]|$)/';
 
     public static function validationError($format, $data)
     {
         switch ($format) {
-            case 'date-time':
+            case self::DATE_TIME:
                 return self::dateTimeError($data);
-            case 'date':
-                return preg_match('/^' . self::DATE_REGEX_PART . '$/i', $data) ? null : 'Invalid date';
-            case 'time':
-                return preg_match('/^' . self::TIME_REGEX_PART . '$/i', $data) ? null : 'Invalid time';
-            case 'uri':
+            case self::DATE:
+                return preg_match('/^' . self::$dateRegexPart . '$/i', $data) ? null : 'Invalid date';
+            case self::TIME:
+                return preg_match('/^' . self::$timeRegexPart . '$/i', $data) ? null : 'Invalid time';
+            case self::URI:
                 return Uri::validationError($data, Uri::IS_SCHEME_REQUIRED);
-            case 'iri':
+            case self::IRI:
                 return Iri::validationError($data);
-            case 'email':
+            case self::EMAIL:
                 return filter_var($data, FILTER_VALIDATE_EMAIL) ? null : 'Invalid email';
-            case 'idn-email':
+            case self::IDN_EMAIL:
                 return count(explode('@', $data, 3)) === 2 ? null : 'Invalid email';
-            case 'ipv4':
+            case self::IPV4:
                 return filter_var($data, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) ? null : 'Invalid ipv4';
-            case 'ipv6':
+            case self::IPV6:
                 return filter_var($data, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) ? null : 'Invalid ipv6';
-            case 'hostname':
-                return preg_match(self::HOSTNAME_REGEX, $data) ? null : 'Invalid hostname';
-            case 'idn-hostname':
+            case self::HOSTNAME:
+                return preg_match(Uri::HOSTNAME_REGEX, $data) ? null : 'Invalid hostname';
+            case self::IDN_HOSTNAME:
                 return IdnHostname::validationError($data);
-            case 'regex':
+            case self::REGEX:
                 return self::regexError($data);
-            case 'json-pointer':
+            case self::JSON_POINTER:
                 return self::jsonPointerError($data);
-            case 'relative-json-pointer':
+            case self::RELATIVE_JSON_POINTER:
                 return self::jsonPointerError($data, true);
-            case 'uri-reference':
+            case self::URI_REFERENCE:
                 return Uri::validationError($data, Uri::IS_URI_REFERENCE);
-            case 'iri-reference':
+            case self::IRI_REFERENCE:
                 return Iri::validationError($data, Uri::IS_URI_REFERENCE);
-            case 'uri-template':
+            case self::URI_TEMPLATE:
                 return Uri::validationError($data, Uri::IS_URI_TEMPLATE);
         }
         return null;
@@ -68,7 +75,7 @@ class Format
 
     public static function dateTimeError($data)
     {
-        return preg_match('/^' . self::DATE_REGEX_PART . 'T' . self::TIME_REGEX_PART . '$/i', $data)
+        return preg_match('/^' . self::$dateRegexPart . 'T' . self::$timeRegexPart . '$/i', $data)
             ? null
             : 'Invalid date-time: ' . $data;
     }
@@ -95,13 +102,13 @@ class Format
 
     public static function jsonPointerError($data, $isRelative = false)
     {
-        if (preg_match(self::JSON_POINTER_UNESCAPED_TILDE, $data)) {
+        if (preg_match(self::$jsonPointerUnescapedTilde, $data)) {
             return 'Invalid json-pointer: unescaped ~';
         }
         if ($isRelative) {
-            return preg_match(self::JSON_POINTER_RELATIVE_REGEX, $data) ? null : 'Invalid relative json-pointer';
+            return preg_match(self::$jsonPointerRelativeRegex, $data) ? null : 'Invalid relative json-pointer';
         } else {
-            return preg_match(self::JSON_POINTER_REGEX, $data) ? null : 'Invalid json-pointer';
+            return preg_match(self::$jsonPointerRegex, $data) ? null : 'Invalid json-pointer';
         }
     }
 }

@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vpoturaev
- * Date: 1/19/18
- * Time: 15:39
- */
 
 namespace Swaggest\JsonSchema\Tests\PHPUnit\Spec;
-
 
 use Swaggest\JsonSchema\Context;
 use Swaggest\JsonSchema\InvalidValue;
@@ -115,7 +108,6 @@ abstract class SchemaTestSuite extends \PHPUnit_Framework_TestCase
         return $testCases;
     }
 
-
     /**
      * @dataProvider specProvider
      * @param $schemaData
@@ -179,6 +171,12 @@ abstract class SchemaTestSuite extends \PHPUnit_Framework_TestCase
             $options = $this->makeOptions($version);
             $schema = Schema::import($schemaData, $options);
 
+            // import with defaults applied
+            $schema->in($data, $options);
+
+            // default is not required to pass validation, so result might be invalid
+            // for back-exporting defaults have to be disabled
+            $options->applyDefaults = false;
             $res = $schema->in($data, $options);
 
             $exported = $schema->out($res);
@@ -199,53 +197,6 @@ abstract class SchemaTestSuite extends \PHPUnit_Framework_TestCase
             . "\nError: " . $error . "\n");
 
     }
-
-
-    /**
-     * @dataProvider specProvider
-     * @param $schemaData
-     * @param $data
-     * @param $isValid
-     * @param $name
-     */
-    public function testSpecSkipValidation($schemaData, $data, $isValid, $name)
-    {
-        if ($this->skipTest($name)) {
-            $this->markTestSkipped();
-            return;
-        }
-        $this->runSpecTestSkipValidation($schemaData, $data, $isValid, $name);
-    }
-
-    private function runSpecTestSkipValidation($schemaData, $data, $isValid, $name)
-    {
-        $refProvider = static::getProvider();
-
-        $actualValid = true;
-        $error = '';
-        try {
-            $options = new Context();
-            $options->setRemoteRefProvider($refProvider);
-            $schema = Schema::import($schemaData, $options);
-            $context = new Context();
-            $context->skipValidation = true;
-            $res = $schema->in($data, $context);
-
-            $context = new Context();
-            $context->skipValidation = true;
-            $exported = $schema->out($res, $context);
-            $this->assertEquals($data, $exported);
-        } catch (InvalidValue $exception) {
-            $actualValid = false;
-            $error = $exception->getMessage();
-        }
-
-
-        $this->assertTrue($actualValid, "Schema:\n" . json_encode($schemaData, JSON_PRETTY_PRINT)
-            . "\nData:\n" . json_encode($data, JSON_PRETTY_PRINT)
-            . "\nError: " . $error . "\n");
-    }
-
 }
 
 /**

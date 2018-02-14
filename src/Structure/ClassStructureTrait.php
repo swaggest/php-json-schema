@@ -42,6 +42,9 @@ trait ClassStructureTrait
      * @param mixed $data
      * @param Context $options
      * @return static
+     * @throws \Exception
+     * @throws \Swaggest\JsonSchema\Exception
+     * @throws \Swaggest\JsonSchema\InvalidValue
      */
     public static function import($data, Context $options = null)
     {
@@ -53,6 +56,7 @@ trait ClassStructureTrait
      * @param Context $options
      * @return mixed
      * @throws \Swaggest\JsonSchema\InvalidValue
+     * @throws \Exception
      */
     public static function export($data, Context $options = null)
     {
@@ -103,7 +107,7 @@ trait ClassStructureTrait
     }
 
     /**
-     * @return static
+     * @return static|NameMirror
      */
     public static function names()
     {
@@ -130,6 +134,10 @@ trait ClassStructureTrait
         return get_called_class();
     }
 
+    /**
+     * @throws \Exception
+     * @throws \Swaggest\JsonSchema\InvalidValue
+     */
     public function validate()
     {
         static::schema()->out($this);

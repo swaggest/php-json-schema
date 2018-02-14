@@ -3,12 +3,13 @@
 namespace Swaggest\JsonSchema\Tests\PHPUnit\Spec;
 
 
-class Draft4Test extends SchemaTestSuite
+class Draft4SkipValidationTest extends SchemaSkipValidation
 {
     protected function skipTest($name)
     {
         return false;
     }
+
 
     public function specOptionalProvider()
     {

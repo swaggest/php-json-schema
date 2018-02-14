@@ -67,7 +67,7 @@ class Properties extends ObjectItem implements Constraint
 
 
     /** @var Egg[][] */
-    private $nestedProperties = array();
+    public $nestedProperties = array();
 
     /** @var Schema[] */
     public $nestedPropertyNames = array();

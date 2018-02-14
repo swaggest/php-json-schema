@@ -1,18 +1,20 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vpoturaev
- * Date: 1/19/18
- * Time: 15:05
- */
 
 namespace Swaggest\JsonSchema\Constraint\Format;
 
-
-use Swaggest\JsonSchema\Constraint\Format;
-
 class Uri
 {
+    /**
+     * @see http://stackoverflow.com/a/1420225
+     */
+    const HOSTNAME_REGEX = '/^
+      (?=.{1,255}$)
+      [0-9a-z]
+      (([0-9a-z]|-){0,61}[0-9a-z])?
+      (\.[0-9a-z](?:(?:[0-9a-z]|-){0,61}[0-9a-z])?)*
+      \.?
+    $/ix';
+
     const IS_URI_REFERENCE = 1;
     const IS_URI_TEMPLATE = 2;
     const IS_SCHEME_REQUIRED = 8;
@@ -50,7 +52,7 @@ class Uri
         }
         if (isset($uri['host'])) {
             $host = $uri['host'];
-            if (!preg_match(Format::HOSTNAME_REGEX, $host)) {
+            if (!preg_match(self::HOSTNAME_REGEX, $host)) {
                 // stripping [ ]
                 if ($host[0] === '[' && $host[strlen($host) - 1] === ']') {
                     $host = substr($host, 1, -1);

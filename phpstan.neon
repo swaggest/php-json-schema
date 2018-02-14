@@ -2,3 +2,4 @@ parameters:
 	ignoreErrors:
 		- '#PHPDoc tag @param references unknown parameter \$schema#'
 		- '#Access to an undefined property static\(Swaggest\\JsonSchema\\JsonSchema\)\|Swaggest\\JsonSchema\\Constraint\\Properties::#'
+		- '#Accessing property \$skipValidation on possibly null value of type Swaggest\\JsonSchema\\Context\|null#'
