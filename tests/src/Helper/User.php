@@ -50,7 +50,8 @@ class User extends ClassStructure
         $defaultOptions = new UserOptions();
         $defaultOptions->autoLogin = true;
         $defaultOptions->groupName = 'guest';
-        $properties->options = (clone UserOptions::schema())->setDefault(UserOptions::export($defaultOptions));
+        $properties->options = clone UserOptions::schema();
+        $properties->options->setDefault(UserOptions::export($defaultOptions));
 
         // Dynamic (phpdoc-defined) properties can be used as well
         $properties->quantity = Schema::integer();
