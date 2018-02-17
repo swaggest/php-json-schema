@@ -40,12 +40,12 @@ class Schema extends JsonSchema implements MetaHolder
     const VERSION_DRAFT_06 = 6;
     const VERSION_DRAFT_07 = 7;
 
-    const REF = '$ref';
-    const ID = '$id';
-    const ID_D4 = 'id';
+    const PROP_REF = '$ref';
+    const PROP_ID = '$id';
+    const PROP_ID_D4 = 'id';
 
     // Object
-    /** @var Properties|Schema[]|Schema */
+    /** @var null|Properties|Schema[]|Schema */
     public $properties;
     /** @var Schema|bool */
     public $additionalProperties;
@@ -106,7 +106,7 @@ class Schema extends JsonSchema implements MetaHolder
             $options = new Context();
         }
 
-        //$options->applyDefaults = false; // todo check infinite recursion on items, additionalProperties, etc...
+        $options->applyDefaults = false;
 
         if (isset($options->schemasCache) && is_object($data)) {
             if ($options->schemasCache->contains($data)) {
@@ -120,7 +120,7 @@ class Schema extends JsonSchema implements MetaHolder
 
         // string $data is expected to be $ref uri
         if (is_string($data)) {
-            $data = (object)array(self::REF => $data);
+            $data = (object)array(self::PROP_REF => $data);
         }
 
         $data = self::unboolSchema($data);
@@ -302,8 +302,7 @@ class Schema extends JsonSchema implements MetaHolder
         if ($this->format !== null) {
             $validationError = Format::validationError($this->format, $data);
             if ($validationError !== null) {
-                if ($this->format === "uri" && substr($path, -3) === ':id') {
-                } else {
+                if (!($this->format === "uri" && substr($path, -3) === ':id')) {
                     $this->fail(new StringException($validationError), $path);
                 }
             }
@@ -564,7 +563,6 @@ class Schema extends JsonSchema implements MetaHolder
                 if ($this->useObjectAsArray) {
                     $result = array();
                 } elseif (!$result instanceof ObjectItemContract) {
-                    //$result = $this->makeObjectItem($options);
                     //* todo check performance impact
                     if (null === $this->objectItemClass) {
                         $result = new ObjectItem();
@@ -604,10 +602,10 @@ class Schema extends JsonSchema implements MetaHolder
         // @todo better check for schema id
 
         if ($import
-            && isset($data->{Schema::ID_D4})
+            && isset($data->{Schema::PROP_ID_D4})
             && ($options->version === Schema::VERSION_DRAFT_04 || $options->version === Schema::VERSION_AUTO)
-            && is_string($data->{Schema::ID_D4}) /*&& (!isset($this->properties['id']))/* && $this->isMetaSchema($data)*/) {
-            $id = $data->{Schema::ID_D4};
+            && is_string($data->{Schema::PROP_ID_D4})) {
+            $id = $data->{Schema::PROP_ID_D4};
             $refResolver = $options->refResolver;
             $parentScope = $refResolver->updateResolutionScope($id);
             /** @noinspection PhpUnusedLocalVariableInspection */
@@ -617,10 +615,10 @@ class Schema extends JsonSchema implements MetaHolder
         }
 
         if ($import
-            && isset($data->{self::ID})
+            && isset($data->{self::PROP_ID})
             && ($options->version >= Schema::VERSION_DRAFT_06 || $options->version === Schema::VERSION_AUTO)
-            && is_string($data->{self::ID}) /*&& (!isset($this->properties['id']))/* && $this->isMetaSchema($data)*/) {
-            $id = $data->{self::ID};
+            && is_string($data->{self::PROP_ID})) {
+            $id = $data->{self::PROP_ID};
             $refResolver = $options->refResolver;
             $parentScope = $refResolver->updateResolutionScope($id);
             /** @noinspection PhpUnusedLocalVariableInspection */
@@ -632,11 +630,11 @@ class Schema extends JsonSchema implements MetaHolder
         if ($import) {
             try {
                 while (
-                    isset($data->{self::REF})
-                    && is_string($data->{self::REF})
-                    && !isset($this->properties[self::REF])
+                    isset($data->{self::PROP_REF})
+                    && is_string($data->{self::PROP_REF})
+                    && !isset($this->properties[self::PROP_REF])
                 ) {
-                    $refString = $data->{self::REF};
+                    $refString = $data->{self::PROP_REF};
 
                     // todo check performance impact
                     if ($refString === 'http://json-schema.org/draft-04/schema#'
@@ -655,7 +653,6 @@ class Schema extends JsonSchema implements MetaHolder
 
                     $ref = $refResolver->resolveReference($refString);
                     $data = self::unboolSchemaData($ref->getData());
-                    //$data = $ref->getData();
                     if (!$options->validateOnly) {
                         if ($ref->isImported()) {
                             $refResult = $ref->getImported();
@@ -728,7 +725,6 @@ class Schema extends JsonSchema implements MetaHolder
             && !$options->validateOnly
             && $options->applyDefaults
             && $properties !== null
-            && $this->objectItemClass !== 'Swaggest\JsonSchema\Schema' // todo replace literal
         ) {
             foreach ($properties as $key => $property) {
                 if (isset($property->default)) {
@@ -777,7 +773,7 @@ class Schema extends JsonSchema implements MetaHolder
                 if ($prop instanceof Schema) {
                     $value = $prop->process(
                         $value,
-                        isset($defaultApplied[$key]) ? $options->withSkipValidation() : $options,
+                        isset($defaultApplied[$key]) ? $options->withDefault() : $options,
                         $path . '->properties:' . $key
                     );
                 }
@@ -959,7 +955,7 @@ class Schema extends JsonSchema implements MetaHolder
      * @param mixed $data
      * @param Context $options
      * @param string $path
-     * @param null $result
+     * @param mixed|null $result
      * @return array|mixed|null|object|\stdClass
      * @throws InvalidValue
      * @throws \Exception
@@ -969,7 +965,6 @@ class Schema extends JsonSchema implements MetaHolder
     {
 
         $import = $options->import;
-        //$pathTrace = explode('->', $path);
 
         if (!$import && $data instanceof ObjectItemContract) {
             $result = new \stdClass();
@@ -977,12 +972,10 @@ class Schema extends JsonSchema implements MetaHolder
                 /** @noinspection PhpIllegalArrayKeyTypeInspection */
                 $path = $options->circularReferences[$data];
                 // @todo $path is not a valid json pointer $ref
-                $result->{self::REF} = $path;
+                $result->{self::PROP_REF} = $path;
                 return $result;
-//                return $options->circularReferences[$data];
             }
             $options->circularReferences->attach($data, $path);
-            //$options->circularReferences->attach($data, $result);
 
             $data = $data->jsonSerialize();
         }

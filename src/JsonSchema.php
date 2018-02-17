@@ -47,28 +47,28 @@ class JsonSchema extends ClassStructure {
 
 	public $default;
 
-	/** @var float */
+	/** @var float|null */
 	public $multipleOf;
 
-	/** @var float */
+	/** @var float|null */
 	public $maximum;
 
-	/** @var bool|float */
+	/** @var bool|float|null */
 	public $exclusiveMaximum;
 
-	/** @var float */
+	/** @var float|null */
 	public $minimum;
 
 	/** @var bool|float */
 	public $exclusiveMinimum;
 
-	/** @var int */
+	/** @var int|null */
 	public $maxLength;
 
-	/** @var int */
+	/** @var int|null */
 	public $minLength;
 
-	/** @var string */
+	/** @var string|null */
 	public $pattern;
 
 	/** @var bool|JsonSchema */
@@ -77,13 +77,13 @@ class JsonSchema extends ClassStructure {
 	/** @var JsonSchema|JsonSchema[]|array */
 	public $items;
 
-	/** @var int */
+	/** @var int|null */
 	public $maxItems;
 
-	/** @var int */
+	/** @var int|null */
 	public $minItems;
 
-	/** @var bool */
+	/** @var bool|null */
 	public $uniqueItems;
 
 	/** @var int */
@@ -116,7 +116,7 @@ class JsonSchema extends ClassStructure {
 	/** @var array|string */
 	public $type;
 
-	/** @var string */
+	/** @var string|null */
 	public $format;
 
 	/** @var string */

@@ -41,7 +41,7 @@ trait ClassStructureTrait
     /**
      * @param mixed $data
      * @param Context $options
-     * @return static
+     * @return static|mixed
      * @throws \Exception
      * @throws \Swaggest\JsonSchema\Exception
      * @throws \Swaggest\JsonSchema\InvalidValue

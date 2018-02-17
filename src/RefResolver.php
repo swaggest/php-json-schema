@@ -157,11 +157,11 @@ class RefResolver
                     /** @var JsonSchema $branch */
                     $branch = &$refResolver->rootData;
                     while (!empty($path)) {
-                        if (isset($branch->{Schema::ID_D4}) && is_string($branch->{Schema::ID_D4})) {
-                            $refResolver->updateResolutionScope($branch->{Schema::ID_D4});
+                        if (isset($branch->{Schema::PROP_ID_D4}) && is_string($branch->{Schema::PROP_ID_D4})) {
+                            $refResolver->updateResolutionScope($branch->{Schema::PROP_ID_D4});
                         }
-                        if (isset($branch->{Schema::ID}) && is_string($branch->{Schema::ID})) {
-                            $refResolver->updateResolutionScope($branch->{Schema::ID});
+                        if (isset($branch->{Schema::PROP_ID}) && is_string($branch->{Schema::PROP_ID})) {
+                            $refResolver->updateResolutionScope($branch->{Schema::PROP_ID});
                         }
 
                         $folder = array_shift($path);
@@ -223,22 +223,22 @@ class RefResolver
         } elseif ($data instanceof \stdClass) {
             /** @var JsonSchema $data */
             if (
-                isset($data->{Schema::ID_D4})
-                && is_string($data->{Schema::ID_D4})
+                isset($data->{Schema::PROP_ID_D4})
+                && is_string($data->{Schema::PROP_ID_D4})
                 && (($options->version === Schema::VERSION_AUTO) || $options->version === Schema::VERSION_DRAFT_04)
             ) {
-                $prev = $this->setupResolutionScope($data->{Schema::ID_D4}, $data);
+                $prev = $this->setupResolutionScope($data->{Schema::PROP_ID_D4}, $data);
                 /** @noinspection PhpUnusedLocalVariableInspection */
                 $_ = new ScopeExit(function () use ($prev) {
                     $this->setResolutionScope($prev);
                 });
             }
 
-            if (isset($data->{Schema::ID})
-                && is_string($data->{Schema::ID})
+            if (isset($data->{Schema::PROP_ID})
+                && is_string($data->{Schema::PROP_ID})
                 && (($options->version === Schema::VERSION_AUTO) || $options->version >= Schema::VERSION_DRAFT_06)
             ) {
-                $prev = $this->setupResolutionScope($data->{Schema::ID}, $data);
+                $prev = $this->setupResolutionScope($data->{Schema::PROP_ID}, $data);
                 /** @noinspection PhpUnusedLocalVariableInspection */
                 $_ = new ScopeExit(function () use ($prev) {
                     $this->setResolutionScope($prev);

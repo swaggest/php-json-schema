@@ -1,3 +1,7 @@
+checks:
+    php:
+        code_rating: true
+        duplication: true
 filter:
     paths: [src/*]
     excluded_paths: [vendor/*, tests/*]
@@ -16,3 +20,11 @@ tools:
     php_cpd:
         enabled: true
         excluded_dirs: [vendor, tests]
+
+
+build:
+    nodes:
+        analysis:
+            tests:
+                override:
+                    - php-scrutinizer-run
