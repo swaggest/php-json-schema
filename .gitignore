@@ -1,6 +1,5 @@
 vendor
 .idea
-composer.lock
 composer.phar
 clover.xml
 build
