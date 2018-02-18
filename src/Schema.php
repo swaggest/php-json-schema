@@ -29,7 +29,7 @@ use Swaggest\JsonSchema\Structure\ObjectItemContract;
  * Class Schema
  * @package Swaggest\JsonSchema
  */
-class Schema extends JsonSchema implements MetaHolder
+class Schema extends JsonSchema implements MetaHolder, SchemaContract
 {
     const CONST_PROPERTY = 'const';
 
@@ -95,7 +95,7 @@ class Schema extends JsonSchema implements MetaHolder
     /**
      * @param mixed $data
      * @param Context|null $options
-     * @return static|JsonSchema
+     * @return SchemaContract
      * @throws Exception
      * @throws InvalidValue
      * @throws \Exception
@@ -124,7 +124,7 @@ class Schema extends JsonSchema implements MetaHolder
         }
 
         $data = self::unboolSchema($data);
-        if ($data instanceof Schema) {
+        if ($data instanceof SchemaContract) {
             return $data;
         }
 
@@ -727,13 +727,14 @@ class Schema extends JsonSchema implements MetaHolder
             && $properties !== null
         ) {
             foreach ($properties as $key => $property) {
-                if (isset($property->default)) {
+                // todo check when property is \stdClass `{}` here (RefTest)
+                if ($property instanceof SchemaContract && null !== $default = $property->getDefault()) {
                     if (isset($this->__dataToProperty[$options->mapping][$key])) {
                         $key = $this->__dataToProperty[$options->mapping][$key];
                     }
                     if (!array_key_exists($key, $array)) {
                         $defaultApplied[$key] = true;
-                        $array[$key] = $property->default;
+                        $array[$key] = $default;
                     }
                 }
             }
@@ -751,7 +752,7 @@ class Schema extends JsonSchema implements MetaHolder
                 if (isset($deps->$key)) {
                     $dependencies = $deps->$key;
                     $dependencies = self::unboolSchema($dependencies);
-                    if ($dependencies instanceof Schema) {
+                    if ($dependencies instanceof SchemaContract) {
                         $dependencies->process($data, $options, $path . '->dependencies:' . $key);
                     } else {
                         foreach ($dependencies as $item) {
@@ -770,7 +771,7 @@ class Schema extends JsonSchema implements MetaHolder
                 $prop = self::unboolSchema($properties[$key]);
                 $propertyFound = true;
                 $found = true;
-                if ($prop instanceof Schema) {
+                if ($prop instanceof SchemaContract) {
                     $value = $prop->process(
                         $value,
                         isset($defaultApplied[$key]) ? $options->withDefault() : $options,
@@ -806,7 +807,7 @@ class Schema extends JsonSchema implements MetaHolder
                     $this->fail(new ObjectException('Additional properties not allowed'), $path . ':' . $key);
                 }
 
-                if ($this->additionalProperties instanceof Schema) {
+                if ($this->additionalProperties instanceof SchemaContract) {
                     $value = $this->additionalProperties->process($value, $options, $path . '->additionalProperties:' . $key);
                 }
 
@@ -863,7 +864,7 @@ class Schema extends JsonSchema implements MetaHolder
 
         $pathItems = 'items';
         $this->items = self::unboolSchema($this->items);
-        if ($this->items instanceof Schema) {
+        if ($this->items instanceof SchemaContract) {
             $items = array();
             $additionalItems = $this->items;
         } elseif ($this->items === null) { // items defaults to empty schema so everything is valid
@@ -886,7 +887,7 @@ class Schema extends JsonSchema implements MetaHolder
                 $itemSchema = self::unboolSchema($items[$index]);
                 $result[$key] = $itemSchema->process($value, $options, $path . '->items:' . $index);
             } else {
-                if ($additionalItems instanceof Schema) {
+                if ($additionalItems instanceof SchemaContract) {
                     $result[$key] = $additionalItems->process($value, $options, $path . '->' . $pathItems
                         . '[' . $index . ']');
                 } elseif (!$options->skipValidation && $additionalItems === false) {
@@ -1235,4 +1236,18 @@ class Schema extends JsonSchema implements MetaHolder
         }
     }
 
+    public function getDefault()
+    {
+        return $this->default;
+    }
+
+    public function getProperties()
+    {
+        return $this->properties;
+    }
+
+    public function getObjectItemClass()
+    {
+        return $this->objectItemClass;
+    }
 }

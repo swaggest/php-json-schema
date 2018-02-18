@@ -32,7 +32,7 @@ trait ObjectItemTrait
         if (null === $nested) {
             $nested = $nestedEgg->classSchema->makeObjectItem();
             $this->__nestedObjects[$nestedName] = $nested;
-            if ($nestedName !== $nestedEgg->classSchema->objectItemClass) {
+            if ($nestedName !== $nestedEgg->classSchema->getObjectItemClass()) {
                 $this->$nestedName = $nested;
             }
         }

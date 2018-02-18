@@ -4,31 +4,29 @@ namespace Swaggest\JsonSchema\Constraint;
 
 use Swaggest\JsonSchema\Exception;
 use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\SchemaContract;
 use Swaggest\JsonSchema\Structure\Egg;
 use Swaggest\JsonSchema\Structure\Nested;
 use Swaggest\JsonSchema\Structure\ObjectItem;
 
 /**
- * @method Schema __get($key)
+ * @method SchemaContract __get($key)
  * @method Schema[] toArray()
  */
 class Properties extends ObjectItem implements Constraint
 {
+    private $__isReadOnly = false;
+
     /** @var Schema[] */
     protected $__arrayOfData = array();
 
     /** @var Schema */
     protected $__schema;
 
-    public function setSchema(Schema $schema)
+    public function lock()
     {
-        $this->__schema = $schema;
+        $this->__isReadOnly = true;
         return $this;
-    }
-
-    public function getSchema()
-    {
-        return $this->__schema;
     }
 
     /**
@@ -39,6 +37,9 @@ class Properties extends ObjectItem implements Constraint
      */
     public function __set($name, $column)
     {
+        if ($this->__isReadOnly) {
+            throw new Exception('Trying to modify read-only Properties');
+        }
         if ($column instanceof Nested) {
             $this->addNested($column->schema, $name);
             return $this;
@@ -55,30 +56,28 @@ class Properties extends ObjectItem implements Constraint
     /** @var Schema|null */
     private $additionalProperties;
 
-    /**
-     * @param Schema $additionalProperties
-     * @return Properties
-     */
-    public function setAdditionalProperties(Schema $additionalProperties = null)
-    {
-        $this->additionalProperties = $additionalProperties;
-        return $this;
-    }
-
-
     /** @var Egg[][] */
     public $nestedProperties = array();
 
-    /** @var Schema[] */
+    /** @var string[] */
     public $nestedPropertyNames = array();
 
-    protected function addNested(Schema $nested, $name)
+    /**
+     * @param SchemaContract $nested
+     * @param string $name
+     * @return $this
+     * @throws Exception
+     */
+    protected function addNested(SchemaContract $nested, $name)
     {
-        if (null === $nested->properties) {
+        if ($this->__isReadOnly) {
+            throw new Exception('Trying to modify read-only Properties');
+        }
+        if (null === $nested->getProperties()) {
             throw new Exception('Schema with properties required', Exception::PROPERTIES_REQUIRED);
         }
         $this->nestedPropertyNames[$name] = $name;
-        foreach ($nested->properties->toArray() as $propertyName => $property) {
+        foreach ($nested->getProperties()->toArray() as $propertyName => $property) {
             $this->nestedProperties[$propertyName][] = new Egg($nested, $name, $property);
         }
         return $this;
