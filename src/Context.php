@@ -30,7 +30,7 @@ class Context extends MagicMap
     /** @var bool */
     public $skipValidation = false;
 
-    /** @var string[] map of from -> to class names */
+    /** @var string[]|null map of from -> to class names */
     public $objectItemClassMapping;
 
     /** @var bool allow soft cast from to/strings */
@@ -107,23 +107,20 @@ class Context extends MagicMap
     }
 
     /** @var self */
-    private $withSkipValidation;
+    private $withDefault;
 
     /**
      * @return Context
      */
-    public function withSkipValidation()
+    public function withDefault()
     {
-        if (null === $this->withSkipValidation) {
-            if ($this->skipValidation) {
-                $this->withSkipValidation = $this;
-            } else {
-                $this->withSkipValidation = clone $this;
-                $this->withSkipValidation->skipValidation = true;
-            }
+        if (null === $this->withDefault) {
+            $this->withDefault = clone $this;
+            $this->withDefault->skipValidation = true;
+            $this->withDefault->applyDefaults = false;
         }
 
-        return $this->withSkipValidation;
+        return $this->withDefault;
     }
 
 

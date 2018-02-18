@@ -4,6 +4,8 @@ namespace Swaggest\JsonSchema\Structure;
 
 use Swaggest\JsonSchema\Constraint\Properties;
 use Swaggest\JsonSchema\Context;
+use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\Wrapper;
 use Swaggest\JsonSchema\NameMirror;
 
 trait ClassStructureTrait
@@ -11,23 +13,25 @@ trait ClassStructureTrait
     use ObjectItemTrait;
 
     /**
-     * @return ClassSchema
+     * @return Wrapper
      */
     public static function schema()
     {
         static $schemas = array();
         $className = get_called_class();
-        $schema = &$schemas[$className];
+        $schemaWrapper = &$schemas[$className];
 
-        if (null === $schema) {
-            $schema = new ClassSchema();
+        if (null === $schemaWrapper) {
+            $schema = new Schema();
             $properties = new Properties();
             $schema->properties = $properties;
             $schema->objectItemClass = $className;
+            $schemaWrapper = new Wrapper($schema);
             static::setUpProperties($properties, $schema);
+            $properties->lock();
         }
 
-        return $schema;
+        return $schemaWrapper;
     }
 
     /**
@@ -35,13 +39,13 @@ trait ClassStructureTrait
      */
     public static function properties()
     {
-        return static::schema()->properties;
+        return static::schema()->getProperties();
     }
 
     /**
      * @param mixed $data
      * @param Context $options
-     * @return static
+     * @return static|mixed
      * @throws \Exception
      * @throws \Swaggest\JsonSchema\Exception
      * @throws \Swaggest\JsonSchema\InvalidValue
@@ -86,14 +90,14 @@ trait ClassStructureTrait
     public function jsonSerialize()
     {
         $result = new \stdClass();
-        $properties = static::schema()->properties;
-        foreach ($properties->toArray() as $name => $schema) {
+        $schema = static::schema();
+        foreach ($schema->getPropertyNames() as $name) {
             $value = $this->$name;
             if ((null !== $value) || array_key_exists($name, $this->__arrayOfData)) {
                 $result->$name = $value;
             }
         }
-        foreach ($properties->nestedPropertyNames as $name) {
+        foreach ($schema->getNestedPropertyNames() as $name) {
             /** @var ObjectItem $nested */
             $nested = $this->$name;
             if (null !== $nested) {
@@ -121,7 +125,7 @@ trait ClassStructureTrait
     public function __set($name, $column) // todo nested schemas
     {
         if ($this->__validateOnSet) {
-            if ($property = static::schema()->properties[$name]) {
+            if ($property = static::schema()->getProperty($name)) {
                 $property->out($column);
             }
         }

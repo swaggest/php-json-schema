@@ -24,10 +24,8 @@ class ReImportTest extends \PHPUnit_Framework_TestCase
     {
         $data = file_get_contents(__DIR__ . '/../../../spec/json-schema.json');
         $data = json_decode($data);
-        //print_r($data);
 
         $options = new Context();
-        $options->applyDefaults = false; // todo check why default values break test
 
         $schema = Schema::import($data, $options);
         //print_r(Properties::getFromSchema($schema)->enum);

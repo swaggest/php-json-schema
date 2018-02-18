@@ -6,6 +6,7 @@ namespace Swaggest\JsonSchema\Tests\PHPUnit\Schema;
 use Swaggest\JsonSchema\Exception\TypeException;
 use Swaggest\JsonSchema\InvalidValue;
 use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\SchemaContract;
 
 class ParentTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,11 +36,11 @@ class ParentTest extends \PHPUnit_Framework_TestCase
         return $schema;
     }
 
-    private function assertSchema(Schema $schema)
+    private function assertSchema(SchemaContract $schema)
     {
-        $level3Schema = $schema->properties->__get('level1')
-            ->properties->__get('level2')
-            ->properties->__get('level3');
+        $level3Schema = $schema->getProperties()->__get('level1')
+            ->getProperties()->__get('level2')
+            ->getProperties()->__get('level3');
 
         $this->assertSame($level3Schema->type, 'integer');
     }
@@ -74,7 +75,7 @@ class ParentTest extends \PHPUnit_Framework_TestCase
 
     public function testImport()
     {
-        $object = $this->deepSchema()->import((object)array(
+        $object = $this->deepSchema()->in((object)array(
             'level1'=> (object)array(
                 'level2' => (object)array(
                     'level3' => 123 // integer required

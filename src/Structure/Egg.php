@@ -2,26 +2,27 @@
 
 namespace Swaggest\JsonSchema\Structure;
 
-
 use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\SchemaContract;
+use Swaggest\JsonSchema\Wrapper;
 
 class Egg
 {
 
 
-    /** @var Schema */
+    /** @var SchemaContract */
     public $classSchema;
     public $name;
-    /** @var Schema */
+    /** @var SchemaContract */
     public $propertySchema;
 
     /**
      * Egg constructor.
-     * @param Schema $classSchema
+     * @param SchemaContract $classSchema
      * @param string $name
-     * @param Schema $propertySchema
+     * @param SchemaContract $propertySchema
      */
-    public function __construct(Schema $classSchema, $name, Schema $propertySchema)
+    public function __construct(SchemaContract $classSchema, $name, SchemaContract $propertySchema)
     {
         $this->classSchema = $classSchema;
         $this->name = $name;

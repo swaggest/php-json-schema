@@ -2,13 +2,13 @@
 
 namespace Swaggest\JsonSchema\Structure;
 
-use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\SchemaContract;
 
 class Nested
 {
-    /** @var Schema */
+    /** @var SchemaContract */
     public $schema;
-    public function __construct(Schema $schema)
+    public function __construct(SchemaContract $schema)
     {
         $this->schema = $schema;
     }
