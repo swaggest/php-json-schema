@@ -5,7 +5,7 @@
   "require": {
     "php": ">=5.4",
     "phplang/scope-exit": "^1.0",
-    "swaggest/json-diff": "^3.0"
+    "swaggest/json-diff": "^3.1.1"
   },
   "require-dev": {
     "phpunit/phpunit": "4.8.35",

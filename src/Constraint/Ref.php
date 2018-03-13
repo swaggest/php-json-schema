@@ -4,6 +4,7 @@ namespace Swaggest\JsonSchema\Constraint;
 
 class Ref implements Constraint
 {
+    /** @var string */
     public $ref;
     public function __construct($ref, $data = null)
     {
@@ -42,6 +43,12 @@ class Ref implements Constraint
     public function isImported()
     {
         return $this->isImported;
+    }
+
+    public function unsetImported()
+    {
+        $this->isImported = false;
+        $this->imported = null;
     }
 
     /**
