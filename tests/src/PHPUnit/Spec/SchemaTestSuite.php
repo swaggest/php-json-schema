@@ -177,12 +177,12 @@ abstract class SchemaTestSuite extends \PHPUnit_Framework_TestCase
             // default is not required to pass validation, so result might be invalid
             // for back-exporting defaults have to be disabled
             $options->applyDefaults = false;
-            $res = $schema->in($data, $options);
+            $imported = $schema->in($data, $options);
 
-            $exported = $schema->out($res);
+            $exported = $schema->out($imported);
 
-            $res = $schema->in($exported, $options);
-            $exported2 = $schema->out($res);
+            $imported = $schema->in($exported, $options);
+            $exported2 = $schema->out($imported);
 
             $this->assertEquals($exported2, $exported, $name);
         } catch (InvalidValue $exception) {

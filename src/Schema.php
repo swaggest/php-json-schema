@@ -20,6 +20,7 @@ use Swaggest\JsonSchema\Exception\StringException;
 use Swaggest\JsonSchema\Exception\TypeException;
 use Swaggest\JsonSchema\Meta\Meta;
 use Swaggest\JsonSchema\Meta\MetaHolder;
+use Swaggest\JsonSchema\Path\PointerUtil;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 use Swaggest\JsonSchema\Structure\Egg;
 use Swaggest\JsonSchema\Structure\ObjectItem;
@@ -165,9 +166,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             $options->refResolver->setRemoteRefProvider($options->remoteRefProvider);
         }
 
-        if ($options->import) {
-            $options->refResolver->preProcessReferences($data, $options);
-        }
+        $options->refResolver->preProcessReferences($data, $options);
 
         return $this->process($data, $options, '#');
     }
@@ -394,7 +393,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
         $result = $data;
         foreach ($this->oneOf as $index => $item) {
             try {
-                $result = self::unboolSchema($item)->process($data, $options, $path . '->oneOf:' . $index);
+                $result = self::unboolSchema($item)->process($data, $options, $path . '->oneOf[' . $index . ']');
                 $successes++;
                 if ($successes > 1 || $options->skipValidation) {
                     break;
@@ -407,7 +406,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
         if ($skipValidation) {
             $options->skipValidation = true;
             if ($successes === 0) {
-                $result = self::unboolSchema($this->oneOf[0])->process($data, $options, $path . '->oneOf:' . 0);
+                $result = self::unboolSchema($this->oneOf[0])->process($data, $options, $path . '->oneOf[' . 0 . ']');
             }
         }
 
@@ -438,7 +437,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
         $result = $data;
         foreach ($this->anyOf as $index => $item) {
             try {
-                $result = self::unboolSchema($item)->process($data, $options, $path . '->anyOf:' . $index);
+                $result = self::unboolSchema($item)->process($data, $options, $path . '->anyOf[' . $index . ']');
                 $successes++;
                 if ($successes) {
                     break;
@@ -467,7 +466,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     {
         $result = $data;
         foreach ($this->allOf as $index => $item) {
-            $result = self::unboolSchema($item)->process($data, $options, $path . '->allOf' . $index);
+            $result = self::unboolSchema($item)->process($data, $options, $path . '->allOf[' . $index . ']');
         }
         return $result;
     }
@@ -658,12 +657,17 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                             $refResult = $ref->getImported();
                             return $refResult;
                         }
-                        if ($result instanceof ObjectItemContract) {
-                            $result->setFromRef($refString);
-                        }
                         $ref->setImported($result);
-                        $refResult = $this->process($data, $options, $path . '->ref:' . $refString, $result);
-                        $ref->setImported($refResult);
+                        try {
+                            $refResult = $this->process($data, $options, $path . '->ref:' . $refString, $result);
+                            if ($refResult instanceof ObjectItemContract) {
+                                $refResult->setFromRef($refString);
+                            }
+                            $ref->setImported($refResult);
+                        } catch (InvalidValue $exception) {
+                            $ref->unsetImported();
+                            throw $exception;
+                        }
                         return $refResult;
                     } else {
                         $this->process($data, $options, $path . '->ref:' . $refString);
@@ -889,7 +893,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             } else {
                 if ($additionalItems instanceof SchemaContract) {
                     $result[$key] = $additionalItems->process($value, $options, $path . '->' . $pathItems
-                        . '[' . $index . ']');
+                        . '[' . $index . ']:' . $index);
                 } elseif (!$options->skipValidation && $additionalItems === false) {
                     $this->fail(new ArrayException('Unexpected array item'), $path);
                 }
@@ -964,16 +968,20 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
      */
     public function process($data, Context $options, $path = '#', $result = null)
     {
-
         $import = $options->import;
 
         if (!$import && $data instanceof ObjectItemContract) {
             $result = new \stdClass();
+
+            if ($ref = $data->getFromRef()) {
+                $result->{self::PROP_REF} = $ref;
+                return $result;
+            }
+
             if ($options->circularReferences->contains($data)) {
                 /** @noinspection PhpIllegalArrayKeyTypeInspection */
                 $path = $options->circularReferences[$data];
-                // @todo $path is not a valid json pointer $ref
-                $result->{self::PROP_REF} = $path;
+                $result->{self::PROP_REF} = PointerUtil::getDataPointer($path);
                 return $result;
             }
             $options->circularReferences->attach($data, $path);

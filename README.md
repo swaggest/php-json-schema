@@ -4,6 +4,7 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/swaggest/php-json-schema/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/swaggest/php-json-schema/?branch=master)
 [![Code Climate](https://codeclimate.com/github/swaggest/php-json-schema/badges/gpa.svg)](https://codeclimate.com/github/swaggest/php-json-schema)
 [![Code Coverage](https://scrutinizer-ci.com/g/swaggest/php-json-schema/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/swaggest/php-json-schema/code-structure/master/code-coverage/src/)
+
 High definition PHP structures with JSON-schema based validation.
 
 Supported schemas:

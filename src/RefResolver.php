@@ -3,6 +3,7 @@
 namespace Swaggest\JsonSchema;
 
 use PhpLang\ScopeExit;
+use Swaggest\JsonDiff\JsonPointer;
 use Swaggest\JsonSchema\Constraint\Ref;
 use Swaggest\JsonSchema\RemoteRef\BasicFetcher;
 
@@ -152,7 +153,11 @@ class RefResolver
                     $ref = new Ref($referencePath, $refResolver->rootData);
                 } else {
                     $ref = new Ref($referencePath);
-                    $path = explode('/', trim($referencePath, '#/'));
+                    try {
+                        $path = JsonPointer::splitPath($referencePath);
+                    } catch (\Swaggest\JsonDiff\Exception $e) {
+                        throw new InvalidValue('Invalid reference: ' . $referencePath . ', ' . $e->getMessage());
+                    }
 
                     /** @var JsonSchema $branch */
                     $branch = &$refResolver->rootData;
@@ -165,11 +170,6 @@ class RefResolver
                         }
 
                         $folder = array_shift($path);
-
-                        // unescaping special characters
-                        // https://tools.ietf.org/html/draft-ietf-appsawg-json-pointer-07#section-4
-                        // https://github.com/json-schema-org/JSON-Schema-Test-Suite/issues/130
-                        $folder = str_replace(array('~0', '~1', '%25'), array('~', '/', '%'), $folder);
 
                         if ($branch instanceof \stdClass && isset($branch->$folder)) {
                             $branch = &$branch->$folder;
