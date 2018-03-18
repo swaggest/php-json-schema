@@ -32,6 +32,7 @@ use Swaggest\JsonSchema\Structure\ObjectItemContract;
  */
 class Schema extends JsonSchema implements MetaHolder, SchemaContract
 {
+    const ENUM_NAMES_PROPERTY = 'x-enum-names';
     const CONST_PROPERTY = 'const';
 
     const DEFAULT_MAPPING = 'default';
@@ -228,7 +229,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             }
         }
         if (!$enumOk) {
-            $this->fail(new EnumException('Enum failed'), $path);
+            $this->fail(new EnumException('Enum failed, enum: ' . json_encode($this->enum) . ', data: ' . json_encode($data)), $path);
         }
     }
 
@@ -271,7 +272,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             // Expected exception
         }
         if ($exception === false) {
-            $this->fail(new LogicException('Failed due to logical constraint: not'), $path);
+            $this->fail(new LogicException('Not ' . json_encode($this->not) . ' expected, ' . json_encode($data) . ' received'), $path);
         }
     }
 
@@ -384,6 +385,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     {
         $successes = 0;
         $failures = '';
+        $subErrors = [];
         $skipValidation = false;
         if ($options->skipValidation) {
             $skipValidation = true;
@@ -399,6 +401,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                     break;
                 }
             } catch (InvalidValue $exception) {
+                $subErrors[$index] = $exception;
                 $failures .= ' ' . $index . ': ' . Helper::padLines(' ', $exception->getMessage()) . "\n";
                 // Expected exception
             }
@@ -406,16 +409,23 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
         if ($skipValidation) {
             $options->skipValidation = true;
             if ($successes === 0) {
-                $result = self::unboolSchema($this->oneOf[0])->process($data, $options, $path . '->oneOf[' . 0 . ']');
+                $result = self::unboolSchema($this->oneOf[0])->process($data, $options, $path . '->oneOf[0]');
             }
         }
 
         if (!$options->skipValidation) {
             if ($successes === 0) {
-                $this->fail(new LogicException('Failed due to logical constraint: no valid results for oneOf {' . "\n" . substr($failures, 0, -1) . "\n}"), $path);
+                $exception = new LogicException('No valid results for oneOf {' . "\n" . substr($failures, 0, -1) . "\n}");
+                $exception->error = 'No valid results for oneOf';
+                $exception->subErrors = $subErrors;
+                $this->fail($exception, $path);
             } elseif ($successes > 1) {
-                $this->fail(new LogicException('Failed due to logical constraint: '
-                    . $successes . '/' . count($this->oneOf) . ' valid results for oneOf'), $path);
+                $exception = new LogicException('More than 1 valid result for oneOf: '
+                    . $successes . '/' . count($this->oneOf) . ' valid results for oneOf {'
+                    . "\n" . substr($failures, 0, -1) . "\n}");
+                $exception->error = 'More than 1 valid result for oneOf';
+                $exception->subErrors = $subErrors;
+                $this->fail($exception, $path);
             }
         }
         return $result;
@@ -434,6 +444,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     {
         $successes = 0;
         $failures = '';
+        $subErrors = [];
         $result = $data;
         foreach ($this->anyOf as $index => $item) {
             try {
@@ -443,12 +454,18 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                     break;
                 }
             } catch (InvalidValue $exception) {
+                $subErrors[$index] = $exception;
                 $failures .= ' ' . $index . ': ' . $exception->getMessage() . "\n";
                 // Expected exception
             }
         }
         if (!$successes && !$options->skipValidation) {
-            $this->fail(new LogicException('Failed due to logical constraint: no valid results for anyOf {' . "\n" . substr(Helper::padLines(' ', $failures), 0, -1) . "\n}"), $path);
+            $exception = new LogicException('No valid results for anyOf {' . "\n"
+                . substr(Helper::padLines(' ', $failures, false), 0, -1)
+                . "\n}");
+            $exception->error = 'No valid results for anyOf';
+            $exception->subErrors = $subErrors;
+            $this->fail($exception, $path);
         }
         return $result;
     }
@@ -515,7 +532,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                         $item = $this->__propertyToData[$options->mapping][$item];
                     }
                     if (!property_exists($data, $item)) {
-                        $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
+                        $this->fail(new ObjectException('Required property missing: ' . $item . ', data: ' . json_encode($data, JSON_UNESCAPED_SLASHES), ObjectException::REQUIRED), $path);
                     }
                 }
             } else {
@@ -524,7 +541,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                         $item = $this->__dataToProperty[$options->mapping][$item];
                     }
                     if (!property_exists($data, $item)) {
-                        $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
+                        $this->fail(new ObjectException('Required property missing: ' . $item . ', data: ' . json_encode($data, JSON_UNESCAPED_SLASHES), ObjectException::REQUIRED), $path);
                     }
                 }
             }
@@ -532,7 +549,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
         } else {
             foreach ($this->required as $item) {
                 if (!property_exists($data, $item)) {
-                    $this->fail(new ObjectException('Required property missing: ' . $item, ObjectException::REQUIRED), $path);
+                    $this->fail(new ObjectException('Required property missing: ' . $item . ', data: ' . json_encode($data, JSON_UNESCAPED_SLASHES), ObjectException::REQUIRED), $path);
                 }
             }
         }
@@ -659,7 +676,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                         }
                         $ref->setImported($result);
                         try {
-                            $refResult = $this->process($data, $options, $path . '->ref:' . $refString, $result);
+                            $refResult = $this->process($data, $options, $path . '->$ref:' . $refString, $result);
                             if ($refResult instanceof ObjectItemContract) {
                                 $refResult->setFromRef($refString);
                             }
@@ -670,7 +687,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                         }
                         return $refResult;
                     } else {
-                        $this->process($data, $options, $path . '->ref:' . $refString);
+                        $this->process($data, $options, $path . '->$ref:' . $refString);
                     }
                 }
             } catch (InvalidValue $exception) {
@@ -970,6 +987,10 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     {
         $import = $options->import;
 
+        if ($ref = $this->getFromRef()) {
+            $path .= '->$ref[' . $ref . ']';
+        }
+
         if (!$import && $data instanceof ObjectItemContract) {
             $result = new \stdClass();
 
@@ -981,7 +1002,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             if ($options->circularReferences->contains($data)) {
                 /** @noinspection PhpIllegalArrayKeyTypeInspection */
                 $path = $options->circularReferences[$data];
-                $result->{self::PROP_REF} = PointerUtil::getDataPointer($path);
+                $result->{self::PROP_REF} = PointerUtil::getDataPointer($path, true);
                 return $result;
             }
             $options->circularReferences->attach($data, $path);

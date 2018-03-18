@@ -18,7 +18,7 @@ class ExampleTest extends \PHPUnit_Framework_TestCase
     public function testJsonSchema()
     {
         $this->setExpectedException(get_class(new ObjectException()),
-            'Required property missing: id at #->properties:orders->items[1]'
+            'Required property missing: id, data: {"price":1} at #->properties:orders->items[1]'
         );
 
         $schemaJson = <<<'JSON'
@@ -117,7 +117,7 @@ JSON
         $order->dateTime = '2015-10-28T07:28:00Z';
         $example->orders[] = $order;
 
-        $this->setExpectedException(get_class(new ObjectException()), 'Required property missing: id at #->properties:orders->items[0]');
+        $this->setExpectedException(get_class(new ObjectException()), 'Required property missing: id, data: {"dateTime":"2015-10-28T07:28:00Z"} at #->properties:orders->items[0]');
         /** @noinspection PhpUnhandledExceptionInspection */
         User::export($example); // Exception: Required property missing: id at #->properties:orders->items[0]
     }

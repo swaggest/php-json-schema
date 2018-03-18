@@ -19,6 +19,7 @@ interface SchemaContract
     /**
      * @param mixed $data
      * @param Context|null $options
+     * @throws InvalidValue
      * @return array|mixed|null|object|\stdClass
      */
     public function in($data, Context $options = null);
@@ -26,6 +27,7 @@ interface SchemaContract
     /**
      * @param mixed $data
      * @param Context|null $options
+     * @throws InvalidValue
      * @return array|mixed|null|object|\stdClass
      */
     public function out($data, Context $options = null);
