@@ -24,18 +24,29 @@ class InvalidValue extends Exception
     const NOT_IMPLEMENTED = 2;
 
 
-    public static function inspect(InvalidValue $invalidValue)
+    public function inspect()
     {
         $error = new Error();
-        $error->error = $invalidValue->error;
-        $error->processingPath = $invalidValue->path;
+        $error->error = $this->error;
+        $error->processingPath = $this->path;
         $error->dataPointer = PointerUtil::getDataPointer($error->processingPath);
         $error->schemaPointers = PointerUtil::getSchemaPointers($error->processingPath);
-        if ($invalidValue instanceof LogicException) {
-            foreach ($invalidValue->subErrors as $nestedError) {
-                $error->subErrors[] = self::inspect($nestedError);
+        if ($this instanceof LogicException) {
+            foreach ($this->subErrors as $subError) {
+                $error->subErrors[] = $subError->inspect();
             }
         }
         return $error;
     }
+
+    public function getSchemaPointer()
+    {
+        return PointerUtil::getSchemaPointer($this->path);
+    }
+
+    public function getDataPointer()
+    {
+        return PointerUtil::getDataPointer($this->path);
+    }
+
 }

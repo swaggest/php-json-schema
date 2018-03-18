@@ -169,8 +169,10 @@ TEXT;
             $this->fail('Exception expected');
         } catch (InvalidValue $exception) {
             $this->assertSame($expectedException, $exception->getMessage());
-            $error = InvalidValue::inspect($exception);
+            $error = $exception->inspect();
             $this->assertSame($errorInspected, print_r($error, 1));
+            $this->assertSame('/properties/root/patternProperties/^[a-zA-Z0-9_]+$', $exception->getSchemaPointer());
+            $this->assertSame('/root/zoo', $exception->getDataPointer());
         }
     }
 

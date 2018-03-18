@@ -118,11 +118,12 @@ No valid results for oneOf {
 } at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo
 ```
 
-For ambiguous schemas defined with `oneOf`/`anyOf` message is indented multi-line.
+For ambiguous schemas defined with `oneOf`/`anyOf` message is indented multi-line string.
 
-Processing path is a combination of schema and data pointers. You can use `PointerUtil` to extract schema/data pointer.
+Processing path is a combination of schema and data pointers. You can use `InvalidValue->getSchemaPointer()`
+and `InvalidValue->getDataPointer()` to extract schema/data pointer.
 
-You can build `Error` tree from exception using `InvalidValue::inspect($exception)`.
+You can build error tree using `InvalidValue->inspect()`.
 
 ### PHP structured classes with validation
 
