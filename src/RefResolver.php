@@ -39,6 +39,10 @@ class RefResolver
     }
 
 
+    /**
+     * @param string $id
+     * @return string
+     */
     public function updateResolutionScope($id)
     {
         $id = rtrim($id, '#');

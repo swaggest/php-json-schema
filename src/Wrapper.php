@@ -50,7 +50,6 @@ class Wrapper implements SchemaContract, MetaHolder
      * @return array|mixed|null|object|\stdClass
      * @throws Exception
      * @throws InvalidValue
-     * @throws \Exception
      */
     public function in($data, Context $options = null)
     {

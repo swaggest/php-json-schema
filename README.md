@@ -102,6 +102,28 @@ $schema = Schema::import(true); // permissive schema, always validates
 $schema = Schema::import(false); // restrictive schema, always invalidates
 ```
 
+### Understanding error cause
+
+With complex schemas it may be hard to find out what's wrong with your data. Exception message can look like:
+
+```
+No valid results for oneOf {
+ 0: Enum failed, enum: ["a"], data: "f" at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[0]
+ 1: Enum failed, enum: ["b"], data: "f" at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[1]
+ 2: No valid results for anyOf {
+   0: Enum failed, enum: ["c"], data: "f" at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/cde]->anyOf[0]
+   1: Enum failed, enum: ["d"], data: "f" at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/cde]->anyOf[1]
+   2: Enum failed, enum: ["e"], data: "f" at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/cde]->anyOf[2]
+ } at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/cde]
+} at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo
+```
+
+For ambiguous schemas defined with `oneOf`/`anyOf` message is indented multi-line.
+
+Processing path is a combination of schema and data pointers. You can use `PointerUtil` to extract schema/data pointer.
+
+You can build `Error` tree from exception using `InvalidValue::inspect($exception)`.
+
 ### PHP structured classes with validation
 
 ```php

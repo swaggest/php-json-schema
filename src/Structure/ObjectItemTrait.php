@@ -113,7 +113,9 @@ trait ObjectItemTrait
 
     public function setFromRef($ref)
     {
-        $this->__fromRef = $ref;
+        if (null === $this->__fromRef) {
+            $this->__fromRef = $ref;
+        }
         return $this;
     }
 }
