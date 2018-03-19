@@ -815,7 +815,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                     if (preg_match(Helper::toPregPattern($pattern), $key)) {
                         $found = true;
                         $value = self::unboolSchema($propertySchema)->process($value, $options,
-                            $path . '->patternProperties[' . $pattern . ']:' . $key);
+                            $path . '->patternProperties[' . strtr($pattern, array('~' => '~1', ':' => '~2')) . ']:' . $key);
                         if (!$options->validateOnly && $import) {
                             $result->addPatternPropertyName($pattern, $key);
                         }
@@ -988,7 +988,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
         $import = $options->import;
 
         if ($ref = $this->getFromRef()) {
-            $path .= '->$ref[' . $ref . ']';
+            $path .= '->$ref[' . strtr($ref, array('~' => '~1', ':' => '~2')) . ']';
         }
 
         if (!$import && $data instanceof ObjectItemContract) {

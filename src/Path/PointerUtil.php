@@ -37,14 +37,22 @@ class PointerUtil
             $parts = explode(':', $item);
             if (isset($parts[0])) {
                 $schemaPaths = explode('[', $parts[0], 2);
+                if (isset($schemaPaths[1])) {
+                    $schemaPaths[1] = substr(strtr($schemaPaths[1], array('~1' => '~', '~2' => ':')), 0, -1);
+                }
+
                 if ($schemaPaths[0] === Schema::PROP_REF) {
                     $result[] = $pointer . '/' . JsonPointer::escapeSegment(Schema::PROP_REF, $isURIFragmentId);
-                    $pointer = self::rebuildPointer(substr($schemaPaths[1], 0, -1), $isURIFragmentId);
+                    if (strpos($schemaPaths[1], '://')) {
+                        $pointer = $schemaPaths[1];
+                    } else {
+                        $pointer = self::rebuildPointer($schemaPaths[1], $isURIFragmentId);
+                    }
                     continue;
                 }
                 $pointer .= '/' . JsonPointer::escapeSegment($schemaPaths[0], $isURIFragmentId);
                 if (isset($schemaPaths[1])) {
-                    $pointer .= '/' . JsonPointer::escapeSegment(substr($schemaPaths[1], 0, -1), $isURIFragmentId);
+                    $pointer .= '/' . JsonPointer::escapeSegment($schemaPaths[1], $isURIFragmentId);
                 } elseif ($parts[1]) {
                     $pointer .= '/' . JsonPointer::escapeSegment($parts[1], $isURIFragmentId);
                 }
