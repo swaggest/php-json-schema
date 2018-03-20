@@ -3,7 +3,7 @@
 namespace Swaggest\JsonSchema\Tests\Helper;
 
 use Swaggest\JsonSchema\Constraint\Properties;
-use Swaggest\JsonSchema\AbstractMeta;
+use Swaggest\JsonSchema\Meta\AbstractMeta;
 use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\Structure\ClassStructureContract;
 use Swaggest\JsonSchema\Structure\ClassStructureTrait;
