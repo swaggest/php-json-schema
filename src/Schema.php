@@ -18,7 +18,6 @@ use Swaggest\JsonSchema\Exception\NumericException;
 use Swaggest\JsonSchema\Exception\ObjectException;
 use Swaggest\JsonSchema\Exception\StringException;
 use Swaggest\JsonSchema\Exception\TypeException;
-use Swaggest\JsonSchema\Meta\Meta;
 use Swaggest\JsonSchema\Meta\MetaHolder;
 use Swaggest\JsonSchema\Path\PointerUtil;
 use Swaggest\JsonSchema\Structure\ClassStructure;
@@ -1179,19 +1178,22 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
         return $this;
     }
 
-    /** @var Meta[] */
+    /** @var mixed[] */
     private $metaItems = array();
 
-    public function addMeta(Meta $meta)
+    public function addMeta($meta, $name = null)
     {
-        $this->metaItems[get_class($meta)] = $meta;
+        if ($name === null) {
+            $name = get_class($meta);
+        }
+        $this->metaItems[$name] = $meta;
         return $this;
     }
 
-    public function getMeta($className)
+    public function getMeta($name)
     {
-        if (isset($this->metaItems[$className])) {
-            return $this->metaItems[$className];
+        if (isset($this->metaItems[$name])) {
+            return $this->metaItems[$name];
         }
         return null;
     }

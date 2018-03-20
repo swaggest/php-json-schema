@@ -2,7 +2,6 @@
 
 namespace Swaggest\JsonSchema;
 
-use Swaggest\JsonSchema\Meta\Meta;
 use Swaggest\JsonSchema\Meta\MetaHolder;
 use Swaggest\JsonSchema\Structure\Nested;
 
@@ -179,9 +178,9 @@ class Wrapper implements SchemaContract, MetaHolder
         throw new Exception('Unexpected isset: ' . $name);
     }
 
-    public function addMeta(Meta $meta)
+    public function addMeta($meta, $name = null)
     {
-        $this->originalSchema->addMeta($meta);
+        $this->originalSchema->addMeta($meta, $name);
         return $this;
     }
 

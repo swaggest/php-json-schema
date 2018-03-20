@@ -1,11 +1,9 @@
 <?php
 
-namespace Swaggest\JsonSchema;
+namespace Swaggest\JsonSchema\Meta;
 
-use Swaggest\JsonSchema\Meta\Meta;
-use Swaggest\JsonSchema\Meta\MetaHolder;
 
-abstract class AbstractMeta implements Meta
+abstract class AbstractMeta
 {
     /**
      * @param MetaHolder $schema
