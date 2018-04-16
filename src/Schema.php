@@ -222,9 +222,17 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     {
         $enumOk = false;
         foreach ($this->enum as $item) {
-            if ($item === $data) { // todo support complex structures here
+            if ($item === $data) {
                 $enumOk = true;
                 break;
+            } else {
+                if (is_array($item) || is_object($item)) {
+                    $diff = new JsonDiff($item, $data, JsonDiff::STOP_ON_DIFF);
+                    if ($diff->getDiffCnt() === 0) {
+                        $enumOk = true;
+                        break;
+                    }
+                }
             }
         }
         if (!$enumOk) {
