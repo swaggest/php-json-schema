@@ -57,13 +57,13 @@ class Preloaded implements RemoteRefProvider
 
     public function setSchemaData($url, $schemaData)
     {
-        $this->storage[$url] = $schemaData;
+        $this->storage[rtrim($url, '#')] = $schemaData;
         return $this;
     }
 
     public function setSchemaFile($url, $path)
     {
-        $this->schemaFiles[$url] = $path;
+        $this->schemaFiles[rtrim($url, '#')] = $path;
         return $this;
     }
 

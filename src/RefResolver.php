@@ -45,7 +45,7 @@ class RefResolver
      */
     public function updateResolutionScope($id)
     {
-        $id = rtrim($id, '#');
+        $id = rtrim($id, '#'); // safe to trim because # in hashCode must be urlencoded to %23
         $rootResolver = $this->rootResolver ? $this->rootResolver : $this;
         if (strpos($id, '://') !== false) {
             $prev = $rootResolver->setResolutionScope($id);
