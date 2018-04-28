@@ -5,6 +5,7 @@ namespace Swaggest\JsonSchema;
 
 use PhpLang\ScopeExit;
 use Swaggest\JsonDiff\JsonDiff;
+use Swaggest\JsonDiff\JsonPointer;
 use Swaggest\JsonSchema\Constraint\Content;
 use Swaggest\JsonSchema\Constraint\Format;
 use Swaggest\JsonSchema\Constraint\Properties;
@@ -50,7 +51,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     public $properties;
     /** @var Schema|bool */
     public $additionalProperties;
-    /** @var Schema[] */
+    /** @var Schema[]|Properties */
     public $patternProperties;
     /** @var string[][]|Schema[]|\stdClass */
     public $dependencies;
@@ -652,10 +653,26 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
 
         if ($import) {
             try {
+
+                $refProperty = null;
+                $dereference = true;
+
+                if (isset($data->{self::PROP_REF})) {
+                    if (null === $refProperty = $this->properties[self::PROP_REF]) {
+                        if (isset($this->__dataToProperty[$options->mapping][self::PROP_REF])) {
+                            $refProperty = $this->properties[$this->__dataToProperty[$options->mapping][self::PROP_REF]];
+                        }
+                    }
+
+                    if (isset($refProperty) && ($refProperty->format !== Format::URI_REFERENCE)) {
+                        $dereference = false;
+                    }
+                }
+
                 while (
                     isset($data->{self::PROP_REF})
                     && is_string($data->{self::PROP_REF})
-                    && !isset($this->properties[self::PROP_REF])
+                    && $dereference
                 ) {
                     $refString = $data->{self::PROP_REF};
 
@@ -832,7 +849,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             }
             if (!$found && $this->additionalProperties !== null) {
                 if (!$options->skipValidation && $this->additionalProperties === false) {
-                    $this->fail(new ObjectException('Additional properties not allowed'), $path . ':' . $key);
+                    $this->fail(new ObjectException('Additional properties not allowed: ' . $key), $path);
                 }
 
                 if ($this->additionalProperties instanceof SchemaContract) {
@@ -994,16 +1011,35 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     {
         $import = $options->import;
 
-        if ($ref = $this->getFromRef()) {
-            $path .= '->$ref[' . strtr($ref, array('~' => '~1', ':' => '~2')) . ']';
+        if (!$import && $data instanceof SchemaExporter) {
+            $data = $data->exportSchema(); // Used to export ClassStructure::schema()
         }
 
         if (!$import && $data instanceof ObjectItemContract) {
             $result = new \stdClass();
 
-            if ($ref = $data->getFromRef()) {
-                $result->{self::PROP_REF} = $ref;
-                return $result;
+            if ('#' === $path) {
+                $injectDefinitions = new ScopeExit(function () use ($result, $options) {
+                    foreach ($options->exportedDefinitions as $ref => $data) {
+                        JsonPointer::add($result, JsonPointer::splitPath($ref), $data,
+                            JsonPointer::SKIP_IF_ISSET + JsonPointer::RECURSIVE_KEY_CREATION);
+                    }
+                });
+            }
+
+            if ('#' !== $path && $ref = $data->getFromRef()) {
+                if ($ref[0] === '#') {
+                    if (isset($options->exportedDefinitions[$ref])) {
+                        $result->{self::PROP_REF} = $ref;
+                        return $result;
+                    } elseif (!array_key_exists($ref, $options->exportedDefinitions)) {
+                        $exported = null;
+                        $options->exportedDefinitions[$ref] = &$exported;
+                        $exported = $this->process($data, $options, $ref);
+                        $result->{self::PROP_REF} = $ref;
+                        return $result;
+                    }
+                }
             }
 
             if ($options->circularReferences->contains($data)) {
@@ -1016,6 +1052,11 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
 
             $data = $data->jsonSerialize();
         }
+
+        if ($ref = $this->getFromRef()) {
+            $path .= '->$ref[' . strtr($ref, array('~' => '~1', ':' => '~2')) . ']';
+        }
+
         if (!$import && is_array($data) && $this->useObjectAsArray) {
             $data = (object)$data;
         }
@@ -1186,6 +1227,22 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
         return $this;
     }
 
+    /**
+     * @param string $name
+     * @param SchemaContract $schema
+     * @return $this
+     * @throws Exception
+     */
+    public function setPatternProperty($name, $schema)
+    {
+        if (null === $this->patternProperties) {
+            $this->patternProperties = new Properties();
+        }
+        $this->patternProperties->__set($name, $schema);
+        return $this;
+    }
+
+
     /** @var mixed[] */
     private $metaItems = array();
 
@@ -1289,4 +1346,21 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     {
         return $this->objectItemClass;
     }
+
+    /**
+     * @return string[]
+     */
+    public function getPropertyNames()
+    {
+        return array_keys($this->getProperties()->toArray());
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getNestedPropertyNames()
+    {
+        return $this->getProperties()->nestedPropertyNames;
+    }
+
 }

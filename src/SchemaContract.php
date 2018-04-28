@@ -51,4 +51,14 @@ interface SchemaContract
      */
     public function getObjectItemClass();
 
+    /**
+     * @return string[]
+     */
+    public function getPropertyNames();
+
+    /**
+     * @return string[]
+     */
+    public function getNestedPropertyNames();
+
 }

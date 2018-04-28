@@ -21,6 +21,7 @@ class LevelThreeClass extends ClassStructure
     public static function setUpProperties($properties, Schema $ownerSchema)
     {
         $properties->level3 = Schema::integer();
+        $ownerSchema->setFromRef(false);
     }
 
 

@@ -6,6 +6,7 @@
 
 namespace Swaggest\JsonSchema;
 
+use Swaggest\JsonSchema\Constraint\Format;
 use Swaggest\JsonSchema\Constraint\Properties;
 use Swaggest\JsonSchema\Constraint\Type;
 use Swaggest\JsonSchema\Schema as JsonBasicSchema;
@@ -279,6 +280,7 @@ class JsonSchema extends ClassStructure {
 		$properties->type->anyOf[1]->uniqueItems = true;
 		$properties->format = JsonBasicSchema::string();
 		$properties->ref = JsonBasicSchema::string();
+		$properties->ref->format = Format::URI_REFERENCE;
 		$ownerSchema->addPropertyMapping('$ref', self::names()->ref);
 		$properties->allOf = JsonBasicSchema::arr();
 		$properties->allOf->items = JsonBasicSchema::schema();
@@ -296,6 +298,7 @@ class JsonSchema extends ClassStructure {
 		$ownerSchema->description = 'Core schema meta-schema';
 		$ownerSchema->default = (object)array (
 		);
+		$ownerSchema->setFromRef(false);
 		// disabled by draft6
 		/*
 		$ownerSchema->dependencies = (object)array (
