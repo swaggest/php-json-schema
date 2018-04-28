@@ -1599,7 +1599,8 @@
       "additionalProperties": false,
       "properties": {
         "$ref": {
-          "type": "string"
+          "type": "string",
+          "format": "uri-reference"
         }
       }
     }

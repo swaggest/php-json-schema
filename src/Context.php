@@ -21,9 +21,6 @@ class Context extends MagicMap
     /** @var bool Apply default values */
     public $applyDefaults = true;
 
-    /** @var string */
-    public $propagateObjectItemClass;
-
     /** @var \SplObjectStorage */
     public $circularReferences;
 
@@ -50,6 +47,7 @@ class Context extends MagicMap
 
     public $version = Schema::VERSION_AUTO;
 
+    public $exportedDefinitions = [];
     /**
      * @param boolean $skipValidation
      * @return Context

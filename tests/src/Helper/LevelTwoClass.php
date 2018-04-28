@@ -21,6 +21,7 @@ class LevelTwoClass extends ClassStructure
     public static function setUpProperties($properties, Schema $ownerSchema)
     {
         $properties->level2 = LevelThreeClass::schema();
+        $ownerSchema->setFromRef(false);
     }
 
 

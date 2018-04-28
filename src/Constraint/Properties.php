@@ -90,4 +90,9 @@ class Properties extends ObjectItem implements Constraint
     {
         return $this->nestedProperties;
     }
+
+    public function isEmpty()
+    {
+        return (count($this->__arrayOfData) + count($this->nestedProperties)) === 0;
+    }
 }

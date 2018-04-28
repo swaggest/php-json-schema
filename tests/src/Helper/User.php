@@ -62,5 +62,6 @@ class User extends ClassStructure
         $properties->orders->items = Order::schema();
 
         $ownerSchema->required = array(self::names()->id);
+        $ownerSchema->setFromRef('#/definitions/user');
     }
 }
