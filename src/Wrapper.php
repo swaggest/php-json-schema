@@ -75,7 +75,7 @@ class Wrapper implements SchemaContract, MetaHolder, SchemaExporter, \JsonSerial
      */
     public function getPropertyNames()
     {
-        return array_keys($this->schema->getProperties()->toArray());
+        return $this->schema->getPropertyNames();
     }
 
     /**
@@ -83,7 +83,7 @@ class Wrapper implements SchemaContract, MetaHolder, SchemaExporter, \JsonSerial
      */
     public function getNestedPropertyNames()
     {
-        return $this->schema->getProperties()->nestedPropertyNames;
+        return $this->schema->getNestedPropertyNames();
     }
 
     public function nested()

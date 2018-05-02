@@ -91,6 +91,10 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     {
         $this->__dataToProperty[$mapping][$dataName] = $propertyName;
         $this->__propertyToData[$mapping][$propertyName] = $dataName;
+
+        if ($mapping === self::DEFAULT_MAPPING && $this->properties instanceof Properties) {
+            $this->properties->__defaultMapping[$propertyName] = $dataName;
+        }
         return $this;
     }
 
