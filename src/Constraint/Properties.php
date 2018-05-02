@@ -23,6 +23,12 @@ class Properties extends ObjectItem implements Constraint
     /** @var Schema */
     protected $__schema;
 
+    /**
+     * Property to data mapping, example ["ref" => "$ref"]
+     * @var array
+     */
+    public $__defaultMapping = array();
+
     public function lock()
     {
         $this->__isReadOnly = true;
@@ -52,9 +58,6 @@ class Properties extends ObjectItem implements Constraint
     {
         return new static;
     }
-
-    /** @var Schema|null */
-    private $additionalProperties;
 
     /** @var Egg[][] */
     public $nestedProperties = array();
@@ -95,4 +98,31 @@ class Properties extends ObjectItem implements Constraint
     {
         return (count($this->__arrayOfData) + count($this->nestedProperties)) === 0;
     }
+
+    public function jsonSerialize()
+    {
+        $result = $this->__arrayOfData;
+        if ($this->__nestedObjects) {
+            foreach ($this->__nestedObjects as $object) {
+                foreach ($object->toArray() as $key => $value) {
+                    $result[$key] = $value;
+                }
+            }
+        }
+
+        if (isset($this->__defaultMapping)) {
+            $mappedResult = new \stdClass();
+            foreach ($result as $key => $value) {
+                if (isset($this->__defaultMapping[$key])) {
+                    $mappedResult->{$this->__defaultMapping[$key]} = $value;
+                } else {
+                    $mappedResult->$key = $value;
+                }
+            }
+            return $mappedResult;
+        }
+
+        return (object)$result;
+    }
+
 }

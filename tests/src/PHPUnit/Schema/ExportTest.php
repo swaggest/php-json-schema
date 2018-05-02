@@ -5,6 +5,7 @@ namespace Swaggest\JsonSchema\Tests\PHPUnit\Schema;
 
 use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\Structure\ObjectItem;
+use Swaggest\JsonSchema\Tests\Helper\RefClass;
 
 class ExportTest extends \PHPUnit_Framework_TestCase
 {
@@ -160,6 +161,17 @@ JSON
 
         $exported = $schema->out($imported);
         $this->assertTrue($exported->veryNestedObject->nesteder instanceof \stdClass);
+    }
+
+    public function testRefClass()
+    {
+        $schema = RefClass::schema()->exportSchema();
+        $this->assertSame('{"properties":{"$ref":{"type":"string","format":"uri-reference"}}}', json_encode($schema));
+        $schemaData = Schema::export($schema);
+        $this->assertSame(
+            '{"properties":{"$ref":{"type":"string","format":"uri-reference"}}}',
+            json_encode($schemaData, JSON_UNESCAPED_SLASHES)
+        );
     }
 
 }
