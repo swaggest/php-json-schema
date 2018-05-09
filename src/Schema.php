@@ -673,7 +673,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                     }
                 }
 
-                while (
+                if (
                     isset($data->{self::PROP_REF})
                     && is_string($data->{self::PROP_REF})
                     && $dereference
@@ -1057,9 +1057,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             $data = $data->jsonSerialize();
         }
 
-        if ($ref = $this->getFromRef()) {
-            $path .= '->$ref[' . strtr($ref, array('~' => '~1', ':' => '~2')) . ']';
-        }
+        $path .= $this->getFromRefPath();
 
         if (!$import && is_array($data) && $this->useObjectAsArray) {
             $data = (object)$data;

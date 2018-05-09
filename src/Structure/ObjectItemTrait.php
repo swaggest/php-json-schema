@@ -108,14 +108,33 @@ trait ObjectItemTrait
      */
     public function getFromRef()
     {
-        return $this->__fromRef;
+        return null === $this->__fromRef ? null : $this->__fromRef[0];
     }
 
     public function setFromRef($ref)
     {
         if (null === $this->__fromRef) {
-            $this->__fromRef = $ref;
+            $this->__fromRef = array($ref);
+        } else {
+            if (false !== $this->__fromRef[0]) {
+                $this->__fromRef[] = $ref;
+            }
         }
         return $this;
+    }
+
+    private $__refPath;
+    protected function getFromRefPath() {
+        if ($this->__refPath === null) {
+            $this->__refPath = '';
+            if ($this->__fromRef) {
+                foreach ($this->__fromRef as $ref) {
+                    if ($ref) {
+                        $this->__refPath = '->$ref[' . strtr($ref, array('~' => '~1', ':' => '~2')) . ']' . $this->__refPath;
+                    }
+                }
+            }
+        }
+        return $this->__refPath;
     }
 }

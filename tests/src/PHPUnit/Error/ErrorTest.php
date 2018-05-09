@@ -52,10 +52,10 @@ No valid results for oneOf {
  0: Enum failed, enum: ["a"], data: "f" at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[0]
  1: Enum failed, enum: ["b"], data: "f" at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[1]
  2: No valid results for anyOf {
-   0: Enum failed, enum: ["c"], data: "f" at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/cde]->anyOf[0]
-   1: Enum failed, enum: ["d"], data: "f" at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/cde]->anyOf[1]
-   2: Enum failed, enum: ["e"], data: "f" at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/cde]->anyOf[2]
- } at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/cde]
+   0: Enum failed, enum: ["c"], data: "f" at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/ref-to-cde]->$ref[#/cde]->anyOf[0]
+   1: Enum failed, enum: ["d"], data: "f" at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/ref-to-cde]->$ref[#/cde]->anyOf[1]
+   2: Enum failed, enum: ["e"], data: "f" at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/ref-to-cde]->$ref[#/cde]->anyOf[2]
+ } at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/ref-to-cde]->$ref[#/cde]
 } at #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo
 TEXT;
 
@@ -104,11 +104,12 @@ Swaggest\JsonSchema\Exception\Error Object
                     [schemaPointers] => Array
                         (
                             [0] => /properties/root/patternProperties/^[a-zA-Z0-9_]+$/oneOf/2/$ref
-                            [1] => /cde
+                            [1] => /ref-to-cde/$ref
+                            [2] => /cde
                         )
 
                     [dataPointer] => /root/zoo
-                    [processingPath] => #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/cde]
+                    [processingPath] => #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/ref-to-cde]->$ref[#/cde]
                     [subErrors] => Array
                         (
                             [0] => Swaggest\JsonSchema\Exception\Error Object
@@ -117,11 +118,12 @@ Swaggest\JsonSchema\Exception\Error Object
                                     [schemaPointers] => Array
                                         (
                                             [0] => /properties/root/patternProperties/^[a-zA-Z0-9_]+$/oneOf/2/$ref
-                                            [1] => /cde/anyOf/0
+                                            [1] => /ref-to-cde/$ref
+                                            [2] => /cde/anyOf/0
                                         )
 
                                     [dataPointer] => /root/zoo
-                                    [processingPath] => #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/cde]->anyOf[0]
+                                    [processingPath] => #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/ref-to-cde]->$ref[#/cde]->anyOf[0]
                                     [subErrors] => 
                                 )
 
@@ -131,11 +133,12 @@ Swaggest\JsonSchema\Exception\Error Object
                                     [schemaPointers] => Array
                                         (
                                             [0] => /properties/root/patternProperties/^[a-zA-Z0-9_]+$/oneOf/2/$ref
-                                            [1] => /cde/anyOf/1
+                                            [1] => /ref-to-cde/$ref
+                                            [2] => /cde/anyOf/1
                                         )
 
                                     [dataPointer] => /root/zoo
-                                    [processingPath] => #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/cde]->anyOf[1]
+                                    [processingPath] => #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/ref-to-cde]->$ref[#/cde]->anyOf[1]
                                     [subErrors] => 
                                 )
 
@@ -145,11 +148,12 @@ Swaggest\JsonSchema\Exception\Error Object
                                     [schemaPointers] => Array
                                         (
                                             [0] => /properties/root/patternProperties/^[a-zA-Z0-9_]+$/oneOf/2/$ref
-                                            [1] => /cde/anyOf/2
+                                            [1] => /ref-to-cde/$ref
+                                            [2] => /cde/anyOf/2
                                         )
 
                                     [dataPointer] => /root/zoo
-                                    [processingPath] => #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/cde]->anyOf[2]
+                                    [processingPath] => #->properties:root->patternProperties[^[a-zA-Z0-9_]+$]:zoo->oneOf[2]->$ref[#/ref-to-cde]->$ref[#/cde]->anyOf[2]
                                     [subErrors] => 
                                 )
 
