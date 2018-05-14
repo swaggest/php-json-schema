@@ -1025,25 +1025,35 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             if ('#' === $path) {
                 $injectDefinitions = new ScopeExit(function () use ($result, $options) {
                     foreach ($options->exportedDefinitions as $ref => $data) {
-                        JsonPointer::add($result, JsonPointer::splitPath($ref), $data,
-                            JsonPointer::SKIP_IF_ISSET + JsonPointer::RECURSIVE_KEY_CREATION);
+                        if ($data !== null) {
+                            JsonPointer::add($result, JsonPointer::splitPath($ref), $data,
+                                /*JsonPointer::SKIP_IF_ISSET + */
+                                JsonPointer::RECURSIVE_KEY_CREATION);
+                        }
                     }
                 });
             }
 
-            if ('#' !== $path && $ref = $data->getFromRef()) {
-                if ($ref[0] === '#') {
-                    if (isset($options->exportedDefinitions[$ref])) {
-                        $result->{self::PROP_REF} = $ref;
-                        return $result;
-                    } elseif (!array_key_exists($ref, $options->exportedDefinitions)) {
-                        $exported = null;
-                        $options->exportedDefinitions[$ref] = &$exported;
-                        $exported = $this->process($data, $options, $ref);
-                        $result->{self::PROP_REF} = $ref;
-                        return $result;
+            if ('#' !== $path && $refs = $data->getFromRefs()) {
+                $ref = $refs[0];
+                if (!array_key_exists($ref, $options->exportedDefinitions)) {
+                    $exported = null;
+                    $options->exportedDefinitions[$ref] = &$exported;
+                    $exported = $this->process($data, $options /*, $ref*/);
+                    unset($exported);
+                }
+
+                for ($i = 1; $i < count($refs); $i++) {
+                    $ref = $refs[$i];
+                    if (!array_key_exists($ref, $options->exportedDefinitions)) {
+                        $exported = new \stdClass();
+                        $exported->{self::PROP_REF} = $refs[$i-1];
+                        $options->exportedDefinitions[$ref] = $exported;
                     }
                 }
+
+                $result->{self::PROP_REF} = $refs[count($refs) - 1];
+                return $result;
             }
 
             if ($options->circularReferences->contains($data)) {

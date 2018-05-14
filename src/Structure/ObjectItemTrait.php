@@ -104,6 +104,10 @@ trait ObjectItemTrait
     }
 
     /**
+     * @see ObjectItemContract::getFromRef
+     * @deprecated use ObjectItemContract::getFromRefs
+     * @see ObjectItemContract::getFromRefs
+     * @todo remove
      * @return string
      */
     public function getFromRef()
@@ -111,6 +115,20 @@ trait ObjectItemTrait
         return null === $this->__fromRef ? null : $this->__fromRef[0];
     }
 
+    /**
+     * @see ObjectItemContract::getFromRef
+     * @return string
+     */
+    public function getFromRefs()
+    {
+        return $this->__fromRef;
+    }
+
+    /**
+     * @see ObjectItemContract::setFromRef
+     * @param string $ref
+     * @return $this
+     */
     public function setFromRef($ref)
     {
         if (null === $this->__fromRef) {
