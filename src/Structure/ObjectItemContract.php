@@ -10,5 +10,15 @@ interface ObjectItemContract extends \ArrayAccess, \JsonSerializable, \Iterator
     public function addAdditionalPropertyName($name);
     public function setDocumentPath($path);
     public function setFromRef($ref);
+
+    /**
+     * @return string
+     * @deprecated
+     */
     public function getFromRef();
+
+    /**
+     * @return string[]|null
+     */
+    public function getFromRefs();
 }

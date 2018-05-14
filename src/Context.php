@@ -48,6 +48,9 @@ class Context extends MagicMap
     public $version = Schema::VERSION_AUTO;
 
     public $exportedDefinitions = [];
+
+    public $isRef = false;
+
     /**
      * @param boolean $skipValidation
      * @return Context
