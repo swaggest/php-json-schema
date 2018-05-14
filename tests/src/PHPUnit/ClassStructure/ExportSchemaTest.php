@@ -45,6 +45,12 @@ JSON;
     "properties": {
         "prop": {
             "$ref": "#/definitions/lvlD"
+        },
+        "directTitle": {
+            "$ref": "http://json-schema.org/draft-04/schema#/properties/title"
+        },
+        "intermediateTitle": {
+            "$ref": "#/definitions/title"
         }
     },
     "type": "string",
@@ -60,6 +66,9 @@ JSON;
         },
         "lvlD": {
             "$ref": "#/definitions/lvlC"
+        },
+        "title": {
+            "$ref": "http://json-schema.org/draft-04/schema#/properties/title"
         }
     }
 }

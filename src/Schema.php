@@ -1034,26 +1034,31 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                 });
             }
 
-            if ('#' !== $path && $refs = $data->getFromRefs()) {
-                $ref = $refs[0];
-                if (!array_key_exists($ref, $options->exportedDefinitions)) {
-                    $exported = null;
-                    $options->exportedDefinitions[$ref] = &$exported;
-                    $exported = $this->process($data, $options /*, $ref*/);
-                    unset($exported);
-                }
-
-                for ($i = 1; $i < count($refs); $i++) {
-                    $ref = $refs[$i];
-                    if (!array_key_exists($ref, $options->exportedDefinitions)) {
-                        $exported = new \stdClass();
-                        $exported->{self::PROP_REF} = $refs[$i-1];
-                        $options->exportedDefinitions[$ref] = $exported;
+            if ($options->isRef) {
+                $options->isRef = false;
+            } else {
+                if ('#' !== $path && $refs = $data->getFromRefs()) {
+                    $ref = $refs[0];
+                    if (!array_key_exists($ref, $options->exportedDefinitions) && strpos($ref, '://') === false) {
+                        $exported = null;
+                        $options->exportedDefinitions[$ref] = &$exported;
+                        $options->isRef = true;
+                        $exported = $this->process($data, $options, $ref);
+                        unset($exported);
                     }
-                }
 
-                $result->{self::PROP_REF} = $refs[count($refs) - 1];
-                return $result;
+                    for ($i = 1; $i < count($refs); $i++) {
+                        $ref = $refs[$i];
+                        if (!array_key_exists($ref, $options->exportedDefinitions) && strpos($ref, '://') === false) {
+                            $exported = new \stdClass();
+                            $exported->{self::PROP_REF} = $refs[$i - 1];
+                            $options->exportedDefinitions[$ref] = $exported;
+                        }
+                    }
+
+                    $result->{self::PROP_REF} = $refs[count($refs) - 1];
+                    return $result;
+                }
             }
 
             if ($options->circularReferences->contains($data)) {
