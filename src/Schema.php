@@ -706,6 +706,9 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                         try {
                             $refResult = $this->process($data, $options, $path . '->$ref:' . $refString, $result);
                             if ($refResult instanceof ObjectItemContract) {
+                                if ($refResult->getFromRefs()) {
+                                    $refResult = clone $refResult; // @todo check performance, consider option
+                                }
                                 $refResult->setFromRef($refString);
                             }
                             $ref->setImported($refResult);

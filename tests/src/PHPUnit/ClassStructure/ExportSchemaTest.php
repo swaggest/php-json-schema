@@ -51,6 +51,9 @@ JSON;
         },
         "intermediateTitle": {
             "$ref": "#/definitions/title"
+        },
+        "anotherTitle": {
+            "$ref": "#/definitions/anotherTitle"
         }
     },
     "type": "string",
@@ -68,6 +71,9 @@ JSON;
             "$ref": "#/definitions/lvlC"
         },
         "title": {
+            "$ref": "http://json-schema.org/draft-04/schema#/properties/title"
+        },
+        "anotherTitle": {
             "$ref": "http://json-schema.org/draft-04/schema#/properties/title"
         }
     }
@@ -95,11 +101,23 @@ JSON;
         },
         "lvl4": {
             "type": "integer"
+        },
+        "title": {
+            "$ref": "http://json-schema.org/draft-04/schema#/properties/title"
+        },
+        "anotherTitle": {
+            "$ref": "http://json-schema.org/draft-04/schema#/properties/title"
         }
     },
     "properties": {
         "prop": {
             "$ref": "#/definitions/lvl1"
+        },
+        "intermediateTitle": {
+            "$ref": "#/definitions/title"
+        },
+        "anotherTitle": {
+            "$ref": "#/definitions/anotherTitle"
         }
     },
     "type": "object"

@@ -13,6 +13,8 @@ class DeepRefRoot extends ClassStructure
 
     public $intermediateTitle;
 
+    public $anotherTitle;
+
     public $prop;
 
     /**
@@ -27,6 +29,8 @@ class DeepRefRoot extends ClassStructure
         $properties->directTitle->ref = 'http://json-schema.org/draft-04/schema#/properties/title';
 
         $properties->intermediateTitle = DeepRefTitle::schema();
+
+        $properties->anotherTitle = DeepRefAnotherTitle::schema();
 
         $ownerSchema->type = Schema::STRING;
     }
