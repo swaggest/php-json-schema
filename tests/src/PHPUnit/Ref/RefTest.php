@@ -11,6 +11,7 @@ use Swaggest\JsonSchema\RefResolver;
 use Swaggest\JsonSchema\RemoteRef\Preloaded;
 use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\Tests\PHPUnit\Spec\Draft4Test;
+use Swaggest\JsonSchema\Tests\PHPUnit\Suite\SuiteTest;
 
 class RefTest extends \PHPUnit_Framework_TestCase
 {
@@ -355,7 +356,7 @@ JSON
 JSON
 );
         $options = new Context();
-        $options->remoteRefProvider = Draft4Test::getProvider();
+        $options->remoteRefProvider = SuiteTest::getProvider();
         $schema = Schema::import($testData->schema, $options);
 
         $schema->in($testData->tests[0]->data);
@@ -391,7 +392,7 @@ JSON
         );
 
         $schema = Schema::import($testData->schema, new Context(
-                Draft4Test::getProvider())
+                SuiteTest::getProvider())
         );
         $schema->in($testData->tests[0]->data);
         $this->setExpectedException(get_class(new InvalidValue()));

@@ -1,0 +1,19 @@
+[
+  {
+    "schema": {
+      "$ref": "http://json-schema.org/draft-04/schema#/definitions/positiveIntegerDefault0"
+    },
+    "tests": [
+      {
+        "description": "valid against remote schema",
+        "data": 1,
+        "valid": true
+      },
+      {
+        "description": "valid against remote schema",
+        "data": -1,
+        "valid": false
+      }
+    ]
+  }
+]

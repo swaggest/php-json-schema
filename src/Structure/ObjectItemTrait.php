@@ -117,7 +117,7 @@ trait ObjectItemTrait
 
     /**
      * @see ObjectItemContract::getFromRef
-     * @return string
+     * @return string[]|null
      */
     public function getFromRefs()
     {

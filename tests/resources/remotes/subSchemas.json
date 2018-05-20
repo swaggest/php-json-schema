@@ -1,0 +1,19 @@
+{
+    "integer": {
+        "type": "integer"
+    }, 
+    "refToInteger": {
+        "$ref": "#/integer"
+    },
+    "indirectRefToInteger": {
+        "allOf": [
+            {},
+            {
+                "$ref": "#/refToInteger"
+            }
+        ]
+    },
+    "refToExternalInteger": {
+        "$ref": "http://json-schema.org/draft-04/schema#/definitions/positiveIntegerDefault0"
+    }
+}
