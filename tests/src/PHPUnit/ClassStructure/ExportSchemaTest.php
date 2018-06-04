@@ -3,6 +3,8 @@
 namespace Swaggest\JsonSchema\Tests\PHPUnit\ClassStructure;
 
 
+use Swaggest\JsonSchema\Context;
+use Swaggest\JsonSchema\RemoteRef\Preloaded;
 use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\Tests\Helper\DbId;
 use Swaggest\JsonSchema\Tests\Helper\DeepRefRoot;
@@ -125,7 +127,7 @@ JSON;
 JSON;
         $schemaData = json_decode($schemaJson);
 
-        $schema = Schema::import($schemaData);
+        $schema = Schema::import($schemaData, new Context(new Preloaded()));
         $exported = Schema::export($schema);
         $this->assertSame($schemaJson, json_encode($exported, JSON_PRETTY_PRINT + JSON_UNESCAPED_SLASHES));
     }

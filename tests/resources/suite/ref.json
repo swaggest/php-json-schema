@@ -1,5 +1,6 @@
 [
   {
+    "description": "remote ref",
     "schema": {
       "$ref": "http://json-schema.org/draft-04/schema#/definitions/positiveIntegerDefault0"
     },
@@ -12,6 +13,64 @@
       {
         "description": "valid against remote schema",
         "data": -1,
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "enum-terminated self-reference",
+    "schema": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Foo"
+        }
+      ],
+      "definitions": {
+        "Foo": {
+          "oneOf": [
+            {
+              "enum": [
+                "A",
+                "B"
+              ]
+            },
+            {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/Foo"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "valid against enum",
+        "data": {
+          "test": "A",
+          "test1": "B",
+          "test2": {
+            "test4": "A",
+            "test5": {
+              "test6": "B"
+            }
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "invalid against enum",
+        "data": {
+          "test": "A",
+          "test1": "B",
+          "test2": {
+            "test4": "A",
+            "test5": {
+              "test6": "C"
+            }
+          }
+        },
         "valid": false
       }
     ]
