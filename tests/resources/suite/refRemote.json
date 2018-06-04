@@ -159,6 +159,7 @@
     ]
   },
   {
+    "description": "remote reference with url fragment",
     "schema": {
       "$ref": "http://json-schema.org/draft-04/schema#/definitions/positiveIntegerDefault0"
     },
