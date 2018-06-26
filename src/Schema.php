@@ -361,7 +361,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             } else {
                 if ($data > $this->maximum) {
                     $this->fail(new NumericException(
-                        'Value less than ' . $this->minimum . ' expected, ' . $data . ' received',
+                        'Value less than ' . $this->maximum . ' expected, ' . $data . ' received',
                         NumericException::MAXIMUM), $path);
                 }
             }
