@@ -67,4 +67,65 @@ TEXT;
         }
     }
 
+
+    function testFileReference()
+    {
+        $pathToExternalSchema = __DIR__ . '/../../../resources/remotes/subSchemas.json';
+        $schemaData = json_decode(<<<JSON
+{"\$ref": "file://$pathToExternalSchema#/integer"}
+JSON
+        );
+
+        $schema = Schema::import($schemaData);
+        $schema->in(123);
+
+        $this->setExpectedException(get_class(new InvalidValue()));
+        $schema->in('abc');
+    }
+
+    function testFileReferenceCapitalized()
+    {
+        $pathToExternalSchema = __DIR__ . '/../../../resources/remotes/subSchemas.json';
+        $schemaData = json_decode(<<<JSON
+{"\$ref": "FILE://$pathToExternalSchema#/integer"}
+JSON
+        );
+
+        $schema = Schema::import($schemaData);
+        $schema->in(123);
+
+        $this->setExpectedException(get_class(new InvalidValue()));
+        $schema->in('abc');
+    }
+
+    function testFileReferenceRealpath()
+    {
+        $pathToExternalSchema = realpath(__DIR__ . '/../../../resources/remotes/subSchemas.json');
+        $schemaData = json_decode(<<<JSON
+{"\$ref": "file://$pathToExternalSchema#/integer"}
+JSON
+        );
+
+        $schema = Schema::import($schemaData);
+        $schema->in(123);
+
+        $this->setExpectedException(get_class(new InvalidValue()));
+        $schema->in('abc');
+    }
+
+    function testFileReferenceNoProtocolScheme()
+    {
+        $pathToExternalSchema = __DIR__ . '/../../../resources/remotes/subSchemas.json';
+        $schemaData = json_decode(<<<JSON
+{"\$ref": "$pathToExternalSchema#/integer"}
+JSON
+        );
+
+        $schema = Schema::import($schemaData);
+        $schema->in(123);
+
+        $this->setExpectedException(get_class(new InvalidValue()));
+        $schema->in('abc');
+    }
+
 }
