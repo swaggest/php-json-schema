@@ -113,6 +113,22 @@ JSON
         $schema->in('abc');
     }
 
+    function testFileReferenceRealpathWithSpecialCharacters()
+    {
+        $pathToExternalSchema = realpath(__DIR__ . '/../../../resources/remotes/#special~characters%directory/subSchemas.json');
+        $pathToExternalSchema = str_replace('#special~characters%directory', rawurlencode('#special~characters%directory'), $pathToExternalSchema);
+        $schemaData = json_decode(<<<JSON
+{"\$ref": "file://$pathToExternalSchema#/integer"}
+JSON
+        );
+
+        $schema = Schema::import($schemaData);
+        $schema->in(123);
+
+        $this->setExpectedException(get_class(new InvalidValue()));
+        $schema->in('abc');
+    }
+
     function testFileReferenceNoProtocolScheme()
     {
         $pathToExternalSchema = __DIR__ . '/../../../resources/remotes/subSchemas.json';

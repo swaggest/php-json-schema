@@ -8,6 +8,6 @@ class BasicFetcher implements RemoteRefProvider
 {
     public function getSchemaData($url)
     {
-        return json_decode(file_get_contents($url));
+        return json_decode(file_get_contents(rawurldecode($url)));
     }
 }
