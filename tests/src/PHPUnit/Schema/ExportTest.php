@@ -174,4 +174,74 @@ JSON
         );
     }
 
+    /**
+     * @throws \Swaggest\JsonSchema\Exception
+     * @throws \Swaggest\JsonSchema\InvalidValue
+     * @see https://github.com/swaggest/php-json-schema/issues/51
+     */
+    public function testJustADereferencer()
+    {
+        $schema = \Swaggest\JsonSchema\Schema::import(json_decode(<<<'JSON'
+{
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer"
+        },
+        "orders": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/order"
+            }
+        }
+    },
+    "definitions": {
+        "order": {
+            "type": "object",
+            "properties": {
+                "orderid": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}
+JSON
+        ));
+
+        $dereferencedJson = json_encode($schema, JSON_PRETTY_PRINT);
+        $this->assertSame(<<<'JSON'
+{
+    "definitions": {
+        "order": {
+            "properties": {
+                "orderid": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "properties": {
+        "id": {
+            "type": "integer"
+        },
+        "orders": {
+            "items": {
+                "properties": {
+                    "orderid": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "type": "array"
+        }
+    },
+    "type": "object"
+}
+JSON
+            , $dereferencedJson
+        );
+    }
 }
