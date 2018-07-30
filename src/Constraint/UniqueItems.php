@@ -17,11 +17,15 @@ class UniqueItems
         foreach ($data as $value) {
             if (is_array($value) || $value instanceof \stdClass) {
                 $value = json_encode($value);
-            }
-            if (is_bool($value)) {
-                $value = '_______BOOL' . $value;
-            }
-            if ($value instanceof ObjectItemContract) {
+            } elseif (is_bool($value)) {
+                $value = '_B' . $value;
+            } elseif (is_string($value)) {
+                $value = '_S' . $value;
+            } elseif (is_int($value)) {
+                $value = '_I' . $value;
+            } elseif (is_float($value)) {
+                $value = '_F' . $value;
+            } elseif ($value instanceof ObjectItemContract) {
                 $value = json_encode($value);
             }
             $tmp = &$index[$value];
