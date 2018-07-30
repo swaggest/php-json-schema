@@ -2,10 +2,7 @@
 
 namespace Swaggest\JsonSchema\Tests\PHPUnit\Error;
 
-
-use Swaggest\JsonSchema\Exception\LogicException;
 use Swaggest\JsonSchema\InvalidValue;
-use Swaggest\JsonSchema\Path\Error;
 use Swaggest\JsonSchema\Schema;
 
 class ErrorTest extends \PHPUnit_Framework_TestCase
@@ -177,6 +174,28 @@ TEXT;
             $this->assertSame($errorInspected, print_r($error, 1));
             $this->assertSame('/properties/root/patternProperties/^[a-zA-Z0-9_]+$', $exception->getSchemaPointer());
             $this->assertSame('/root/zoo', $exception->getDataPointer());
+        }
+    }
+
+
+    public function testNoSubErrors()
+    {
+        $schema = Schema::import(json_decode(<<<'JSON'
+{
+    "not": {
+        "type": "string"
+    }
+}
+JSON
+        ));
+
+        try {
+            $schema->in('abc');
+        } catch (InvalidValue $exception) {
+            $this->assertSame('Not {"type":"string"} expected, "abc" received at #->not', $exception->getMessage());
+
+            $error = $exception->inspect();
+            $this->assertSame('Not {"type":"string"} expected, "abc" received', $error->error);
         }
     }
 

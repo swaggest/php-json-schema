@@ -53,10 +53,13 @@ class PointerUtil
                 $pointer .= '/' . JsonPointer::escapeSegment($schemaPaths[0], $isURIFragmentId);
                 if (isset($schemaPaths[1])) {
                     $pointer .= '/' . JsonPointer::escapeSegment($schemaPaths[1], $isURIFragmentId);
-                } elseif ($parts[1]) {
+                } elseif (isset($parts[1])) {
                     $pointer .= '/' . JsonPointer::escapeSegment($parts[1], $isURIFragmentId);
                 }
             }
+        }
+        if ($pointer === '') {
+            $pointer = '/';
         }
         $result[] = $pointer;
         return $result;
@@ -80,6 +83,9 @@ class PointerUtil
             if (isset($parts[1])) {
                 $result .= '/' . JsonPointer::escapeSegment($parts[1], $isURIFragmentId);
             }
+        }
+        if ($result === '') {
+            return '/';
         }
         return $result;
     }
