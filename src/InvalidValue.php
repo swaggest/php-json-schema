@@ -17,7 +17,9 @@ class InvalidValue extends Exception
             $this->error = $this->message;
         }
         $this->path = $path;
-        $this->message .= ' at ' . $path;
+        if ('#' !== $this->path) {
+            $this->message .= ' at ' . $path;
+        }
     }
 
     const INVALID_VALUE = 1;
@@ -32,8 +34,10 @@ class InvalidValue extends Exception
         $error->dataPointer = PointerUtil::getDataPointer($error->processingPath);
         $error->schemaPointers = PointerUtil::getSchemaPointers($error->processingPath);
         if ($this instanceof LogicException) {
-            foreach ($this->subErrors as $subError) {
-                $error->subErrors[] = $subError->inspect();
+            if ($this->subErrors !== null) {
+                foreach ($this->subErrors as $subError) {
+                    $error->subErrors[] = $subError->inspect();
+                }
             }
         }
         return $error;

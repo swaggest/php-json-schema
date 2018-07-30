@@ -284,7 +284,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             // Expected exception
         }
         if ($exception === false) {
-            $this->fail(new LogicException('Not ' . json_encode($this->not) . ' expected, ' . json_encode($data) . ' received'), $path);
+            $this->fail(new LogicException('Not ' . json_encode($this->not) . ' expected, ' . json_encode($data) . ' received'), $path . '->not');
         }
     }
 
@@ -1167,9 +1167,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
      */
     private function fail(InvalidValue $exception, $path)
     {
-        if ($path !== '#') {
-            $exception->addPath($path);
-        }
+        $exception->addPath($path);
         throw $exception;
     }
 
