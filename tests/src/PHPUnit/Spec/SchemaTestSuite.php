@@ -2,6 +2,7 @@
 
 namespace Swaggest\JsonSchema\Tests\PHPUnit\Spec;
 
+use Swaggest\JsonSchema\Constraint\Format;
 use Swaggest\JsonSchema\Context;
 use Swaggest\JsonSchema\InvalidValue;
 use Swaggest\JsonSchema\Schema;
@@ -164,7 +165,7 @@ abstract class SchemaTestSuite extends \PHPUnit_Framework_TestCase
      */
     protected function runSpecTest($schemaData, $data, $isValid, $name, $version)
     {
-
+        Format::$strictDateTimeValidation = true;
         $actualValid = true;
         $error = '';
         try {

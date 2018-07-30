@@ -26,6 +26,8 @@ class Format
     const IRI_REFERENCE = 'iri-reference';
     const URI_TEMPLATE = 'uri-template';
 
+    public static $strictDateTimeValidation = false;
+
     private static $dateRegexPart = '(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])';
     private static $timeRegexPart = '([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)([01][0-9]|2[0-3]):([0-5][0-9]))?';
     private static $jsonPointerRegex = '_^(?:/|(?:/[^/#]*)*)$_';
@@ -75,9 +77,26 @@ class Format
 
     public static function dateTimeError($data)
     {
-        return preg_match('/^' . self::$dateRegexPart . 'T' . self::$timeRegexPart . '$/i', $data)
-            ? null
-            : 'Invalid date-time: ' . $data;
+        if (!preg_match('/^' . self::$dateRegexPart . 'T' . self::$timeRegexPart . '$/i', $data)) {
+            return 'Invalid date-time format: ' . $data;
+        }
+
+        if (self::$strictDateTimeValidation) {
+            $dt = date_create($data);
+            if ($dt === false) {
+                return 'Failed to parse date-time: ' . $data;
+            }
+            $isLeapSecond = '6' === $data[17] && (
+                    0 === strpos(substr($data, 5, 5), '12-31') ||
+                    0 === strpos(substr($data, 5, 5), '06-30')
+                );
+            if (!$isLeapSecond &&
+                0 !== stripos($dt->format(DATE_RFC3339), substr($data, 0, 19))) {
+                return 'Invalid date-time value: ' . $data;
+            }
+        }
+
+        return null;
     }
 
     public static function regexError($data)

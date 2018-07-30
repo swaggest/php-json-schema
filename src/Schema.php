@@ -1144,6 +1144,9 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
         }
 
         if ($this->contentEncoding !== null || $this->contentMediaType !== null) {
+            if ($import && !is_string($data)) {
+                return $result;
+            }
             $result = $this->processContent($data, $options, $path);
         }
 
