@@ -71,6 +71,7 @@ TEXT;
     function testFileReference()
     {
         $pathToExternalSchema = __DIR__ . '/../../../resources/remotes/subSchemas.json';
+        $pathToExternalSchema = $this->preparePath($pathToExternalSchema);
         $schemaData = json_decode(<<<JSON
 {"\$ref": "file://$pathToExternalSchema#/integer"}
 JSON
@@ -86,6 +87,7 @@ JSON
     function testFileReferenceCapitalized()
     {
         $pathToExternalSchema = __DIR__ . '/../../../resources/remotes/subSchemas.json';
+        $pathToExternalSchema = $this->preparePath($pathToExternalSchema);
         $schemaData = json_decode(<<<JSON
 {"\$ref": "FILE://$pathToExternalSchema#/integer"}
 JSON
@@ -101,6 +103,7 @@ JSON
     function testFileReferenceRealpath()
     {
         $pathToExternalSchema = realpath(__DIR__ . '/../../../resources/remotes/subSchemas.json');
+        $pathToExternalSchema = $this->preparePath($pathToExternalSchema);
         $schemaData = json_decode(<<<JSON
 {"\$ref": "file://$pathToExternalSchema#/integer"}
 JSON
@@ -117,6 +120,7 @@ JSON
     {
         $pathToExternalSchema = realpath(__DIR__ . '/../../../resources/remotes/#special~characters%directory/subSchemas.json');
         $pathToExternalSchema = str_replace('#special~characters%directory', rawurlencode('#special~characters%directory'), $pathToExternalSchema);
+        $pathToExternalSchema = $this->preparePath($pathToExternalSchema);
         $schemaData = json_decode(<<<JSON
 {"\$ref": "file://$pathToExternalSchema#/integer"}
 JSON
@@ -132,6 +136,7 @@ JSON
     function testFileReferenceNoProtocolScheme()
     {
         $pathToExternalSchema = __DIR__ . '/../../../resources/remotes/subSchemas.json';
+        $pathToExternalSchema = $this->preparePath($pathToExternalSchema);
         $schemaData = json_decode(<<<JSON
 {"\$ref": "$pathToExternalSchema#/integer"}
 JSON
@@ -144,4 +149,11 @@ JSON
         $schema->in('abc');
     }
 
+    private function preparePath($path)
+    {
+        if (DIRECTORY_SEPARATOR === '\\') {
+            return str_replace('\\', '/', $path);
+        }
+        return $path;
+    }
 }
