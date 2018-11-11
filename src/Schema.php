@@ -530,7 +530,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     }
 
     /**
-     * @param \stdClass $data
+     * @param object $data
      * @param Context $options
      * @param string $path
      * @throws InvalidValue
@@ -568,7 +568,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     }
 
     /**
-     * @param \stdClass $data
+     * @param object $data
      * @param Context $options
      * @param string $path
      * @param ObjectItemContract|null $result
