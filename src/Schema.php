@@ -741,7 +741,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
 
         $array = array();
         if (!empty($this->__dataToProperty[$options->mapping])) { // todo skip on $options->validateOnly
-            foreach ((array)$data as $key => $value) {
+            foreach (!$data instanceof \stdClass ? get_object_vars($data) : (array)$data as $key => $value) {
                 if ($import) {
                     if (isset($this->__dataToProperty[$options->mapping][$key])) {
                         $key = $this->__dataToProperty[$options->mapping][$key];
@@ -754,7 +754,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                 $array[$key] = $value;
             }
         } else {
-            $array = (array)$data;
+            $array = !$data instanceof \stdClass ? get_object_vars($data) : (array)$data;
         }
 
         if (!$options->skipValidation) {
@@ -1135,7 +1135,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             $result = $this->processAllOf($data, $options, $path);
         }
 
-        if ($data instanceof \stdClass) {
+        if (is_object($data)) {
             $result = $this->processObject($data, $options, $path, $result);
         }
 
