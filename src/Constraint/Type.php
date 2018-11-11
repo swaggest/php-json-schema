@@ -64,7 +64,7 @@ class Type implements Constraint
         foreach ($types as $type) {
             switch ($type) {
                 case self::OBJECT:
-                    $ok = $data instanceof \stdClass;
+                    $ok = is_object($data);
                     break;
                 case self::ARR:
                     $ok = is_array($data);
