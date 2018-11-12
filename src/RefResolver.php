@@ -174,8 +174,9 @@ class RefResolver
                         }
 
                         $folder = array_shift($path);
-
-                        if ($branch instanceof \stdClass && isset($branch->$folder)) {
+                        if ($folder === ''){
+                            // root element
+                        } elseif ($branch instanceof \stdClass && isset($branch->$folder)) {
                             $branch = &$branch->$folder;
                         } elseif (is_array($branch) && isset($branch[$folder])) {
                             $branch = &$branch[$folder];
