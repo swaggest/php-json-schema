@@ -1030,7 +1030,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                     foreach ($options->exportedDefinitions as $ref => $data) {
                         if ($data !== null) {
                             // fix external reference
-                            $pathItems = explode('#', $path,2);
+                            $pathItems = explode('#', $ref,2);
                             if ((count($pathItems) > 1) && (count($pathItem[0]) > 0)){
                                 $ref = "#" . $pathItem[1];
                             }
