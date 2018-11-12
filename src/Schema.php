@@ -1031,8 +1031,8 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                         if ($data !== null) {
                             // fix external reference
                             $pathItems = explode('#', $ref,2);
-                            if ((count($pathItems) > 1) && (strlen($pathItem[0]) > 0)){
-                                $ref = "#" . $pathItem[1];
+                            if ((count($pathItems) > 1) && (strlen($pathItems[0]) > 0)){
+                                $ref = "#" . $pathItems[1];
                             }
                             JsonPointer::add($result, JsonPointer::splitPath($ref), $data,
                             /*JsonPointer::SKIP_IF_ISSET + */
