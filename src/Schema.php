@@ -1029,9 +1029,14 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                 $injectDefinitions = new ScopeExit(function () use ($result, $options) {
                     foreach ($options->exportedDefinitions as $ref => $data) {
                         if ($data !== null) {
+                            // fix external reference
+                            $pathItems = explode('#', $path,2);
+                            if ((count($pathItems) > 1) && (count($pathItem[0]) > 0)){
+                                $ref = "#" . $pathItem[1];
+                            }
                             JsonPointer::add($result, JsonPointer::splitPath($ref), $data,
-                                /*JsonPointer::SKIP_IF_ISSET + */
-                                JsonPointer::RECURSIVE_KEY_CREATION);
+                            /*JsonPointer::SKIP_IF_ISSET + */
+                            JsonPointer::RECURSIVE_KEY_CREATION);
                         }
                     }
                 });
