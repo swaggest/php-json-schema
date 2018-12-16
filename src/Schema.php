@@ -1033,7 +1033,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             if ('#' === $path) {
                 $injectDefinitions = new ScopeExit(function () use ($result, $options) {
                     foreach ($options->exportedDefinitions as $ref => $data) {
-                        if ($data !== null) {
+                        if ($data !== null  && ($ref[0] === '#' || $ref[1] === '/')) {
                             JsonPointer::add($result, JsonPointer::splitPath($ref), $data,
                                 /*JsonPointer::SKIP_IF_ISSET + */
                                 JsonPointer::RECURSIVE_KEY_CREATION);
