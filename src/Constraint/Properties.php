@@ -11,7 +11,6 @@ use Swaggest\JsonSchema\Structure\ObjectItem;
 
 /**
  * @method SchemaContract __get($key)
- * @method Schema[] toArray()
  */
 class Properties extends ObjectItem implements Constraint
 {
@@ -24,16 +23,82 @@ class Properties extends ObjectItem implements Constraint
     protected $__schema;
 
     /**
+     * @var Schema[]
+     */
+    private $__mappedProperties;
+
+    /**
+     * @var array
+     */
+    private $__dataKeyMaps = array();
+
+    /**
+     * Data to property mapping, example ["$ref" => "ref"]
+     * @var array
+     */
+    public $__dataToProperty = array();
+
+    /**
      * Property to data mapping, example ["ref" => "$ref"]
      * @var array
      */
-    public $__defaultMapping = array();
+    public $__propertyToData = array();
+
+    /**
+     * Returns a map of properties by default data name
+     * @return Schema[]
+     */
+    public function &toArray()
+    {
+        if (!isset($this->__propertyToData[Schema::DEFAULT_MAPPING])) {
+            return $this->__arrayOfData;
+        }
+        if (null === $this->__mappedProperties) {
+            $properties = array();
+            foreach ($this->__arrayOfData as $propertyName => $property) {
+                if (isset($this->__propertyToData[Schema::DEFAULT_MAPPING][$propertyName])) {
+                    $propertyName = $this->__propertyToData[Schema::DEFAULT_MAPPING][$propertyName];
+                }
+                $properties[$propertyName] = $property;
+            }
+            $this->__mappedProperties = $properties;
+        }
+        return $this->__mappedProperties;
+    }
+
+    /**
+     * @param string $mapping
+     * @return string[] a map of propertyName to dataName
+     */
+    public function getDataKeyMap($mapping = Schema::DEFAULT_MAPPING)
+    {
+        if (!isset($this->__dataKeyMaps[$mapping])) {
+            $map = array();
+            foreach ($this->__arrayOfData as $propertyName => $property) {
+                if (isset($this->__propertyToData[$mapping][$propertyName])) {
+                    $map[$propertyName] = $this->__propertyToData[$mapping][$propertyName];
+                } else {
+                    $map[$propertyName] = $propertyName;
+                }
+            }
+            $this->__dataKeyMaps[$mapping] = $map;
+        }
+
+        return $this->__dataKeyMaps[$mapping];
+    }
 
     public function lock()
     {
         $this->__isReadOnly = true;
         return $this;
     }
+
+    public function addPropertyMapping($dataName, $propertyName, $mapping = Schema::DEFAULT_MAPPING)
+    {
+        $this->__dataToProperty[$mapping][$dataName] = $propertyName;
+        $this->__propertyToData[$mapping][$propertyName] = $dataName;
+    }
+
 
     /**
      * @param string $name
@@ -101,25 +166,14 @@ class Properties extends ObjectItem implements Constraint
 
     public function jsonSerialize()
     {
-        $result = $this->__arrayOfData;
+        $result = $this->toArray();
+
         if ($this->__nestedObjects) {
             foreach ($this->__nestedObjects as $object) {
                 foreach ($object->toArray() as $key => $value) {
                     $result[$key] = $value;
                 }
             }
-        }
-
-        if (isset($this->__defaultMapping)) {
-            $mappedResult = new \stdClass();
-            foreach ($result as $key => $value) {
-                if (isset($this->__defaultMapping[$key])) {
-                    $mappedResult->{$this->__defaultMapping[$key]} = $value;
-                } else {
-                    $mappedResult->$key = $value;
-                }
-            }
-            return $mappedResult;
         }
 
         return (object)$result;

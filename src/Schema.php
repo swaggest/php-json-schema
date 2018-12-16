@@ -47,7 +47,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     const PROP_ID_D4 = 'id';
 
     // Object
-    /** @var null|Properties|Schema[]|Schema */
+    /** @var null|Properties */
     public $properties;
     /** @var Schema|bool */
     public $additionalProperties;
@@ -80,21 +80,22 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
 
 
     public $objectItemClass;
-    private $useObjectAsArray = false;
 
-    private $__dataToProperty = array();
-    private $__propertyToData = array();
+    /**
+     * @todo check usages/deprecate
+     * @var bool
+     */
+    private $useObjectAsArray = false;
 
     private $__booleanSchema;
 
     public function addPropertyMapping($dataName, $propertyName, $mapping = self::DEFAULT_MAPPING)
     {
-        $this->__dataToProperty[$mapping][$dataName] = $propertyName;
-        $this->__propertyToData[$mapping][$propertyName] = $dataName;
-
-        if ($mapping === self::DEFAULT_MAPPING && $this->properties instanceof Properties) {
-            $this->properties->__defaultMapping[$propertyName] = $dataName;
+        if (null === $this->properties) {
+            $this->properties = new Properties();
         }
+
+        $this->properties->addPropertyMapping($dataName, $propertyName, $mapping);
         return $this;
     }
 
@@ -530,39 +531,16 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     }
 
     /**
-     * @param object $data
+     * @param array $array
      * @param Context $options
      * @param string $path
      * @throws InvalidValue
      */
-    private function processObjectRequired($data, Context $options, $path)
+    private function processObjectRequired($array, Context $options, $path)
     {
-        if (isset($this->__dataToProperty[$options->mapping])) {
-            if ($options->import) {
-                foreach ($this->required as $item) {
-                    if (isset($this->__propertyToData[$options->mapping][$item])) {
-                        $item = $this->__propertyToData[$options->mapping][$item];
-                    }
-                    if (!property_exists($data, $item)) {
-                        $this->fail(new ObjectException('Required property missing: ' . $item . ', data: ' . json_encode($data, JSON_UNESCAPED_SLASHES), ObjectException::REQUIRED), $path);
-                    }
-                }
-            } else {
-                foreach ($this->required as $item) {
-                    if (isset($this->__dataToProperty[$options->mapping][$item])) {
-                        $item = $this->__dataToProperty[$options->mapping][$item];
-                    }
-                    if (!property_exists($data, $item)) {
-                        $this->fail(new ObjectException('Required property missing: ' . $item . ', data: ' . json_encode($data, JSON_UNESCAPED_SLASHES), ObjectException::REQUIRED), $path);
-                    }
-                }
-            }
-
-        } else {
-            foreach ($this->required as $item) {
-                if (!property_exists($data, $item)) {
-                    $this->fail(new ObjectException('Required property missing: ' . $item . ', data: ' . json_encode($data, JSON_UNESCAPED_SLASHES), ObjectException::REQUIRED), $path);
-                }
+        foreach ($this->required as $item) {
+            if (!array_key_exists($item, $array)) {
+                $this->fail(new ObjectException('Required property missing: ' . $item . ', data: ' . json_encode($array, JSON_UNESCAPED_SLASHES), ObjectException::REQUIRED), $path);
             }
         }
     }
@@ -581,10 +559,34 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     {
         $import = $options->import;
 
-        if (!$options->skipValidation && $this->required !== null) {
-            $this->processObjectRequired($data, $options, $path);
+        $hasMapping = isset($this->properties->__dataToProperty[$options->mapping]);
+
+        $array = !$data instanceof \stdClass ? get_object_vars($data) : (array)$data;
+
+        // convert imported data to default mapping before validation
+        if ($import && $options->mapping !== self::DEFAULT_MAPPING) {
+            if (isset($this->properties->__dataToProperty[$options->mapping])) {
+                foreach ($this->properties->__dataToProperty[$options->mapping] as $dataName => $propertyName) {
+                    if (!isset($array[$dataName])) {
+                        continue;
+                    }
+
+                    $propertyName = isset($this->properties->__propertyToData[self::DEFAULT_MAPPING][$propertyName])
+                        ? $this->properties->__propertyToData[self::DEFAULT_MAPPING][$propertyName]
+                        : $propertyName;
+                    if ($propertyName !== $dataName) {
+                        $array[$propertyName] = $array[$dataName];
+                        unset($array[$dataName]);
+                    }
+                }
+            }
         }
 
+        if (!$options->skipValidation && $this->required !== null) {
+            $this->processObjectRequired($array, $options, $path);
+        }
+
+        // build result entity
         if ($import) {
             if (!$options->validateOnly) {
 
@@ -630,10 +632,10 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
         // @todo better check for schema id
 
         if ($import
-            && isset($data->{Schema::PROP_ID_D4})
+            && isset($array[Schema::PROP_ID_D4])
             && ($options->version === Schema::VERSION_DRAFT_04 || $options->version === Schema::VERSION_AUTO)
-            && is_string($data->{Schema::PROP_ID_D4})) {
-            $id = $data->{Schema::PROP_ID_D4};
+            && is_string($array[Schema::PROP_ID_D4])) {
+            $id = $array[Schema::PROP_ID_D4];
             $refResolver = $options->refResolver;
             $parentScope = $refResolver->updateResolutionScope($id);
             /** @noinspection PhpUnusedLocalVariableInspection */
@@ -643,10 +645,10 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
         }
 
         if ($import
-            && isset($data->{self::PROP_ID})
+            && isset($array[self::PROP_ID])
             && ($options->version >= Schema::VERSION_DRAFT_06 || $options->version === Schema::VERSION_AUTO)
-            && is_string($data->{self::PROP_ID})) {
-            $id = $data->{self::PROP_ID};
+            && is_string($array[self::PROP_ID])) {
+            $id = $array[self::PROP_ID];
             $refResolver = $options->refResolver;
             $parentScope = $refResolver->updateResolutionScope($id);
             /** @noinspection PhpUnusedLocalVariableInspection */
@@ -655,18 +657,15 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             });
         }
 
+        // check $ref
         if ($import) {
             try {
 
                 $refProperty = null;
                 $dereference = true;
 
-                if (isset($data->{self::PROP_REF})) {
-                    if (null === $refProperty = $this->properties[self::PROP_REF]) {
-                        if (isset($this->__dataToProperty[$options->mapping][self::PROP_REF])) {
-                            $refProperty = $this->properties[$this->__dataToProperty[$options->mapping][self::PROP_REF]];
-                        }
-                    }
+                if (isset($array[self::PROP_REF])) {
+                    $refProperty = $this->properties[self::PROP_REF];
 
                     if (isset($refProperty) && ($refProperty->format !== Format::URI_REFERENCE)) {
                         $dereference = false;
@@ -674,11 +673,11 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                 }
 
                 if (
-                    isset($data->{self::PROP_REF})
-                    && is_string($data->{self::PROP_REF})
+                    isset($array[self::PROP_REF])
+                    && is_string($array[self::PROP_REF])
                     && $dereference
                 ) {
-                    $refString = $data->{self::PROP_REF};
+                    $refString = $array[self::PROP_REF];
 
                     // todo check performance impact
                     if ($refString === 'http://json-schema.org/draft-04/schema#'
@@ -732,6 +731,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
         $nestedProperties = null;
         if ($this->properties !== null) {
             $properties = $this->properties->toArray(); // todo call directly
+
             if ($this->properties instanceof Properties) {
                 $nestedProperties = $this->properties->nestedProperties;
             } else {
@@ -739,23 +739,6 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             }
         }
 
-        $array = array();
-        if (!empty($this->__dataToProperty[$options->mapping])) { // todo skip on $options->validateOnly
-            foreach (!$data instanceof \stdClass ? get_object_vars($data) : (array)$data as $key => $value) {
-                if ($import) {
-                    if (isset($this->__dataToProperty[$options->mapping][$key])) {
-                        $key = $this->__dataToProperty[$options->mapping][$key];
-                    }
-                } else {
-                    if (isset($this->__propertyToData[$options->mapping][$key])) {
-                        $key = $this->__propertyToData[$options->mapping][$key];
-                    }
-                }
-                $array[$key] = $value;
-            }
-        } else {
-            $array = !$data instanceof \stdClass ? get_object_vars($data) : (array)$data;
-        }
 
         if (!$options->skipValidation) {
             if ($this->minProperties !== null && count($array) < $this->minProperties) {
@@ -781,9 +764,6 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             foreach ($properties as $key => $property) {
                 // todo check when property is \stdClass `{}` here (RefTest)
                 if ($property instanceof SchemaContract && null !== $default = $property->getDefault()) {
-                    if (isset($this->__dataToProperty[$options->mapping][$key])) {
-                        $key = $this->__dataToProperty[$options->mapping][$key];
-                    }
                     if (!array_key_exists($key, $array)) {
                         $defaultApplied[$key] = true;
                         $array[$key] = $default;
@@ -808,7 +788,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                         $dependencies->process($data, $options, $path . '->dependencies:' . $key);
                     } else {
                         foreach ($dependencies as $item) {
-                            if (!property_exists($data, $item)) {
+                            if (!array_key_exists($item, $array)) {
                                 $this->fail(new ObjectException('Dependency property missing: ' . $item,
                                     ObjectException::DEPENDENCY_MISSING), $path);
                             }
@@ -868,21 +848,45 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                 }
             }
 
+            $propertyName = $key;
+
+            if ($hasMapping) {
+                if (isset($this->properties->__dataToProperty[self::DEFAULT_MAPPING][$key])) {
+                    // todo check performance of local map access
+                    $propertyName = $this->properties->__dataToProperty[self::DEFAULT_MAPPING][$key];
+                }
+            }
+
+            if ($options->mapping !== self::DEFAULT_MAPPING) {
+                if (!$import) {
+                    if (isset($this->properties->__propertyToData[$options->mapping][$propertyName])) {
+                        // todo check performance of local map access
+                        $propertyName = $this->properties->__propertyToData[$options->mapping][$propertyName];
+                    }
+                }
+            }
+
             if (!$options->validateOnly && $nestedEggs && $import) {
                 foreach ($nestedEggs as $nestedEgg) {
                     $result->setNestedProperty($key, $value, $nestedEgg);
                 }
                 if ($propertyFound) {
-                    $result->$key = $value;
+                    $result->$propertyName = $value;
                 }
             } else {
+                if (!$import && $hasMapping) {
+                    if (isset($this->properties->__propertyToData[$options->mapping][$propertyName])) {
+                        $propertyName = $this->properties->__propertyToData[$options->mapping][$propertyName];
+                    }
+                }
+
                 if ($this->useObjectAsArray && $import) {
-                    $result[$key] = $value;
+                    $result[$propertyName] = $value;
                 } else {
                     if ($found || !$import) {
-                        $result->$key = $value;
-                    } elseif (!isset($result->$key)) {
-                        $result->$key = $value;
+                        $result->$propertyName = $value;
+                    } elseif (!isset($result->$propertyName)) {
+                        $result->$propertyName = $value;
                     }
                 }
             }
@@ -1016,6 +1020,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
      */
     public function process($data, Context $options, $path = '#', $result = null)
     {
+        $origData = $data;
         $import = $options->import;
 
         if (!$import && $data instanceof SchemaExporter) {
@@ -1050,7 +1055,8 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                         unset($exported);
                     }
 
-                    for ($i = 1; $i < count($refs); $i++) {
+                    $countRefs = count($refs);
+                    for ($i = 1; $i < $countRefs; $i++) {
                         $ref = $refs[$i];
                         if (!array_key_exists($ref, $options->exportedDefinitions) && strpos($ref, '://') === false) {
                             $exported = new \stdClass();
@@ -1059,7 +1065,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                         }
                     }
 
-                    $result->{self::PROP_REF} = $refs[count($refs) - 1];
+                    $result->{self::PROP_REF} = $refs[$countRefs - 1];
                     return $result;
                 }
             }

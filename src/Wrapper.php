@@ -92,7 +92,7 @@ class Wrapper implements SchemaContract, MetaHolder, SchemaExporter, \JsonSerial
     }
 
     /**
-     * @return null|Constraint\Properties|Schema|Schema[]
+     * @return null|Constraint\Properties
      */
     public function getProperties()
     {

@@ -122,7 +122,7 @@ JSON
         $order->dateTime = '2015-10-28T07:28:00Z';
         $example->orders[] = $order;
 
-        $this->setExpectedException(get_class(new ObjectException()), 'Required property missing: id, data: {"dateTime":"2015-10-28T07:28:00Z"} at #->$ref[#/definitions/user]->properties:orders->items[0]:0->$ref[#/definitions/order]');
+        $this->setExpectedException(get_class(new ObjectException()), 'Required property missing: id, data: {"date_time":"2015-10-28T07:28:00Z"} at #->$ref[#/definitions/user]->properties:orders->items[0]:0->$ref[#/definitions/order]');
         /** @noinspection PhpUnhandledExceptionInspection */
         User::export($example); // Exception: Required property missing: id, data: {"dateTime":"2015-10-28T07:28:00Z"} at #->$ref[#/definitions/user]->properties:orders->items[0]:0->$ref[#/definitions/order]
     }
@@ -150,6 +150,15 @@ JSON;
         $this->assertSame('2015-10-28T07:28:00Z', $imported->dateTime);
         $this->assertSame(2.2, $imported->price);
 
+    }
+
+    public function testNameMapperNonDefault()
+    {
+        $order = new Order();
+        $order->id = 1;
+        $order->dateTime = '2015-10-28T07:28:00Z';
+        $order->price = 2.2;
+
         $options = new Context();
         $options->mapping = Order::FANCY_MAPPING;
 
@@ -167,7 +176,6 @@ JSON;
         $imported = Order::import(json_decode($json), $options);
         $this->assertSame('2015-10-28T07:28:00Z', $imported->dateTime);
     }
-
 
     public function testNestedStructure()
     {

@@ -13,7 +13,24 @@ class Issue63Test extends \PHPUnit_Framework_TestCase
         $user->setFirstName('first');
         $user->setLastName('last');
         $user->setAge(10);
+
+        $this->assertSame(
+            '{"id":123,"first_name":"first","last_name":"last","age":10}',
+            json_encode(User63::export($user))
+        );
+
         // no exception expected
         $user->validate();
+
+
+        $this->assertSame(
+            '{"id":123,"first_name":"first","last_name":"last","age":10}',
+            json_encode($user->jsonSerialize())
+        );
+
+        $this->assertSame(
+            '{"id":123,"first_name":"first","last_name":"last","age":10}',
+            json_encode($user)
+        );
     }
 }
