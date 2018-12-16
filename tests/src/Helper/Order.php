@@ -37,7 +37,11 @@ class Order implements ClassStructureContract
         $properties->dateTime->format = Format::DATE_TIME;
         $properties->price = Schema::number();
 
-        $ownerSchema->required[] = self::names()->id;
+        $ownerSchema->required = array(
+            self::names()->id,
+            'date_time',
+            self::names()->price
+        );
         $ownerSchema->setFromRef('#/definitions/order');
 
         // Define default mapping if any

@@ -4,6 +4,7 @@
   "type": "library",
   "require": {
     "php": ">=5.4",
+    "ext-json": "*",
     "phplang/scope-exit": "^1.0",
     "swaggest/json-diff": "^3.4.2"
   },
