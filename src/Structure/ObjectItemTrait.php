@@ -43,7 +43,7 @@ trait ObjectItemTrait
     protected $__additionalPropertyNames;
     public function addAdditionalPropertyName($name)
     {
-        $this->__additionalPropertyNames[] = $name;
+        $this->__additionalPropertyNames[$name] = true;
     }
 
     /**
@@ -51,14 +51,14 @@ trait ObjectItemTrait
      */
     public function getAdditionalPropertyNames()
     {
-        return $this->__additionalPropertyNames;
+        return array_keys($this->__additionalPropertyNames);
     }
 
     protected $__patternPropertyNames;
 
     public function addPatternPropertyName($pattern, $name)
     {
-        $this->__patternPropertyNames[$pattern][] = $name;
+        $this->__patternPropertyNames[$pattern][$name] = true;
     }
 
     /**
@@ -68,7 +68,7 @@ trait ObjectItemTrait
     public function getPatternPropertyNames($pattern)
     {
         if (isset($this->__patternPropertyNames[$pattern])) {
-            return $this->__patternPropertyNames[$pattern];
+            return array_keys($this->__patternPropertyNames[$pattern]);
         } else {
             return null;
         }
