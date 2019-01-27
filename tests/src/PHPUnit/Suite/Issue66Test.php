@@ -2,52 +2,30 @@
 
 namespace Swaggest\JsonSchema\Tests\PHPUnit\Suite;
 
+use Swaggest\JsonSchema\Context;
+use Swaggest\JsonSchema\RemoteRef\Preloaded;
 use Swaggest\JsonSchema\Schema;
 
 class Issue66Test extends \PHPUnit_Framework_TestCase
 {
     public function testIssue()
     {
-        $schemaData = json_decode(<<<'JSON'
-{
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "urn:example:api:response-example",
-    "type": "object",
-    "additionalProperties": false,
-    "required": ["confirmed", "to_pay"],
-    "definitions": {
-        "example_item": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-                "_type",
-                "count"
-            ],
-            "properties": {
-                "_type": {
-                    "$id": "#/definitions/example_item/properties/confirmed/properties/_type",
-                    "type": "string",
-                    "enum": ["example_item"]
-                },
-                "count": {
-                    "$id": "#/definitions/example_item/properties/confirmed/properties/count",
-                    "type": "integer"
-                }
-            }
-        }
-    },
-    "properties": {
-        "confirmed": {
-            "$ref": "#/definitions/example_item"
-        },
-        "to_pay": {
-            "$ref": "#/definitions/example_item"
-        }
+        $schemaPath = realpath(__DIR__ . '/../../../resources/suite/issue66.json');
+        $schemaData = json_decode(file_get_contents($schemaPath));
+        $resolver = new Preloaded();
+        $resolver->setSchemaData($schemaPath, $schemaData);
+
+        $options = new Context($resolver);
+
+        $schema = Schema::import((object)['$ref' => $schemaPath], $options);
+        $res = $schema->in(json_decode('{"confirmed":{"count":123, "_type": "example_item"}, "to_pay":{"count":123, "_type": "example_item"}}'));
+        $this->assertSame(123, $res->confirmed->count);
     }
-}
-JSON
-);
-        $schema = Schema::import($schemaData);
+
+    public function testDirectImport()
+    {
+        $schemaPath = realpath(__DIR__ . '/../../../resources/suite/issue66.json');
+        $schema = Schema::import($schemaPath);
         $res = $schema->in(json_decode('{"confirmed":{"count":123, "_type": "example_item"}, "to_pay":{"count":123, "_type": "example_item"}}'));
         $this->assertSame(123, $res->confirmed->count);
     }
