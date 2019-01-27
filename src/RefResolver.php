@@ -47,10 +47,11 @@ class RefResolver
     {
         $id = rtrim($id, '#'); // safe to trim because # in hashCode must be urlencoded to %23
         $rootResolver = $this->rootResolver ? $this->rootResolver : $this;
-        if (strpos($id, '://') !== false) {
+        if ((strpos($id, '://') !== false) || 'urn:' === substr($id, 0, 4)) {
             $prev = $rootResolver->setResolutionScope($id);
         } else {
-            $prev = $rootResolver->setResolutionScope(Helper::resolveURI($rootResolver->resolutionScope, $id));
+            $id = Helper::resolveURI($rootResolver->resolutionScope, $id);
+            $prev = $rootResolver->setResolutionScope($id);
         }
 
         return $prev;
@@ -198,6 +199,8 @@ class RefResolver
                         $refResolver->refProvider = $this->refProvider;
                         $refResolver->url = $url;
                         $rootResolver->setResolutionScope($url);
+                        $options = new Context(); // todo pass real ctx here, v0.13.0
+                        $rootResolver->preProcessReferences($rootData, $options);
                     }
                 }
 
