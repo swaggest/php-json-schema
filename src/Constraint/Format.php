@@ -108,15 +108,7 @@ class Format
             return 'Invalid regex: \A is not supported';
         }
 
-
-        $d = null;
-        foreach (array('/', '_', '~', '#', '!', '%', '`', '=') as $delimiter) {
-            if (strpos($data, $delimiter) === false) {
-                $d = $delimiter;
-                break;
-            }
-        }
-        return @preg_match($d . $data . $d, '') === false ? 'Invalid regex: ' . $data : null;
+        return @preg_match('{' . $data . '}', '') === false ? 'Invalid regex: ' . $data : null;
     }
 
     public static function jsonPointerError($data, $isRelative = false)
