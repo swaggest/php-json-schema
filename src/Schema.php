@@ -1310,6 +1310,8 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     }
 
     /**
+     * Resolves boolean schema into Schema instance
+     *
      * @param mixed $schema
      * @return mixed|Schema
      */
