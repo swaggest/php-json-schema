@@ -123,6 +123,8 @@ For ambiguous schemas defined with `oneOf`/`anyOf` message is indented multi-lin
 Processing path is a combination of schema and data pointers. You can use `InvalidValue->getSchemaPointer()`
 and `InvalidValue->getDataPointer()` to extract schema/data pointer.
 
+You can receive `Schema` instance that failed validation with `InvalidValue->getFailedSubSchema`. 
+
 You can build error tree using `InvalidValue->inspect()`.
 
 ### PHP structured classes with validation
