@@ -187,9 +187,35 @@ TEXT;
     ]
 }
 JSON
-), $failedSchemaData);
+            ), $failedSchemaData);
+
+            // Getting failed sub schema.
+            $failedSchema = $exception->getFailedSubSchema($schema);
+            $this->assertEquals($failedSchema->oneOf[0]->enum, ["a"]);
+            $this->assertEquals($failedSchema->oneOf[1]->enum, ["b"]);
+            $this->assertEquals($failedSchema->oneOf[2]->anyOf[0]->enum, ["c"]);
+            $this->assertEquals($failedSchema->oneOf[2]->anyOf[1]->enum, ["d"]);
+            $this->assertEquals($failedSchema->oneOf[2]->anyOf[2]->enum, ["e"]);
 
             $this->assertSame('/root/zoo', $exception->getDataPointer());
+        }
+    }
+
+    public function testRequiredError()
+    {
+        $schema = Schema::import(__DIR__ . '/../../../resources/suite/required.json');
+        $data = (object)['a' => 1, 'b' => 2, 'c' => 3];
+
+        $schema->in($data);
+
+        unset($data->b);
+
+        try {
+            $schema->in($data);
+            $this->fail('Exception expected');
+        } catch (InvalidValue $e) {
+            $failedSchema = $e->getFailedSubSchema($schema);
+            $this->assertEquals(["a", "b", "c"], $failedSchema->required);
         }
     }
 

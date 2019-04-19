@@ -5,7 +5,7 @@ use Swaggest\PhpCodeBuilder\JsonSchema\PhpBuilder;
 use Swaggest\PhpCodeBuilder\PhpCode;
 use Swaggest\PhpCodeBuilder\PhpFile;
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 $schemaData = json_decode(file_get_contents(__DIR__ . '/../spec/json-schema.json'));
 $schema = Schema::schema()->in($schemaData);
