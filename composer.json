@@ -6,14 +6,12 @@
     "php": ">=5.4",
     "ext-json": "*",
     "phplang/scope-exit": "^1.0",
-    "swaggest/json-diff": "^3.4.2"
+    "swaggest/json-diff": "^3.5.1"
   },
   "require-dev": {
     "phpunit/phpunit": "4.8.35",
-    "swaggest/code-builder": "dev-master#e0c5c0612fd241d2d120e5ddef91cda9edc208ee",
-    "swaggest/php-code-builder": "dev-master#3e643924445eb0f8d13dd011a57a42ce75629892",
     "phpunit/php-code-coverage": "2.2.4",
-    "codeclimate/php-test-reporter": "^0.4.0"
+    "codeclimate/php-test-reporter": "0.4.0"
   },
   "license": "MIT",
   "authors": [
@@ -35,9 +33,6 @@
     "psr-4": {
       "Swaggest\\JsonSchema\\Tests\\": "tests/src/"
     }
-  },
-  "scripts": {
-    "gen-json-struct": "php ./tools/generate_json_structures.php"
   },
   "config": {
     "platform": {

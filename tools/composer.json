@@ -1,0 +1,30 @@
+{
+  "name": "swaggest/json-schema-tool",
+  "description": "Schema generator",
+  "type": "tool",
+  "require": {
+    "php": ">=5.4",
+    "ext-json": "*",
+    "swaggest/code-builder": "^0.3.1",
+    "swaggest/php-code-builder": "^0.2.4"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Viacheslav Poturaev",
+      "email": "vearutop@gmail.com"
+    }
+  ],
+  "support": {
+    "email": "vearutop@gmail.com"
+  },
+  "prefer-stable": true,
+  "scripts": {
+    "gen-json-struct": "php ./tools/generate_json_structures.php"
+  },
+  "config": {
+    "platform": {
+      "php": "5.5.15"
+    }
+  }
+}

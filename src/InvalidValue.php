@@ -2,9 +2,11 @@
 
 namespace Swaggest\JsonSchema;
 
+use Swaggest\JsonDiff\JsonPointer;
 use Swaggest\JsonSchema\Exception\Error;
 use Swaggest\JsonSchema\Exception\LogicException;
 use Swaggest\JsonSchema\Path\PointerUtil;
+use Swaggest\JsonSchema\Structure\ObjectItemContract;
 
 class InvalidValue extends Exception
 {
@@ -47,6 +49,32 @@ class InvalidValue extends Exception
     {
         return PointerUtil::getSchemaPointer($this->path);
     }
+
+    /**
+     * @param Schema $schema
+     * @return bool|Schema
+     * @throws \Swaggest\JsonDiff\Exception
+     */
+    public function getFailedSubSchema(Schema $schema)
+    {
+        $schemaPointer = $this->getSchemaPointer();
+        if ($schema instanceof ObjectItemContract) {
+            $refs = $schema->getFromRefs();
+            if ($refs !== null) {
+                foreach ($refs as $ref) {
+                    if (substr($schemaPointer, 0, strlen($ref)) === $ref) {
+                        $schemaPointer = substr($schemaPointer, strlen($ref));
+                    }
+                }
+            }
+        }
+        if (!(bool)$schemaPointer) {
+            return $schema;
+        }
+
+        return JsonPointer::getByPointer($schema, $this->getSchemaPointer());
+    }
+
 
     public function getDataPointer()
     {

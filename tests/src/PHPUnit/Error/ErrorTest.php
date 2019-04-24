@@ -2,6 +2,7 @@
 
 namespace Swaggest\JsonSchema\Tests\PHPUnit\Error;
 
+use Swaggest\JsonDiff\JsonPointer;
 use Swaggest\JsonSchema\InvalidValue;
 use Swaggest\JsonSchema\Schema;
 
@@ -14,7 +15,7 @@ class ErrorTest extends \PHPUnit_Framework_TestCase
      */
     public function testErrorMessage()
     {
-        $schema = Schema::import(json_decode(<<<'JSON'
+        $schemaData = json_decode(<<<'JSON'
 {
     "$schema": "http://json-schema.org/schema#",
     "type": "object",
@@ -42,7 +43,8 @@ class ErrorTest extends \PHPUnit_Framework_TestCase
     }
 }
 JSON
-        ));
+        );
+        $schema = Schema::import($schemaData);
 
         $expectedException = <<<'TEXT'
 No valid results for oneOf {
@@ -173,7 +175,47 @@ TEXT;
             $error = $exception->inspect();
             $this->assertSame($errorInspected, print_r($error, 1));
             $this->assertSame('/properties/root/patternProperties/^[a-zA-Z0-9_]+$', $exception->getSchemaPointer());
+
+            // Resolving schema pointer to schema data.
+            $failedSchemaData = JsonPointer::getByPointer($schemaData, $exception->getSchemaPointer());
+            $this->assertEquals(json_decode(<<<'JSON'
+{
+    "oneOf": [
+        {"enum": ["a"]},
+        {"enum": ["b"]},
+        {"$ref": "#/ref-to-cde"}
+    ]
+}
+JSON
+            ), $failedSchemaData);
+
+            // Getting failed sub schema.
+            $failedSchema = $exception->getFailedSubSchema($schema);
+            $this->assertEquals($failedSchema->oneOf[0]->enum, ["a"]);
+            $this->assertEquals($failedSchema->oneOf[1]->enum, ["b"]);
+            $this->assertEquals($failedSchema->oneOf[2]->anyOf[0]->enum, ["c"]);
+            $this->assertEquals($failedSchema->oneOf[2]->anyOf[1]->enum, ["d"]);
+            $this->assertEquals($failedSchema->oneOf[2]->anyOf[2]->enum, ["e"]);
+
             $this->assertSame('/root/zoo', $exception->getDataPointer());
+        }
+    }
+
+    public function testRequiredError()
+    {
+        $schema = Schema::import(__DIR__ . '/../../../resources/suite/required.json');
+        $data = (object)['a' => 1, 'b' => 2, 'c' => 3];
+
+        $schema->in($data);
+
+        unset($data->b);
+
+        try {
+            $schema->in($data);
+            $this->fail('Exception expected');
+        } catch (InvalidValue $e) {
+            $failedSchema = $e->getFailedSubSchema($schema);
+            $this->assertEquals(["a", "b", "c"], $failedSchema->required);
         }
     }
 
