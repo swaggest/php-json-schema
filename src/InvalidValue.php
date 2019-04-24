@@ -68,7 +68,7 @@ class InvalidValue extends Exception
                 }
             }
         }
-        if ($schemaPointer === "") {
+        if (!(bool)$schemaPointer) {
             return $schema;
         }
 
