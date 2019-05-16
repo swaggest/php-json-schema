@@ -51,6 +51,9 @@ trait ObjectItemTrait
      */
     public function getAdditionalPropertyNames()
     {
+        if (null === $this->__additionalPropertyNames) {
+            return [];
+        }
         return array_keys($this->__additionalPropertyNames);
     }
 
