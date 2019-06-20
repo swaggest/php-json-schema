@@ -13,7 +13,7 @@ trait ObjectItemTrait
 {
     use MagicMapTrait;
 
-    /** @var ObjectItem[]|null[] */
+    /** @var ObjectItemContract[] */
     protected $__nestedObjects;
     protected $__documentPath;
     protected $__fromRef;
