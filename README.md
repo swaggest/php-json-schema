@@ -1,9 +1,8 @@
 # Swaggest JSON-schema implementation for PHP
 
 [![Build Status](https://travis-ci.org/swaggest/php-json-schema.svg?branch=master)](https://travis-ci.org/swaggest/php-json-schema)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/swaggest/php-json-schema/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/swaggest/php-json-schema/?branch=master)
 [![Code Climate](https://codeclimate.com/github/swaggest/php-json-schema/badges/gpa.svg)](https://codeclimate.com/github/swaggest/php-json-schema)
-[![Code Coverage](https://scrutinizer-ci.com/g/swaggest/php-json-schema/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/swaggest/php-json-schema/code-structure/master/code-coverage/src/)
+[![codecov](https://codecov.io/gh/swaggest/php-json-schema/branch/master/graph/badge.svg)](https://codecov.io/gh/swaggest/php-json-schema)
 
 High definition PHP structures with JSON-schema based validation.
 
