@@ -1,7 +1,6 @@
 language: php
 php:
   - nightly
-  - hhvm
   - 7.3
   - 7.2
   - 7.1
@@ -19,12 +18,11 @@ cache:
 
 before_script:
   - composer install --dev --no-interaction --prefer-dist
-  - if ! [[ $(phpenv version-name) =~ 7.3 ]] ; then phpenv config-rm xdebug.ini ; fi
+  - if ! [[ $(phpenv version-name) =~ 7.3 ]] ; then phpenv config-rm xdebug.ini || exit 0 ; fi
   - if [[ $(phpenv version-name) =~ 7.2 ]] ; then test -f $HOME/.cache/composer/phpstan-0.11.8.phar || wget https://github.com/phpstan/phpstan/releases/download/0.11.8/phpstan.phar -O $HOME/.cache/composer/phpstan-0.11.8.phar; fi
 
 matrix:
   allow_failures:
-    - php: hhvm
     - php: nightly
   fast_finish: true
 
