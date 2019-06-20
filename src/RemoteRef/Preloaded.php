@@ -27,7 +27,11 @@ class Preloaded implements RemoteRefProvider
         if (isset($this->storage[$url])) {
             return $this->storage[$url];
         } elseif (isset($this->schemaFiles[$url])) {
-            $this->storage[$url] = json_decode(file_get_contents($this->schemaFiles[$url]));
+            if ($data = file_get_contents($this->schemaFiles[$url])) {
+                $this->storage[$url] = json_decode($data);
+            } else {
+                return false;
+            }
             return $this->storage[$url];
         }
         return false;

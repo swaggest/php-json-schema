@@ -5,6 +5,7 @@ namespace Swaggest\JsonSchema\Structure;
 use Swaggest\JsonSchema\Constraint\Properties;
 use Swaggest\JsonSchema\Constraint\Type;
 use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\SchemaContract;
 use Swaggest\JsonSchema\Wrapper;
 
 /**
@@ -13,7 +14,7 @@ use Swaggest\JsonSchema\Wrapper;
 class Composition extends Schema
 {
     /**
-     * @param Schema|Wrapper... $schema
+     * @param SchemaContract... $schema
      * @throws \Swaggest\JsonSchema\Exception
      */
     public function __construct()

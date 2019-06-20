@@ -39,8 +39,9 @@ class Helper
                 $resultParts[0] = $currentParts[0];
             } elseif ('/' === substr($currentParts[0], 0, 1)) {
                 $resultParts[0] = $currentParts[0];
-                if ($pos = strpos($parentParts[0], '://')) {
-                    $resultParts[0] = substr($parentParts[0], 0, strpos($parentParts[0], '/', $pos + 3)) . $resultParts[0];
+                if (($pos = strpos($parentParts[0], '://'))
+                    && ($len = strpos($parentParts[0], '/', $pos + 3))) {
+                    $resultParts[0] = substr($parentParts[0], 0, $len) . $resultParts[0];
                 }
             } elseif (false !== $pos = strrpos($parentParts[0], '/')) {
                 $resultParts[0] = substr($parentParts[0], 0, $pos + 1) . $currentParts[0];

@@ -11,7 +11,7 @@ class RefResolver
 {
     public $resolutionScope = '';
     public $url;
-    /** @var RefResolver */
+    /** @var null|RefResolver */
     private $rootResolver;
 
     /**
@@ -164,7 +164,7 @@ class RefResolver
                         throw new InvalidValue('Invalid reference: ' . $referencePath . ', ' . $e->getMessage());
                     }
 
-                    /** @var JsonSchema $branch */
+                    /** @var JsonSchema|\stdClass $branch */
                     $branch = &$refResolver->rootData;
                     while (!empty($path)) {
                         if (isset($branch->{Schema::PROP_ID_D4}) && is_string($branch->{Schema::PROP_ID_D4})) {

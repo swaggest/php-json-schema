@@ -49,33 +49,33 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     // Object
     /** @var null|Properties */
     public $properties;
-    /** @var Schema|bool */
+    /** @var SchemaContract|bool */
     public $additionalProperties;
-    /** @var Schema[]|Properties */
+    /** @var SchemaContract[]|Properties */
     public $patternProperties;
     /** @var string[][]|Schema[]|\stdClass */
     public $dependencies;
 
     // Array
-    /** @var null|Schema|Schema[] */
+    /** @var null|SchemaContract|SchemaContract[] */
     public $items;
-    /** @var null|Schema|bool */
+    /** @var null|SchemaContract|bool */
     public $additionalItems;
 
-    /** @var Schema[] */
+    /** @var SchemaContract[] */
     public $allOf;
-    /** @var Schema */
+    /** @var SchemaContract */
     public $not;
-    /** @var Schema[] */
+    /** @var SchemaContract[] */
     public $anyOf;
-    /** @var Schema[] */
+    /** @var SchemaContract[] */
     public $oneOf;
 
-    /** @var Schema */
+    /** @var SchemaContract */
     public $if;
-    /** @var Schema */
+    /** @var SchemaContract */
     public $then;
-    /** @var Schema */
+    /** @var SchemaContract */
     public $else;
 
 
@@ -550,7 +550,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
      * @param Context $options
      * @param string $path
      * @param ObjectItemContract|null $result
-     * @return array|null|ClassStructure|ObjectItemContract
+     * @return array|null|ClassStructure|ObjectItemContract|SchemaContract
      * @throws InvalidValue
      * @throws \Exception
      * @throws \Swaggest\JsonDiff\Exception
@@ -559,13 +559,13 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     {
         $import = $options->import;
 
-        $hasMapping = isset($this->properties->__dataToProperty[$options->mapping]);
+        $hasMapping = $this->properties !== null && isset($this->properties->__dataToProperty[$options->mapping]);
 
         $array = !$data instanceof \stdClass ? get_object_vars($data) : (array)$data;
 
         // convert imported data to default mapping before validation
         if ($import && $options->mapping !== self::DEFAULT_MAPPING) {
-            if (isset($this->properties->__dataToProperty[$options->mapping])) {
+            if ($this->properties !== null && isset($this->properties->__dataToProperty[$options->mapping])) {
                 foreach ($this->properties->__dataToProperty[$options->mapping] as $dataName => $propertyName) {
                     if (!isset($array[$dataName])) {
                         continue;
@@ -731,12 +731,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
         $nestedProperties = null;
         if ($this->properties !== null) {
             $properties = $this->properties->toArray(); // todo call directly
-
-            if ($this->properties instanceof Properties) {
-                $nestedProperties = $this->properties->nestedProperties;
-            } else {
-                $nestedProperties = array();
-            }
+            $nestedProperties = $this->properties->nestedProperties;
         }
 
 
@@ -772,6 +767,10 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             }
         }
 
+        /**
+         * @var string $key
+         * @var mixed $value
+         */
         foreach ($array as $key => $value) {
             if ($key === '' && PHP_VERSION_ID < 71000) {
                 $this->fail(new InvalidValue('Empty property name'), $path);
@@ -851,7 +850,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             $propertyName = $key;
 
             if ($hasMapping) {
-                if (isset($this->properties->__dataToProperty[self::DEFAULT_MAPPING][$key])) {
+                if ($this->properties !== null && isset($this->properties->__dataToProperty[self::DEFAULT_MAPPING][$key])) {
                     // todo check performance of local map access
                     $propertyName = $this->properties->__dataToProperty[self::DEFAULT_MAPPING][$key];
                 }
@@ -859,7 +858,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
 
             if ($options->mapping !== self::DEFAULT_MAPPING) {
                 if (!$import) {
-                    if (isset($this->properties->__propertyToData[$options->mapping][$propertyName])) {
+                    if ($this->properties !== null && isset($this->properties->__propertyToData[$options->mapping][$propertyName])) {
                         // todo check performance of local map access
                         $propertyName = $this->properties->__propertyToData[$options->mapping][$propertyName];
                     }
@@ -875,7 +874,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                 }
             } else {
                 if (!$import && $hasMapping) {
-                    if (isset($this->properties->__propertyToData[$options->mapping][$propertyName])) {
+                    if ($this->properties !== null && isset($this->properties->__propertyToData[$options->mapping][$propertyName])) {
                         $propertyName = $this->properties->__propertyToData[$options->mapping][$propertyName];
                     }
                 }
@@ -1033,7 +1032,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             if ('#' === $path) {
                 $injectDefinitions = new ScopeExit(function () use ($result, $options) {
                     foreach ($options->exportedDefinitions as $ref => $data) {
-                        if ($data !== null  && ($ref[0] === '#' || $ref[1] === '/')) {
+                        if ($data !== null && ($ref[0] === '#' || $ref[1] === '/')) {
                             JsonPointer::add($result, JsonPointer::splitPath($ref), $data,
                                 /*JsonPointer::SKIP_IF_ISSET + */
                                 JsonPointer::RECURSIVE_KEY_CREATION);
@@ -1232,7 +1231,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
 
     /**
      * @param Properties $properties
-     * @return Schema
+     * @return SchemaContract
      */
     public function setProperties($properties)
     {
@@ -1366,6 +1365,9 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
         return $this->default;
     }
 
+    /**
+     * @nolint
+     */
     public function getProperties()
     {
         return $this->properties;
@@ -1381,7 +1383,10 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
      */
     public function getPropertyNames()
     {
-        return array_keys($this->getProperties()->toArray());
+        if (null === $this->properties) {
+            return array();
+        }
+        return array_keys($this->properties->toArray());
     }
 
     /**
@@ -1389,7 +1394,10 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
      */
     public function getNestedPropertyNames()
     {
-        return $this->getProperties()->nestedPropertyNames;
+        if (null === $this->properties) {
+            return array();
+        }
+        return $this->properties->nestedPropertyNames;
     }
 
 }

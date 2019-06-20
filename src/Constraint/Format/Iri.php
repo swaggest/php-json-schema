@@ -674,7 +674,7 @@ class Iri
      * @see https://stackoverflow.com/a/14366023/329463
      * @param string $string
      * @param int $pointer
-     * @return bool|string
+     * @return false|string
      */
     private static function unicodeNextChar($string, &$pointer)
     {

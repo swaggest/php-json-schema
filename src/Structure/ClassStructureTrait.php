@@ -41,7 +41,7 @@ trait ClassStructureTrait
     }
 
     /**
-     * @return Properties|static
+     * @return Properties|static|null
      */
     public static function properties()
     {
@@ -96,10 +96,13 @@ trait ClassStructureTrait
     {
         $result = new \stdClass();
         $schema = static::schema();
-        foreach ($schema->getProperties()->getDataKeyMap() as $propertyName => $dataName) {
-            $value = $this->$propertyName;
-            if ((null !== $value) || array_key_exists($propertyName, $this->__arrayOfData)) {
-                $result->$dataName = $value;
+        $properties = $schema->getProperties();
+        if (null !== $properties) {
+            foreach ($properties->getDataKeyMap() as $propertyName => $dataName) {
+                $value = $this->$propertyName;
+                if ((null !== $value) || array_key_exists($propertyName, $this->__arrayOfData)) {
+                    $result->$dataName = $value;
+                }
             }
         }
         foreach ($schema->getNestedPropertyNames() as $name) {
