@@ -29,6 +29,7 @@ trait ObjectItemTrait
     public function setNestedProperty($propertyName, $value, Egg $nestedEgg)
     {
         $nestedName = $nestedEgg->name;
+        /** @var null $nested */
         $nested = &$this->__nestedObjects[$nestedName];
         if (null === $nested) {
             $nested = $nestedEgg->classSchema->makeObjectItem();
