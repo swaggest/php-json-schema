@@ -12,7 +12,7 @@ class PointerUtil
      * Path example: #->properties:responses->additionalProperties:envvar->properties:schema
      * @param string $path
      * @param bool $isURIFragmentId
-     * @return string
+     * @return string|null
      */
     public static function getSchemaPointer($path, $isURIFragmentId = false)
     {

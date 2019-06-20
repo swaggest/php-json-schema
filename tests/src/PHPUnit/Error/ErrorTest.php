@@ -203,7 +203,7 @@ JSON
 
     public function testRequiredError()
     {
-        $schema = Schema::import(__DIR__ . '/../../../resources/suite/required.json');
+        $schema = Schema::import(__DIR__ . '/../../../resources/required.json');
         $data = (object)['a' => 1, 'b' => 2, 'c' => 3];
 
         $schema->in($data);

@@ -13,12 +13,13 @@ trait ObjectItemTrait
 {
     use MagicMapTrait;
 
-    /** @var ObjectItem[] */
+    /** @var ObjectItemContract[] */
     protected $__nestedObjects;
     protected $__documentPath;
     protected $__fromRef;
 
-    public function getNestedObject($className) {
+    public function getNestedObject($className)
+    {
         if (isset($this->__nestedObjects[$className])) {
             return $this->__nestedObjects[$className];
         }
@@ -28,6 +29,7 @@ trait ObjectItemTrait
     public function setNestedProperty($propertyName, $value, Egg $nestedEgg)
     {
         $nestedName = $nestedEgg->name;
+        /** @var null $nested */
         $nested = &$this->__nestedObjects[$nestedName];
         if (null === $nested) {
             $nested = $nestedEgg->classSchema->makeObjectItem();
@@ -41,13 +43,14 @@ trait ObjectItemTrait
     }
 
     protected $__additionalPropertyNames;
+
     public function addAdditionalPropertyName($name)
     {
         $this->__additionalPropertyNames[$name] = true;
     }
 
     /**
-     * @return null|string[]
+     * @return string[]
      */
     public function getAdditionalPropertyNames()
     {
@@ -57,6 +60,9 @@ trait ObjectItemTrait
         return array_keys($this->__additionalPropertyNames);
     }
 
+    /**
+     * @var string[][]
+     */
     protected $__patternPropertyNames;
 
     public function addPatternPropertyName($pattern, $name)
@@ -72,9 +78,8 @@ trait ObjectItemTrait
     {
         if (isset($this->__patternPropertyNames[$pattern])) {
             return array_keys($this->__patternPropertyNames[$pattern]);
-        } else {
-            return null;
         }
+        return null;
     }
 
     public function jsonSerialize()
@@ -99,7 +104,7 @@ trait ObjectItemTrait
     {
         return $this->__documentPath;
     }
-    
+
     public function setDocumentPath($path)
     {
         $this->__documentPath = $path;
@@ -107,11 +112,11 @@ trait ObjectItemTrait
     }
 
     /**
-     * @see ObjectItemContract::getFromRef
+     * @return string
      * @deprecated use ObjectItemContract::getFromRefs
      * @see ObjectItemContract::getFromRefs
      * @todo remove
-     * @return string
+     * @see ObjectItemContract::getFromRef
      */
     public function getFromRef()
     {
@@ -119,8 +124,8 @@ trait ObjectItemTrait
     }
 
     /**
-     * @see ObjectItemContract::getFromRef
      * @return string[]|null
+     * @see ObjectItemContract::getFromRef
      */
     public function getFromRefs()
     {
@@ -128,9 +133,9 @@ trait ObjectItemTrait
     }
 
     /**
-     * @see ObjectItemContract::setFromRef
-     * @param string $ref
+     * @param false|string $ref
      * @return $this
+     * @see ObjectItemContract::setFromRef
      */
     public function setFromRef($ref)
     {
@@ -145,7 +150,9 @@ trait ObjectItemTrait
     }
 
     private $__refPath;
-    protected function getFromRefPath() {
+
+    protected function getFromRefPath()
+    {
         if ($this->__refPath === null) {
             $this->__refPath = '';
             if ($this->__fromRef) {

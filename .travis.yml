@@ -1,7 +1,6 @@
 language: php
 php:
   - nightly
-  - hhvm
   - 7.3
   - 7.2
   - 7.1
@@ -11,31 +10,25 @@ php:
   - 5.4
 
 sudo: false
-dist: trusty
 
 ## Cache composer bits
 cache:
   directories:
-    - $HOME/.composer/cache
+    - $HOME/.cache/composer
 
-# execute any number of scripts before the test run, custom env's are available as variables
 before_script:
   - composer install --dev --no-interaction --prefer-dist
-  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then test -f $HOME/.composer/cache/phpstan.phar || wget https://github.com/phpstan/phpstan/releases/download/0.9.2/phpstan.phar -O $HOME/.composer/cache/phpstan.phar; fi
-  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then test -f $HOME/.composer/cache/ocular.phar || wget https://scrutinizer-ci.com/ocular.phar -O $HOME/.composer/cache/ocular.phar; fi
-  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then test -f $HOME/.composer/cache/cctr || wget https://codeclimate.com/downloads/test-reporter/test-reporter-0.1.4-linux-amd64 -O $HOME/.composer/cache/cctr && chmod +x $HOME/.composer/cache/cctr; fi
-  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then $HOME/.composer/cache/cctr before-build; fi
+  - if ! [[ $(phpenv version-name) =~ 7.3 ]] ; then phpenv config-rm xdebug.ini || true ; fi
+  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then test -f $HOME/.cache/composer/phpstan-0.11.8.phar || wget https://github.com/phpstan/phpstan/releases/download/0.11.8/phpstan.phar -O $HOME/.cache/composer/phpstan-0.11.8.phar; fi
 
 matrix:
   allow_failures:
-    - php: hhvm
     - php: nightly
   fast_finish: true
 
 script:
-  - ./vendor/bin/phpunit -v --configuration phpunit.xml --coverage-text --coverage-clover clover.xml
-  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then php $HOME/.composer/cache/phpstan.phar analyze -l 7 -c phpstan.neon ./src; fi
+  - php -derror_reporting="E_ALL & ~E_DEPRECATED" ./vendor/bin/phpunit -v --configuration phpunit.xml --coverage-text --coverage-clover=coverage.xml
+  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then php $HOME/.cache/composer/phpstan-0.11.8.phar analyze -l 7 -c phpstan.neon ./src; fi
 
 after_script:
-  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then php $HOME/.composer/cache/ocular.phar code-coverage:upload --format=php-clover clover.xml; fi
-  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then $HOME/.composer/cache/cctr after-build --exit-code $TRAVIS_TEST_RESULT; fi
+  - if [[ $(phpenv version-name) =~ 7.3 ]] ; then bash <(curl -s https://codecov.io/bash); fi

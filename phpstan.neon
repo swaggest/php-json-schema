@@ -1,7 +1,7 @@
 parameters:
 	ignoreErrors:
-		- '#PHPDoc tag @param references unknown parameter \$schema#'
 		- '#Access to an undefined property static\(Swaggest\\JsonSchema\\JsonSchema\)\|Swaggest\\JsonSchema\\Constraint\\Properties::#'
-		- '#Accessing property \$skipValidation on possibly null value of type Swaggest\\JsonSchema\\Context\|null#'
-		- '#Accessing property \$__propertyToData on possibly null value of type Swaggest\\JsonSchema\\Constraint\\Properties\|null#'
-		- '#Accessing property \$__dataToProperty on possibly null value of type Swaggest\\JsonSchema\\Constraint\\Properties\|null#'
+		- '#Access to an undefined property .+Swaggest\\JsonSchema\\NameMirror::.+#'
+		- '#should be compatible with parameter \$properties#'
+		- '#PHPDoc tag @param references unknown parameter: \$schema#'
+		- '#should return array<string>|null but returns array<int, int|string>#'

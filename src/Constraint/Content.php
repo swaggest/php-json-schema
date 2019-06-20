@@ -39,7 +39,7 @@ class Content
                 }
             }
 
-            if ($mediaType !== null) {
+            if ($mediaType !== null && $data !== false) {
                 switch ($mediaType) {
                     case self::MEDIA_TYPE_APPLICATION_JSON:
                         $data = json_decode($data);
@@ -70,7 +70,7 @@ class Content
                 }
             }
 
-            if ($encoding !== null) {
+            if ($encoding !== null && $data !== false) {
                 switch ($encoding) {
                     case self::ENCODING_BASE64:
                         $data = base64_encode($data);
