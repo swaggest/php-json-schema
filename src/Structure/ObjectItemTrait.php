@@ -16,6 +16,7 @@ trait ObjectItemTrait
     /** @var ObjectItemContract[] */
     protected $__nestedObjects;
     protected $__documentPath;
+    /** @var null|string[] */
     protected $__fromRef;
 
     public function getNestedObject($className)
