@@ -16,6 +16,7 @@ trait ObjectItemTrait
     /** @var ObjectItemContract[] */
     protected $__nestedObjects;
     protected $__documentPath;
+    /** @var null|string[] */
     protected $__fromRef;
 
     public function getNestedObject($className)
@@ -112,7 +113,7 @@ trait ObjectItemTrait
     }
 
     /**
-     * @return string
+     * @return string|null
      * @deprecated use ObjectItemContract::getFromRefs
      * @see ObjectItemContract::getFromRefs
      * @todo remove
