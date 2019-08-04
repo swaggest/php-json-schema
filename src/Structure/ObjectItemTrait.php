@@ -113,7 +113,7 @@ trait ObjectItemTrait
     }
 
     /**
-     * @return string
+     * @return string|null
      * @deprecated use ObjectItemContract::getFromRefs
      * @see ObjectItemContract::getFromRefs
      * @todo remove
