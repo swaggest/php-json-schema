@@ -10,6 +10,7 @@ php:
   - 5.4
 
 sudo: false
+dist: trusty
 
 ## Cache composer bits
 cache:
@@ -19,7 +20,6 @@ cache:
 before_script:
   - composer install --dev --no-interaction --prefer-dist
   - if ! [[ $(phpenv version-name) =~ 7.3 ]] ; then phpenv config-rm xdebug.ini || true ; fi
-  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then test -f $HOME/.cache/composer/phpstan-0.11.8.phar || wget https://github.com/phpstan/phpstan/releases/download/0.11.8/phpstan.phar -O $HOME/.cache/composer/phpstan-0.11.8.phar; fi
 
 matrix:
   allow_failures:
@@ -28,7 +28,8 @@ matrix:
 
 script:
   - php -derror_reporting="E_ALL & ~E_DEPRECATED" ./vendor/bin/phpunit -v --configuration phpunit.xml --coverage-text --coverage-clover=coverage.xml
-  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then php $HOME/.cache/composer/phpstan-0.11.8.phar analyze -l 7 -c phpstan.neon ./src; fi
+  - if [[ $(phpenv version-name) =~ 7.3 ]] ; then make test-coverage; else make test; fi
+  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then make lint; fi
 
 after_script:
   - if [[ $(phpenv version-name) =~ 7.3 ]] ; then bash <(curl -s https://codecov.io/bash); fi

@@ -1,7 +1,8 @@
 vendor
 .idea
 composer.phar
-clover.xml
+/clover.xml
 build
 /xhprof_report.*
 benchmark-result.json
+/coverage.xml
