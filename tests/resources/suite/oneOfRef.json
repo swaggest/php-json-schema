@@ -1,0 +1,51 @@
+[
+  {
+    "description": "oneOfRef",
+    "schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "$ref"
+          ],
+          "properties": {
+            "$ref": {
+              "type": "string",
+              "format": "uri-reference"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "dataKey"
+          ]
+        }
+      ]
+    },
+    "tests": [
+      {
+        "description": "valid against data",
+        "data": {
+          "dataKey": true
+        },
+        "valid": true
+      },
+      {
+        "description": "valid against reference",
+        "data": {
+          "$ref": "#/container",
+          "container": {
+            "dataKey": true
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "invalid against not an object",
+        "data": 123,
+        "valid": false
+      }
+    ]
+  }
+]

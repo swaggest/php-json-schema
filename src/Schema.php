@@ -25,6 +25,7 @@ use Swaggest\JsonSchema\Structure\ClassStructure;
 use Swaggest\JsonSchema\Structure\Egg;
 use Swaggest\JsonSchema\Structure\ObjectItem;
 use Swaggest\JsonSchema\Structure\ObjectItemContract;
+use Swaggest\JsonSchema\Structure\WithResolvedValue;
 
 /**
  * Class Schema
@@ -702,6 +703,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                     });
 
                     $ref = $refResolver->resolveReference($refString);
+                    $unresolvedData = $data;
                     $data = self::unboolSchemaData($ref->getData());
                     if (!$options->validateOnly) {
                         if ($ref->isImported()) {
@@ -710,6 +712,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                         }
                         $ref->setImported($result);
                         try {
+                            // Best effort dereference delivery.
                             $refResult = $this->process($data, $options, $path . '->$ref:' . $refString, $result);
                             if ($refResult instanceof ObjectItemContract) {
                                 if ($refResult->getFromRefs()) {
@@ -718,11 +721,28 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                                 $refResult->setFromRef($refString);
                             }
                             $ref->setImported($refResult);
+                            return $refResult;
                         } catch (InvalidValue $exception) {
                             $ref->unsetImported();
-                            throw $exception;
+                            $skipValidation = $options->skipValidation;
+                            $options->skipValidation = true;
+                            $refResult = $this->process($data, $options, $path . '->$ref:' . $refString);
+                            if ($refResult instanceof ObjectItemContract) {
+                                if ($refResult->getFromRefs()) {
+                                    $refResult = clone $refResult; // @todo check performance, consider option
+                                }
+                                $refResult->setFromRef($refString);
+                            }
+                            $ref->setImported($refResult);
+                            $options->skipValidation = $skipValidation;
+
+                            if ($result instanceof WithResolvedValue) {
+                                $result->setResolvedValue($refResult);
+                            }
+
+                            // Proceeding with unresolved data.
+                            $data = $unresolvedData;
                         }
-                        return $refResult;
                     } else {
                         $this->process($data, $options, $path . '->$ref:' . $refString);
                     }
