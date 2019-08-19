@@ -19,6 +19,26 @@ trait ObjectItemTrait
     /** @var null|string[] */
     protected $__fromRef;
 
+    protected $__hasResolvedValue = false;
+    protected $__resolvedValue;
+
+    public function setResolvedValue($value)
+    {
+        $this->__hasResolvedValue = true;
+        $this->__resolvedValue = $value;
+        return $this;
+    }
+
+    public function getResolvedValue()
+    {
+        return $this->__resolvedValue;
+    }
+
+    public function hasResolvedValue()
+    {
+        return $this->__hasResolvedValue;
+    }
+
     public function getNestedObject($className)
     {
         if (isset($this->__nestedObjects[$className])) {

@@ -11,7 +11,7 @@ namespace Swaggest\JsonSchema\Structure;
  * @method string|null getFromRef();
  * @method string[]|null getFromRefs();
  */
-class ObjectItem implements ObjectItemContract
+class ObjectItem implements ObjectItemContract, WithResolvedValue
 {
     use ObjectItemTrait;
 }
