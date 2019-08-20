@@ -663,7 +663,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             try {
 
                 $refProperty = null;
-                $dereference = false;
+                $dereference = $options->dereference;
 
                 if ($this->properties !== null && isset($array[self::PROP_REF])) {
                     $refPropName = self::PROP_REF;
@@ -675,8 +675,8 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
 
                     $refProperty = $this->properties[$refPropName];
 
-                    if (isset($refProperty) && ($refProperty->format === Format::URI_REFERENCE)) {
-                        $dereference = true;
+                    if (isset($refProperty)) {
+                        $dereference = $refProperty->format === Format::URI_REFERENCE;
                     }
                 }
 
