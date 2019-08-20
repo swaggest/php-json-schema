@@ -52,6 +52,15 @@ class Context extends MagicMap
     public $isRef = false;
 
     /**
+     * Dereference $ref unless there is a $ref property defined with format not equal to `uri-reference`.
+     * Default JSON Schema behavior is to dereference only if there is a $ref property defined with format
+     * equal to `uri-reference`.
+     *
+     * @var bool
+     */
+    public $dereference = false;
+
+    /**
      * @param boolean $skipValidation
      * @return Context
      */
