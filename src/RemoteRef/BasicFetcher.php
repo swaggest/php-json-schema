@@ -10,12 +10,12 @@
     {
       $arrContextOptions = [
         "ssl" => [
-          "verify_peer"      => FALSE,
-          "verify_peer_name" => FALSE,
+          "verify_peer" => false,
+          "verify_peer_name" => false,
         ],
       ];
       
-      if ($data = file_get_contents(rawurldecode($url), FALSE, stream_context_create($arrContextOptions))) {
+      if ($data = file_get_contents(rawurldecode($url), false, stream_context_create($arrContextOptions))) {
         return json_decode($data);
       }
       return false;
