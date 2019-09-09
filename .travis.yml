@@ -29,7 +29,7 @@ matrix:
 script:
   - php -derror_reporting="E_ALL & ~E_DEPRECATED" ./vendor/bin/phpunit -v --configuration phpunit.xml --coverage-text --coverage-clover=coverage.xml
   - if [[ $(phpenv version-name) =~ 7.3 ]] ; then make test-coverage; else make test; fi
-  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then make lint; fi
+  - if [[ $(phpenv version-name) =~ 7.2 ]] ; then make lint;make bench;make bench-master;make bench-compare; fi
 
 after_script:
   - if [[ $(phpenv version-name) =~ 7.3 ]] ; then bash <(curl -s https://codecov.io/bash); fi

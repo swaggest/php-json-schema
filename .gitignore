@@ -6,3 +6,5 @@ build
 /xhprof_report.*
 benchmark-result.json
 /coverage.xml
+/phpbench-candidate.xml
+/phpbench-master.xml
