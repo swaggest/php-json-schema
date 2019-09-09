@@ -30,9 +30,14 @@ class Draft7Bench
             $options->schemasCache = self::$schemas;
 
             $schema = Schema::import($case['schema'], $options);
-
-            $options->validateOnly = true;
+            // import with defaults applied
             $schema->in($case['data'], $options);
+
+            // default is not required to pass validation, so result might be invalid
+            // for back-exporting defaults have to be disabled
+            $options->applyDefaults = false;
+            $imported = $schema->in($case['data'], $options);
+            $schema->out($imported);
         } catch (InvalidValue $exception) {
             $actualValid = false;
         }
