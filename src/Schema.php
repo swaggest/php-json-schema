@@ -593,7 +593,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
 
                 if ($this->useObjectAsArray) {
                     $result = array();
-                } elseif (!$result instanceof ObjectItemContract) {
+                } else/*if (!$result instanceof ObjectItemContract || null !== $this->objectItemClass)*/ {
                     //* todo check performance impact
                     if (null === $this->objectItemClass) {
                         $result = new ObjectItem();
