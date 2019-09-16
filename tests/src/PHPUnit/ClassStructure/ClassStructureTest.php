@@ -4,6 +4,7 @@ namespace Swaggest\JsonSchema\Tests\PHPUnit\ClassStructure;
 
 
 use Swaggest\JsonSchema\Exception\TypeException;
+use Swaggest\JsonSchema\Tests\Helper\ClassWithAllOf;
 use Swaggest\JsonSchema\Tests\Helper\LevelThreeClass;
 use Swaggest\JsonSchema\Tests\Helper\SampleStructure;
 use Swaggest\JsonSchema\Tests\Helper\StructureWithItems;
@@ -86,6 +87,13 @@ class ClassStructureTest extends \PHPUnit_Framework_TestCase
                 'propTwo' => 22,
             )
         ));
+    }
+
+    public function testAllOfClassInstance()
+    {
+        $value = ClassWithAllOf::import((object)array('myProperty'=>'abc'));
+        $this->assertSame('abc', $value->myProperty);
+        $this->assertTrue($value instanceof ClassWithAllOf);
     }
 
 

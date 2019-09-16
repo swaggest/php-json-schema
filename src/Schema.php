@@ -593,10 +593,13 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
 
                 if ($this->useObjectAsArray) {
                     $result = array();
-                } elseif (!$result instanceof ObjectItemContract) {
+                } else {
                     //* todo check performance impact
                     if (null === $this->objectItemClass) {
-                        $result = new ObjectItem();
+                        if (!$result instanceof ObjectItemContract) {
+                            $result = new ObjectItem();
+                            $result->setDocumentPath($path);
+                        }
                     } else {
                         $className = $this->objectItemClass;
                         if ($options->objectItemClassMapping !== null) {
@@ -604,26 +607,23 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                                 $className = $options->objectItemClassMapping[$className];
                             }
                         }
-                        $result = new $className;
-                    }
-                    //*/
-
-
-                    if ($result instanceof ClassStructure) {
-                        if ($result->__validateOnSet) {
-                            $result->__validateOnSet = false;
-                            /** @noinspection PhpUnusedLocalVariableInspection */
-                            /* todo check performance impact
-                            $validateOnSetHandler = new ScopeExit(function () use ($result) {
-                                $result->__validateOnSet = true;
-                            });
+                        if (null !== $result && get_class($result) !== $className) {
+                            $result = new $className;
+                            //* todo check performance impact
+                            if ($result instanceof ClassStructure) {
+                                $result->setDocumentPath($path);
+                                if ($result->__validateOnSet) {
+                                    $result->__validateOnSet = false;
+                                    /** @noinspection PhpUnusedLocalVariableInspection */
+                                    /* todo check performance impact
+                                    $validateOnSetHandler = new ScopeExit(function () use ($result) {
+                                        $result->__validateOnSet = true;
+                                    });
+                                    //*/
+                                }
+                            }
                             //*/
                         }
-                    }
-
-                    //* todo check performance impact
-                    if ($result instanceof ObjectItemContract) {
-                        $result->setDocumentPath($path);
                     }
                     //*/
                 }
