@@ -607,7 +607,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                                 $className = $options->objectItemClassMapping[$className];
                             }
                         }
-                        if (null !== $result && get_class($result) !== $className) {
+                        if (null === $result || get_class($result) !== $className) {
                             $result = new $className;
                             //* todo check performance impact
                             if ($result instanceof ClassStructure) {
