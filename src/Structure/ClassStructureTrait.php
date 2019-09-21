@@ -92,15 +92,33 @@ trait ClassStructureTrait
 
     protected $__validateOnSet = true; // todo skip validation during import
 
+    /**
+     * @return \stdClass
+     */
     public function jsonSerialize()
     {
         $result = new \stdClass();
         $schema = static::schema();
+        $classname = $schema->getObjectItemClass();
+        $classReference = (class_exists($classname)) ? new $classname() : new \stdClass();
         $properties = $schema->getProperties();
         if (null !== $properties) {
             foreach ($properties->getDataKeyMap() as $propertyName => $dataName) {
                 $value = $this->$propertyName;
-                if ((null !== $value) || array_key_exists($propertyName, $this->__arrayOfData)) {
+                $types = ($schema->getProperty($propertyName) instanceof Schema)
+                    ? $schema->getProperty($propertyName)->type
+                    : null;
+                if (
+                    (
+                        null !== $value
+                        ||
+                        ($value === null
+                            && is_array($types)
+                            && in_array('null', $types)
+                        )
+                    )
+                    || array_key_exists($propertyName, $this->__arrayOfData)
+                ) {
                     $result->$dataName = $value;
                 }
             }
