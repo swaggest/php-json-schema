@@ -99,27 +99,23 @@ trait ClassStructureTrait
     {
         $result = new \stdClass();
         $schema = static::schema();
-        $classname = $schema->getObjectItemClass();
-        $classReference = (class_exists($classname)) ? new $classname() : new \stdClass();
         $properties = $schema->getProperties();
         if (null !== $properties) {
             foreach ($properties->getDataKeyMap() as $propertyName => $dataName) {
                 $value = $this->$propertyName;
-                $types = ($schema->getProperty($propertyName) instanceof Schema)
-                    ? $schema->getProperty($propertyName)->type
-                    : null;
-                if (
-                    (
-                        null !== $value
-                        ||
-                        ($value === null
-                            && is_array($types)
-                            && in_array('null', $types)
-                        )
-                    )
-                    || array_key_exists($propertyName, $this->__arrayOfData)
-                ) {
+                // Value is exported if exists.
+                if (null !== $value || array_key_exists($propertyName, $this->__arrayOfData)) {
                     $result->$dataName = $value;
+                    continue;
+                }
+
+                // Non-existent value is only exported if belongs to nullable property (having 'null' in type array).
+                $property = $schema->getProperty($propertyName);
+                if ($property instanceof Schema) {
+                    $types = $property->type;
+                    if ($types === Schema::NULL || (is_array($types) && in_array(Schema::NULL, $types))) {
+                        $result->$dataName = $value;
+                    }
                 }
             }
         }
