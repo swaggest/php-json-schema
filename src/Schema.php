@@ -1335,12 +1335,12 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     }
 
     /**
-     * Resolves boolean schema into Schema instance
+     * Resolves boolean schema into Schema instance.
      *
      * @param mixed $schema
      * @return mixed|Schema
      */
-    private static function unboolSchema($schema)
+    public static function unboolSchema($schema)
     {
         static $trueSchema;
         static $falseSchema;
@@ -1363,10 +1363,12 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     }
 
     /**
+     * Converts bool value into an object schema.
+     *
      * @param mixed $data
      * @return \stdClass
      */
-    private static function unboolSchemaData($data)
+    public static function unboolSchemaData($data)
     {
         static $trueSchema;
         static $falseSchema;
