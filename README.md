@@ -3,6 +3,8 @@
 [![Build Status](https://travis-ci.org/swaggest/php-json-schema.svg?branch=master)](https://travis-ci.org/swaggest/php-json-schema)
 [![Code Climate](https://codeclimate.com/github/swaggest/php-json-schema/badges/gpa.svg)](https://codeclimate.com/github/swaggest/php-json-schema)
 [![codecov](https://codecov.io/gh/swaggest/php-json-schema/branch/master/graph/badge.svg)](https://codecov.io/gh/swaggest/php-json-schema)
+![Code lines](https://sloc.xyz/github/swaggest/php-json-schema/?category=code)
+![Comments](https://sloc.xyz/github/swaggest/php-json-schema/?category=comments)
 
 High definition PHP structures with JSON-schema based validation.
 
