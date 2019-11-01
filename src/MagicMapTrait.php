@@ -23,7 +23,7 @@ trait MagicMapTrait
             return $this->__arrayOfData[$name];
         } else {
             $tmp = null;
-            return $tmp;;
+            return $tmp;
         }
     }
 
