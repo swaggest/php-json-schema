@@ -204,7 +204,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
      * @throws InvalidValue
      * @throws \Exception
      */
-    private function processType($data, Context $options, $path = '#')
+    private function processType(&$data, Context $options, $path = '#')
     {
         if ($options->tolerateStrings && is_string($data)) {
             $valid = Type::readString($this->type, $data);
