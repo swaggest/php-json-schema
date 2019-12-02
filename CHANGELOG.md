@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.23] - 2019-12-02
+
+### Fixed
+- Behavior of `tolerateStrings` when decoding bool and applying values to original data.
+
 ## [0.12.22] - 2019-10-22
 
 ### Added
@@ -19,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Export `null` value instead of skipping it for properties having `null` type.
 
+[0.12.23]: https://github.com/swaggest/php-json-schema/compare/v0.12.22...v0.12.23
 [0.12.22]: https://github.com/swaggest/php-json-schema/compare/v0.12.21...v0.12.22
 [0.12.21]: https://github.com/swaggest/php-json-schema/compare/v0.12.20...v0.12.21
 [0.12.20]: https://github.com/swaggest/php-json-schema/compare/v0.12.19...v0.12.20
