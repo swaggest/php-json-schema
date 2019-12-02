@@ -40,7 +40,7 @@ class Type implements Constraint
                     break;
                 case self::BOOLEAN:
                     $newData = filter_var($data, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-                    $ok = is_bool($data);
+                    $ok = is_bool($newData);
                     break;
                 case self::NULL:
                     break;
