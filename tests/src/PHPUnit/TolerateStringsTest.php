@@ -35,12 +35,20 @@ class TolerateStringsTest extends \PHPUnit_Framework_TestCase
             '2'
         ];
 
+        $expected_data = [
+            'text',
+            10,
+            123.45,
+            true,
+            2
+        ];
+
         $options = new Context();
         $options->tolerateStrings = true;
 
         $schema = Schema::import($json_schema);
 
-        $this->assertSame($data, $schema->in($data, $options));
+        $this->assertSame($expected_data, $schema->in($data, $options));
     }
 
     public function testWithTolerateStringsBadNumber()

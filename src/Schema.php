@@ -1116,10 +1116,6 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             $data = $options->dataPreProcessor->process($data, $this, $import);
         }
 
-        if ($result === null) {
-            $result = $data;
-        }
-
         if ($options->skipValidation) {
             goto skipValidation;
         }
@@ -1153,6 +1149,10 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
         }
 
         skipValidation:
+
+        if ($result === null) {
+            $result = $data;
+        }
 
         if ($this->oneOf !== null) {
             $result = $this->processOneOf($data, $options, $path);
