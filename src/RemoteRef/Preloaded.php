@@ -30,11 +30,11 @@ class Preloaded implements RemoteRefProvider
             if ($data = file_get_contents($this->schemaFiles[$url])) {
                 $this->storage[$url] = json_decode($data);
             } else {
-                return false;
+                return null;
             }
             return $this->storage[$url];
         }
-        return false;
+        return null;
     }
 
     /**

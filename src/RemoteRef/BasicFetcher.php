@@ -18,6 +18,6 @@ class BasicFetcher implements RemoteRefProvider
         if ($data = file_get_contents(rawurldecode($url), false, stream_context_create($arrContextOptions))) {
             return json_decode($data);
         }
-        return false;
+        return null;
     }
 }

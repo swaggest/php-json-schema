@@ -194,7 +194,7 @@ class RefResolver
                     $this->setResolutionScope($url);
                     if (null === $refResolver) {
                         $rootData = $rootResolver->getRefProvider()->getSchemaData($url);
-                        if ($rootData === false) {
+                        if ($rootData === null) {
                             throw new Exception("Failed to resolve $url", Exception::RESOLVE_FAILED);
                         }
 
