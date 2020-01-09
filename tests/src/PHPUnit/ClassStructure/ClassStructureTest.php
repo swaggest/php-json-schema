@@ -2,10 +2,11 @@
 
 namespace Swaggest\JsonSchema\Tests\PHPUnit\ClassStructure;
 
-
+use Swaggest\JsonSchema\Exception\StringException;
 use Swaggest\JsonSchema\Exception\TypeException;
 use Swaggest\JsonSchema\Tests\Helper\ClassWithAllOf;
 use Swaggest\JsonSchema\Tests\Helper\LevelThreeClass;
+use Swaggest\JsonSchema\Tests\Helper\SampleProperties;
 use Swaggest\JsonSchema\Tests\Helper\SampleStructure;
 use Swaggest\JsonSchema\Tests\Helper\StructureWithItems;
 
@@ -96,5 +97,61 @@ class ClassStructureTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($value instanceof ClassWithAllOf);
     }
 
+    public function testAdditionalProperties()
+    {
+        $properties = new SampleProperties();
+        $properties->setAdditionalPropertyValue('propOne', (object)array(
+            'subOne' => 'one',
+            'subTwo' => 'two'
+        ));
+
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $exported = SampleProperties::export($properties);
+        $this->assertSame('{}', json_encode($exported, JSON_PRETTY_PRINT), 'With flag to false');
+
+
+        $properties->setExtendedPropertySerialization();
+        $exported = SampleProperties::export($properties);
+        $json = <<<JSON
+{
+    "propOne": {
+        "subOne": "one",
+        "subTwo": "two"
+    }
+}
+JSON;
+        $this->assertSame($json, json_encode($exported, JSON_PRETTY_PRINT), 'With flag to true');
+    }
+
+    public function testPatternProperties()
+    {
+        $properties = new SampleProperties();
+        $properties->setXValue('x-foo', 'bar');
+        $properties->setXValue('x-baz', 'gnu');
+
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $exported = SampleProperties::export($properties);
+        $this->assertSame('{}', json_encode($exported, JSON_PRETTY_PRINT), 'With flag to false');
+
+        $properties->setExtendedPropertySerialization();
+        $exported = SampleProperties::export($properties);
+        $json = <<<JSON
+{
+    "x-foo": "bar",
+    "x-baz": "gnu"
+}
+JSON;
+        $this->assertSame($json, json_encode($exported, JSON_PRETTY_PRINT), 'With flag to true');
+    }
+
+    /**
+     * @expectedException        Swaggest\JsonSchema\Exception\StringException
+     * @expectedExceptionMessage Pattern mismatch
+     */
+    public function testPatternPropertiesMismatch()
+    {
+        $properties = new SampleProperties();
+        $properties->setXValue('xfoo', 'bar');
+    }
 
 }

@@ -13,6 +13,12 @@ trait ClassStructureTrait
     use ObjectItemTrait;
 
     /**
+     * Serialize additional and pattern properties
+     * @var boolean
+     */
+    protected $extendedPropertySerialization = false;
+
+    /**
      * @return Wrapper
      */
     public static function schema()
@@ -129,6 +135,16 @@ trait ClassStructureTrait
             }
         }
 
+        if ($this->extendedPropertySerialization) {
+            foreach ($this->getAdditionalPropertyNames() as $name) {
+                $result->$name = $this->{$name};
+            }
+
+            foreach ($this->getAllPatternPropertyNames() as $name) {
+                $result->$name = $this->{$name};
+            }
+        }
+
         return $result;
     }
 
@@ -167,5 +183,16 @@ trait ClassStructureTrait
     public function validate()
     {
         static::schema()->out($this);
+    }
+
+    /**
+     * Setter for $extendedPropertySerialization
+     * @param boolean $extend
+     * @return self
+     */
+    public function setExtendedPropertySerialization($extend = true)
+    {
+        $this->extendedPropertySerialization = $extend;
+        return $this;
     }
 }
