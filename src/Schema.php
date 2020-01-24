@@ -911,7 +911,9 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
                     if ($found || !$import) {
                         $result->$propertyName = $value;
                     } elseif (!isset($result->$propertyName)) {
-                        $result->$propertyName = $value;
+                        if (self::PROP_REF !== $propertyName || empty($result->__fromRef)) {
+                            $result->$propertyName = $value;
+                        }
                     }
                 }
             }

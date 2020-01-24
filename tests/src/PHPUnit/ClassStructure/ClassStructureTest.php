@@ -2,10 +2,10 @@
 
 namespace Swaggest\JsonSchema\Tests\PHPUnit\ClassStructure;
 
-
 use Swaggest\JsonSchema\Exception\TypeException;
 use Swaggest\JsonSchema\Tests\Helper\ClassWithAllOf;
 use Swaggest\JsonSchema\Tests\Helper\LevelThreeClass;
+use Swaggest\JsonSchema\Tests\Helper\SampleProperties;
 use Swaggest\JsonSchema\Tests\Helper\SampleStructure;
 use Swaggest\JsonSchema\Tests\Helper\StructureWithItems;
 
@@ -91,10 +91,55 @@ class ClassStructureTest extends \PHPUnit_Framework_TestCase
 
     public function testAllOfClassInstance()
     {
-        $value = ClassWithAllOf::import((object)array('myProperty'=>'abc'));
+        $value = ClassWithAllOf::import((object)array('myProperty' => 'abc'));
         $this->assertSame('abc', $value->myProperty);
         $this->assertTrue($value instanceof ClassWithAllOf);
     }
 
+    public function testAdditionalProperties()
+    {
+        $properties = new SampleProperties();
+        $properties->propOne = (object)array(
+            'subOne' => 'one',
+            'subTwo' => 'two'
+        );
+
+        $exported = SampleProperties::export($properties);
+        $json = <<<JSON
+{
+    "propOne": {
+        "subOne": "one",
+        "subTwo": "two"
+    }
+}
+JSON;
+        $this->assertSame($json, json_encode($exported, JSON_PRETTY_PRINT), 'With flag to true');
+    }
+
+    public function testPatternProperties()
+    {
+        $properties = new SampleProperties();
+        $properties->setXValue('x-foo', 'bar');
+        $properties->setXValue('x-baz', 'gnu');
+
+        $exported = SampleProperties::export($properties);
+        $json = <<<JSON
+{
+    "x-foo": "bar",
+    "x-baz": "gnu"
+}
+JSON;
+        $this->assertSame($json, json_encode($exported, JSON_PRETTY_PRINT), 'With flag to true');
+    }
+
+    /**
+     * @expectedException        Swaggest\JsonSchema\Exception\StringException
+     * @expectedExceptionMessage Pattern mismatch
+     */
+    public function testPatternPropertiesMismatch()
+    {
+        $properties = new SampleProperties();
+        $properties->setXValue('xfoo', 'bar');
+    }
 
 }

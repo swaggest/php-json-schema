@@ -100,12 +100,15 @@ trait ClassStructureTrait
         $result = new \stdClass();
         $schema = static::schema();
         $properties = $schema->getProperties();
+        $processed = array();
         if (null !== $properties) {
             foreach ($properties->getDataKeyMap() as $propertyName => $dataName) {
                 $value = $this->$propertyName;
+
                 // Value is exported if exists.
                 if (null !== $value || array_key_exists($propertyName, $this->__arrayOfData)) {
                     $result->$dataName = $value;
+                    $processed[$propertyName] = true;
                     continue;
                 }
 
@@ -125,6 +128,14 @@ trait ClassStructureTrait
             if (null !== $nested) {
                 foreach ((array)$nested->jsonSerialize() as $key => $value) {
                     $result->$key = $value;
+                }
+            }
+        }
+
+        if (!empty($this->__arrayOfData)) {
+            foreach ($this->__arrayOfData as $name => $value) {
+                if (!isset($processed[$name])) {
+                    $result->$name = $this->{$name};
                 }
             }
         }
