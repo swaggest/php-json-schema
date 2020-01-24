@@ -2,7 +2,6 @@
 
 namespace Swaggest\JsonSchema\Tests\PHPUnit\ClassStructure;
 
-use Swaggest\JsonSchema\Exception\StringException;
 use Swaggest\JsonSchema\Exception\TypeException;
 use Swaggest\JsonSchema\Tests\Helper\ClassWithAllOf;
 use Swaggest\JsonSchema\Tests\Helper\LevelThreeClass;
@@ -92,7 +91,7 @@ class ClassStructureTest extends \PHPUnit_Framework_TestCase
 
     public function testAllOfClassInstance()
     {
-        $value = ClassWithAllOf::import((object)array('myProperty'=>'abc'));
+        $value = ClassWithAllOf::import((object)array('myProperty' => 'abc'));
         $this->assertSame('abc', $value->myProperty);
         $this->assertTrue($value instanceof ClassWithAllOf);
     }
@@ -100,17 +99,11 @@ class ClassStructureTest extends \PHPUnit_Framework_TestCase
     public function testAdditionalProperties()
     {
         $properties = new SampleProperties();
-        $properties->setAdditionalPropertyValue('propOne', (object)array(
+        $properties->propOne = (object)array(
             'subOne' => 'one',
             'subTwo' => 'two'
-        ));
+        );
 
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $exported = SampleProperties::export($properties);
-        $this->assertSame('{}', json_encode($exported, JSON_PRETTY_PRINT), 'With flag to false');
-
-
-        $properties->setExtendedPropertySerialization();
         $exported = SampleProperties::export($properties);
         $json = <<<JSON
 {
@@ -129,11 +122,6 @@ JSON;
         $properties->setXValue('x-foo', 'bar');
         $properties->setXValue('x-baz', 'gnu');
 
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $exported = SampleProperties::export($properties);
-        $this->assertSame('{}', json_encode($exported, JSON_PRETTY_PRINT), 'With flag to false');
-
-        $properties->setExtendedPropertySerialization();
         $exported = SampleProperties::export($properties);
         $json = <<<JSON
 {

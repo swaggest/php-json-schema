@@ -22,7 +22,7 @@ class DbId extends AbstractMeta implements ClassStructureContract
     public static function setUpProperties($properties, Schema $ownerSchema)
     {
         $properties->table = DbTable::schema();
-        $ownerSchema->__fromRef = null;
+        $ownerSchema->setFromRef(false);
     }
 
 

@@ -13,12 +13,6 @@ trait ClassStructureTrait
     use ObjectItemTrait;
 
     /**
-     * Serialize additional and pattern properties
-     * @var boolean
-     */
-    protected $extendedPropertySerialization = false;
-
-    /**
      * @return Wrapper
      */
     public static function schema()
@@ -106,12 +100,15 @@ trait ClassStructureTrait
         $result = new \stdClass();
         $schema = static::schema();
         $properties = $schema->getProperties();
+        $processed = array();
         if (null !== $properties) {
             foreach ($properties->getDataKeyMap() as $propertyName => $dataName) {
                 $value = $this->$propertyName;
+
                 // Value is exported if exists.
                 if (null !== $value || array_key_exists($propertyName, $this->__arrayOfData)) {
                     $result->$dataName = $value;
+                    $processed[$propertyName] = true;
                     continue;
                 }
 
@@ -135,13 +132,11 @@ trait ClassStructureTrait
             }
         }
 
-        if ($this->extendedPropertySerialization) {
-            foreach ($this->getAdditionalPropertyNames() as $name) {
-                $result->$name = $this->{$name};
-            }
-
-            foreach ($this->getAllPatternPropertyNames() as $name) {
-                $result->$name = $this->{$name};
+        if (!empty($this->__arrayOfData)) {
+            foreach ($this->__arrayOfData as $name => $value) {
+                if (!isset($processed[$name])) {
+                    $result->$name = $this->{$name};
+                }
             }
         }
 
@@ -183,16 +178,5 @@ trait ClassStructureTrait
     public function validate()
     {
         static::schema()->out($this);
-    }
-
-    /**
-     * Setter for $extendedPropertySerialization
-     * @param boolean $extend
-     * @return self
-     */
-    public function setExtendedPropertySerialization($extend = true)
-    {
-        $this->extendedPropertySerialization = $extend;
-        return $this;
     }
 }
