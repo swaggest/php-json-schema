@@ -103,6 +103,22 @@ trait ObjectItemTrait
         return null;
     }
 
+    /**
+     * @return string[]
+     */
+    public function getAllPatternPropertyNames()
+    {
+        $result = array();
+        if (isset($this->__patternPropertyNames)) {
+            foreach ($this->__patternPropertyNames as $patternProperties) {
+                if (is_array($patternProperties)) {
+                    $result = array_merge($result, array_keys($patternProperties));
+                }
+            }
+        }
+        return $result;
+    }
+
     public function jsonSerialize()
     {
         if ($this->__nestedObjects) {
