@@ -7,7 +7,6 @@ use Swaggest\JsonSchema\Schema;
 use Swaggest\JsonSchema\Exception\StringException;
 use Swaggest\JsonSchema\Structure\ClassStructure;
 
-
 /**
  * @property string $propOne
  * @property int $propTwo
@@ -29,54 +28,6 @@ class SampleProperties extends ClassStructure
     }
 
     /**
-     * @return array
-     * @codeCoverageIgnoreStart
-     */
-    public function getAdditionalPropertyValues()
-    {
-        $result = array();
-        if (!$names = $this->getAdditionalPropertyNames()) {
-            return $result;
-        }
-        foreach ($names as $name) {
-            $result[$name] = $this->$name;
-        }
-        return $result;
-    }
-    /** @codeCoverageIgnoreEnd */
-
-    /**
-     * @param string $name
-     * @param mixed $value
-     * @return self
-     * @codeCoverageIgnoreStart
-     */
-    public function setAdditionalPropertyValue($name, $value)
-    {
-        $this->addAdditionalPropertyName($name);
-        $this->{$name} = $value;
-        return $this;
-    }
-    /** @codeCoverageIgnoreEnd */
-
-    /**
-     * @return string[]
-     * @codeCoverageIgnoreStart
-     */
-    public function getXValues()
-    {
-        $result = array();
-        if (!$names = $this->getPatternPropertyNames(self::X_PROPERTY_PATTERN)) {
-            return $result;
-        }
-        foreach ($names as $name) {
-            $result[$name] = $this->$name;
-        }
-        return $result;
-    }
-    /** @codeCoverageIgnoreEnd */
-
-    /**
      * @param string $name
      * @param string $value
      * @return self
@@ -94,24 +45,4 @@ class SampleProperties extends ClassStructure
     }
     /** @codeCoverageIgnoreEnd */
 
-    /**
-     * @return string
-     * @codeCoverageIgnoreStart
-     */
-    public function getLastName()
-    {
-        return $this->lastName;
-    }
-    /** @codeCoverageIgnoreEnd */
-
-    /**
-     * @param string $lastName
-     * @return $this
-     * @codeCoverageIgnoreStart
-     */
-    public function setLastName($lastName)
-    {
-        $this->lastName = $lastName;
-        return $this;
-    }
 }
