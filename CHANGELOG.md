@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Export `null` value instead of skipping it for properties having `null` type.
 
+[0.12.27]: https://github.com/swaggest/php-json-schema/compare/v0.12.26...v0.12.27
 [0.12.26]: https://github.com/swaggest/php-json-schema/compare/v0.12.25...v0.12.26
 [0.12.25]: https://github.com/swaggest/php-json-schema/compare/v0.12.24...v0.12.25
 [0.12.24]: https://github.com/swaggest/php-json-schema/compare/v0.12.23...v0.12.24
