@@ -30,7 +30,7 @@ class AdditionalItemsTest extends \PHPUnit_Framework_TestCase
         $schema = new Schema();
         $schema->additionalProperties = Schema::integer();
 
-        if (PHP_VERSION_ID < 71000) {
+        if (PHP_VERSION_ID < 70100) {
             $this->setExpectedException(get_class(new InvalidValue()), 'Empty property name');
         }
 
