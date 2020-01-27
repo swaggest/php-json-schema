@@ -105,7 +105,7 @@ class Wrapper implements SchemaContract, MetaHolder, SchemaExporter, \JsonSerial
      */
     public function getProperty($name)
     {
-        return $this->schema->properties[$name];
+        return isset($this->schema->properties[$name]) ? $this->schema->properties[$name] : null;
     }
 
     /**
