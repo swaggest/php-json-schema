@@ -229,7 +229,13 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     {
         $enumOk = false;
         foreach ($this->enum as $item) {
-            if ($item === $data) {
+            if ($item === $data ||
+                ( // Int and float equality check.
+                    (is_int($item) || is_float($item)) &&
+                    (is_int($data) || is_float($data)) &&
+                    $item == $data
+                )
+            ) {
                 $enumOk = true;
                 break;
             } else {
@@ -255,7 +261,13 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
      */
     private function processConst($data, $path)
     {
-        if ($this->const !== $data) {
+        if ($this->const !== $data &&
+            !( // Int and float equality.
+                (is_int($this->const) || is_float($this->const)) &&
+                (is_int($data) || is_float($data)) &&
+                $this->const == $data
+            )
+        ) {
             if ((is_object($this->const) && is_object($data))
                 || (is_array($this->const) && is_array($data))) {
                 $diff = new JsonDiff($this->const, $data,
