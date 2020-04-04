@@ -478,3 +478,10 @@ Some code quality best practices are deliberately violated here
 Those violations are secured by comprehensive test coverage:
  * draft-04, draft-06, draft-07 of [JSON-Schema-Test-Suite](https://github.com/json-schema-org/JSON-Schema-Test-Suite)
  * test cases (excluding `$data` and few tests) of [epoberezkin/ajv](https://github.com/epoberezkin/ajv/tree/master/spec) (a mature js implementation)
+
+## Contributing
+
+Issues and pull requests are welcome!
+
+[![](https://sourcerer.io/fame/vearutop/swaggest/php-json-schema/images/0)](https://sourcerer.io/fame/vearutop/swaggest/php-json-schema/links/0)[![](https://sourcerer.io/fame/vearutop/swaggest/php-json-schema/images/1)](https://sourcerer.io/fame/vearutop/swaggest/php-json-schema/links/1)[![](https://sourcerer.io/fame/vearutop/swaggest/php-json-schema/images/2)](https://sourcerer.io/fame/vearutop/swaggest/php-json-schema/links/2)[![](https://sourcerer.io/fame/vearutop/swaggest/php-json-schema/images/3)](https://sourcerer.io/fame/vearutop/swaggest/php-json-schema/links/3)[![](https://sourcerer.io/fame/vearutop/swaggest/php-json-schema/images/4)](https://sourcerer.io/fame/vearutop/swaggest/php-json-schema/links/4)[![](https://sourcerer.io/fame/vearutop/swaggest/php-json-schema/images/5)](https://sourcerer.io/fame/vearutop/swaggest/php-json-schema/links/5)[![](https://sourcerer.io/fame/vearutop/swaggest/php-json-schema/images/6)](https://sourcerer.io/fame/vearutop/swaggest/php-json-schema/links/6)[![](https://sourcerer.io/fame/vearutop/swaggest/php-json-schema/images/7)](https://sourcerer.io/fame/vearutop/swaggest/php-json-schema/links/7)
+
