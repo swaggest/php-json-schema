@@ -10,7 +10,9 @@ class Format
 {
     const DATE_TIME = 'date-time';
     const DATE = 'date';
+    const FULL_DATE = 'full-date';
     const TIME = 'time';
+    const FULL_TIME = 'full-time';
     const URI = 'uri';
     const IRI = 'iri';
     const EMAIL = 'email';
@@ -40,8 +42,10 @@ class Format
             case self::DATE_TIME:
                 return self::dateTimeError($data);
             case self::DATE:
+            case self::FULL_DATE:
                 return preg_match('/^' . self::$dateRegexPart . '$/i', $data) ? null : 'Invalid date';
             case self::TIME:
+            case self::FULL_TIME:
                 return preg_match('/^' . self::$timeRegexPart . '$/i', $data) ? null : 'Invalid time';
             case self::URI:
                 return Uri::validationError($data, Uri::IS_SCHEME_REQUIRED);
