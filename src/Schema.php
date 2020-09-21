@@ -31,10 +31,11 @@ use Swaggest\JsonSchema\Structure\WithResolvedValue;
  * Class Schema
  * @package Swaggest\JsonSchema
  */
-class Schema extends JsonSchema implements MetaHolder, SchemaContract
+class Schema extends JsonSchema implements MetaHolder, SchemaContract, HasDefault
 {
     const ENUM_NAMES_PROPERTY = 'x-enum-names';
     const CONST_PROPERTY = 'const';
+    const DEFAULT_PROPERTY = 'default';
 
     const DEFAULT_MAPPING = 'default';
 
@@ -423,7 +424,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             try {
                 $result = self::unboolSchema($item)->process($data, $options, $path . '->oneOf[' . $index . ']');
                 $successes++;
-                if ($successes > 1 || $options->skipValidation) {
+                if ($successes > 1 || $options->skipValidation) { // @phpstan-ignore-line
                     break;
                 }
             } catch (InvalidValue $exception) {
@@ -795,9 +796,23 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
             && $properties !== null
         ) {
             foreach ($properties as $key => $property) {
+                $allowNull = false;
+                if ($property instanceof HasDefault) {
+                    if (!$property->hasDefault()) {
+                        continue;
+                    }
+
+                    $allowNull = true;
+                }
+
                 // todo check when property is \stdClass `{}` here (RefTest)
-                if ($property instanceof SchemaContract && null !== $default = $property->getDefault()) {
+                if ($property instanceof SchemaContract) {
                     if (!array_key_exists($key, $array)) {
+                        $default = $property->getDefault();
+                        if (null === $default && !$allowNull) { // @phpstan-ignore-line
+                            continue;
+                        }
+
                         $defaultApplied[$key] = true;
                         $array[$key] = $default;
                     }
@@ -961,6 +976,9 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
         $this->items = self::unboolSchema($this->items);
         if ($this->items instanceof SchemaContract) {
             $items = array();
+            /**
+             * @var null|bool|Schema $additionalItems
+             */
             $additionalItems = $this->items;
         } elseif ($this->items === null) { // items defaults to empty schema so everything is valid
             $items = array();
@@ -973,7 +991,6 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
 
         /**
          * @var Schema|Schema[] $items
-         * @var null|bool|Schema $additionalItems
          */
         $itemsLen = is_array($items) ? count($items) : 0;
         $index = 0;
@@ -1405,6 +1422,14 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract
     public function getDefault()
     {
         return $this->default;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasDefault()
+    {
+        return array_key_exists(self::DEFAULT_PROPERTY, $this->__arrayOfData);
     }
 
     /**
