@@ -18,6 +18,8 @@ use Swaggest\JsonSchema\Structure\ClassStructure;
  *
  * // draft6
  * @property mixed $const
+ *
+ * @property mixed $default
  */
 class JsonSchema extends ClassStructure
 {
@@ -46,8 +48,6 @@ class JsonSchema extends ClassStructure
 
     /** @var string */
     public $description;
-
-    public $default;
 
     /** @var float|null */
     public $multipleOf;

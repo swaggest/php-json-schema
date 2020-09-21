@@ -32,7 +32,7 @@ class Content
                             throw new ContentException('Invalid base64 string');
                         }
                         $data = base64_decode($data);
-                        if ($data === false && !$options->skipValidation) {
+                        if ($data === false && !$options->skipValidation) { // @phpstan-ignore-line
                             throw new ContentException('Unable to decode base64');
                         }
                         break;

@@ -1,8 +1,15 @@
 parameters:
 	inferPrivatePropertyTypeFromConstructor: true
+	checkMissingIterableValueType: false
+	checkGenericClassInNonGenericObjectType: false
 	ignoreErrors:
 		- '#Access to an undefined property static\(Swaggest\\JsonSchema\\JsonSchema\)\|Swaggest\\JsonSchema\\Constraint\\Properties::#'
 		- '#Access to an undefined property .+Swaggest\\JsonSchema\\NameMirror::.+#'
 		- '#should be compatible with parameter \$properties#'
 		- '#PHPDoc tag @param references unknown parameter: \$schema#'
-		- '#should return array<string>|null but returns array<int, int|string>#'
+		- '#Property .+ \(array<string>\|null\) does not accept array<int, string\|false>.#'
+		- '#should return array<string> but returns array<int, int\|string>#'
+		- '#has no return typehint specified#'
+		- '#with no typehint specified#'
+		- '#has no typehint specified#'
+		- '#Unsafe usage of new static\(\).#'
