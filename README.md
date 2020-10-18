@@ -1,8 +1,8 @@
 # Swaggest JSON-schema implementation for PHP
 
 [![Build Status](https://travis-ci.org/swaggest/php-json-schema.svg?branch=master)](https://travis-ci.org/swaggest/php-json-schema)
-[![Code Climate](https://codeclimate.com/github/swaggest/php-json-schema/badges/gpa.svg)](https://codeclimate.com/github/swaggest/php-json-schema)
 [![codecov](https://codecov.io/gh/swaggest/php-json-schema/branch/master/graph/badge.svg)](https://codecov.io/gh/swaggest/php-json-schema)
+[![time tracker](https://wakatime.com/badge/github/swaggest/php-json-schema.svg)](https://wakatime.com/badge/github/swaggest/php-json-schema)
 ![Code lines](https://sloc.xyz/github/swaggest/php-json-schema/?category=code)
 ![Comments](https://sloc.xyz/github/swaggest/php-json-schema/?category=comments)
 
