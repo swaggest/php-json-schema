@@ -70,6 +70,7 @@ JSON;
 
 Load it
 ```php
+use Swaggest\JsonSchema\Schema;
 $schema = Schema::import(json_decode($schemaJson));
 ```
 
