@@ -15,7 +15,7 @@ test:
 	@php -derror_reporting="E_ALL & ~E_DEPRECATED" vendor/bin/phpunit --configuration phpunit.xml
 
 test-coverage:
-	@php -derror_reporting="E_ALL & ~E_DEPRECATED" -dzend_extension=xdebug.so vendor/bin/phpunit --configuration phpunit.xml --coverage-text --coverage-clover=coverage.xml
+	@php -derror_reporting="E_ALL & ~E_DEPRECATED" -dzend_extension=xdebug.so -dxdebug.mode=coverage vendor/bin/phpunit --configuration phpunit.xml --coverage-text --coverage-clover=coverage.xml
 
 phpbench:
 	@test -f ${HOME}/.cache/composer/phpbench-${PHPBENCH_VERSION}.phar || (mkdir -p ${HOME}/.cache/composer/ && wget https://github.com/phpbench/phpbench/releases/download/${PHPBENCH_VERSION}/phpbench.phar -O ${HOME}/.cache/composer/phpbench-${PHPBENCH_VERSION}.phar)
