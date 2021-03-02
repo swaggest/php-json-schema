@@ -48,10 +48,6 @@ abstract class SchemaTestSuite extends \PHPUnit_Framework_TestCase
 
     protected function provider($path)
     {
-        if (!file_exists($path)) {
-            //$this->markTestSkipped('No spec tests found, please run `git submodule bla-bla`');
-        }
-
         $testCases = array();
 
         if ($handle = opendir($path)) {
@@ -61,13 +57,7 @@ abstract class SchemaTestSuite extends \PHPUnit_Framework_TestCase
                         continue;
                     }
 
-                    //if ($entry !== 'refRemote.json') {
-                    //continue;
-                    //}
-
-                    //echo "$entry\n";
                     /** @var _SpecTest[] $tests */
-//                    $tests = json_decode(file_get_contents($path . '/' . $entry), false, 512, JSON_BIGINT_AS_STRING);
                     $tests = json_decode(file_get_contents($path . '/' . $entry));
 
                     foreach ($tests as $test) {
@@ -111,36 +101,36 @@ abstract class SchemaTestSuite extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider specProvider
-     * @param $schemaData
+     * @param $schema
      * @param $data
      * @param $isValid
      * @param $name
      * @throws \Exception
      */
-    public function testSpec($schemaData, $data, $isValid, $name)
+    public function testSpec($schema, $data, $isValid, $name)
     {
         if ($this->skipTest($name)) {
             $this->markTestSkipped();
             return;
         }
-        $this->runSpecTest($schemaData, $data, $isValid, $name, static::SCHEMA_VERSION);
+        $this->runSpecTest($schema, $data, $isValid, $name, static::SCHEMA_VERSION);
     }
 
     /**
      * @dataProvider specOptionalProvider
-     * @param $schemaData
+     * @param $schema
      * @param $data
      * @param $isValid
      * @param $name
      * @throws \Exception
      */
-    public function testSpecOptional($schemaData, $data, $isValid, $name)
+    public function testSpecOptional($schema, $data, $isValid, $name)
     {
         if ($this->skipTest($name)) {
             $this->markTestSkipped();
             return;
         }
-        $this->runSpecTest($schemaData, $data, $isValid, $name, static::SCHEMA_VERSION);
+        $this->runSpecTest($schema, $data, $isValid, $name, static::SCHEMA_VERSION);
     }
 
     protected function makeOptions($version)

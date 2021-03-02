@@ -116,19 +116,19 @@ class AjvTest extends SchemaTestSuite
 
     /**
      * @dataProvider specExtrasProvider
-     * @param $schemaData
+     * @param $schema
      * @param $data
      * @param $isValid
      * @param $name
      * @throws \Exception
      */
-    public function testSpecExtras($schemaData, $data, $isValid, $name)
+    public function testSpecExtras($schema, $data, $isValid, $name)
     {
         if ($this->skipTest($name)) {
             $this->markTestSkipped();
             return;
         }
-        $this->runSpecTest($schemaData, $data, $isValid, $name, static::SCHEMA_VERSION);
+        $this->runSpecTest($schema, $data, $isValid, $name, static::SCHEMA_VERSION);
     }
 
     public function specSchemasProvider()
@@ -139,19 +139,19 @@ class AjvTest extends SchemaTestSuite
 
     /**
      * @dataProvider specSchemasProvider
-     * @param $schemaData
+     * @param $schema
      * @param $data
      * @param $isValid
      * @param $name
      * @throws \Exception
      */
-    public function testSpecSchemas($schemaData, $data, $isValid, $name)
+    public function testSpecSchemas($schema, $data, $isValid, $name)
     {
         if ($this->skipTest($name)) {
             $this->markTestSkipped();
             return;
         }
-        $this->runSpecTest($schemaData, $data, $isValid, $name, static::SCHEMA_VERSION);
+        $this->runSpecTest($schema, $data, $isValid, $name, static::SCHEMA_VERSION);
     }
 
     public function specDataProvider()
@@ -162,21 +162,21 @@ class AjvTest extends SchemaTestSuite
 
     /**
      * @dataProvider specDataProvider
-     * @param $schemaData
+     * @param $schema
      * @param $data
      * @param $isValid
      * @param $name
      * @throws \Exception
      */
     /*
-    public function testSpecData($schemaData, $data, $isValid, $name)
+    public function testSpecData($schema, $data, $isValid, $name)
     {
         $this->markTestSkipped();
         if ($this->skipTest($name)) {
             $this->markTestSkipped();
             return;
         }
-        $this->runSpecTest($schemaData, $data, $isValid, $name, static::SCHEMA_VERSION);
+        $this->runSpecTest($schema, $data, $isValid, $name, static::SCHEMA_VERSION);
     }
     */
 

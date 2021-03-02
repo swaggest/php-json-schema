@@ -42,19 +42,19 @@ class Draft7SkipValidationTest extends Draft4SkipValidationTest
 
     /**
      * @dataProvider specFormatProvider
-     * @param $schemaData
+     * @param $schema
      * @param $data
      * @param $isValid
      * @param $name
      * @throws \Exception
      */
-    public function testSpecFormat($schemaData, $data, $isValid, $name)
+    public function testSpecFormat($schema, $data, $isValid, $name)
     {
         if (false !== $skip = $this->skipTest($name)) {
             $this->markTestSkipped($skip);
             return;
         }
-        $this->runSpecTest($schemaData, $data, $isValid, $name, static::SCHEMA_VERSION);
+        $this->runSpecTest($schema, $data, $isValid, $name, static::SCHEMA_VERSION);
     }
 
 
