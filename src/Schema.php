@@ -736,6 +736,10 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract, HasDefaul
                             $ref->setImported($refResult);
                             return $refResult;
                         } catch (InvalidValue $exception) {
+                            if ($this->objectItemClass === 'Swaggest\JsonSchema\Schema') {
+                                throw $exception;
+                            }
+
                             $ref->unsetImported();
                             $skipValidation = $options->skipValidation;
                             $options->skipValidation = true;
