@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Parent",
+  "type": "object",
+  "required": [
+    "title",
+    "child"
+  ],
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "second_prop": {
+      "type": "uri"
+    },
+    "child": {
+      "type": "object",
+      "required": [
+        "title"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
