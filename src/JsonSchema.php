@@ -173,7 +173,7 @@ class JsonSchema extends ClassStructure
         $ownerSchema->addPropertyMapping('$schema', self::names()->schema);
         $properties->title = JsonBasicSchema::string();
         $properties->description = JsonBasicSchema::string();
-        $properties->default = new JsonBasicSchema();
+        $properties->default = (object)array();
         $properties->multipleOf = JsonBasicSchema::number();
         $properties->multipleOf->minimum = 0;
         $properties->multipleOf->exclusiveMinimum = true;
