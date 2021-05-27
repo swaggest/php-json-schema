@@ -8,6 +8,7 @@ use Swaggest\JsonSchema\Tests\Helper\LevelThreeClass;
 use Swaggest\JsonSchema\Tests\Helper\SampleProperties;
 use Swaggest\JsonSchema\Tests\Helper\SampleStructure;
 use Swaggest\JsonSchema\Tests\Helper\StructureWithItems;
+use Swaggest\JsonSchema\Tests\Helper\WithConst;
 
 class ClassStructureTest extends \PHPUnit_Framework_TestCase
 {
@@ -140,6 +141,12 @@ JSON;
     {
         $properties = new SampleProperties();
         $properties->setXValue('xfoo', 'bar');
+    }
+
+    function testGeneratedValid()
+    {
+        $v = WithConst::import((object)array('foo' => 'abc'));
+        $this->assertSame('{"foo":"abc"}', json_encode($v));
     }
 
 }
