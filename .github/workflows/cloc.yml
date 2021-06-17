@@ -1,0 +1,36 @@
+# This script is provided by github.com/bool64/dev.
+name: cloc
+on:
+  pull_request:
+jobs:
+  cloc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          path: pr
+      - name: Checkout base code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: base
+      - name: Count Lines Of Code
+        id: loc
+        run: |
+          curl -OL https://github.com/vearutop/sccdiff/releases/download/v1.0.1/linux_amd64.tar.gz && tar xf linux_amd64.tar.gz
+          OUTPUT=$(cd pr && ../sccdiff -basedir ../base)
+          OUTPUT="${OUTPUT//'%'/'%25'}"
+          OUTPUT="${OUTPUT//$'\n'/'%0A'}"
+          OUTPUT="${OUTPUT//$'\r'/'%0D'}"
+          echo "::set-output name=diff::$OUTPUT"
+
+      - name: Comment Code Lines
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          header: LOC
+          message: |
+            ### Lines Of Code
+
+            ${{ steps.loc.outputs.diff }}
