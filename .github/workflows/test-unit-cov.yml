@@ -11,8 +11,8 @@ jobs:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
-        operating-system: [ 'ubuntu-latest' ]
-        php-versions: [ '5.6', '7.0', '7.1', '7.2', '7.3', '7.4' ]
+        operating-system: ['ubuntu-latest']
+        php-versions: ['8.0']
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -29,10 +29,11 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           ini-values: post_max_size=256M, max_execution_time=180
+          coverage: xdebug
           tools: composer
 
       - name: Populate vendor
         run: '[ -e vendor ] || composer install'
 
-      - name: Run Tests
-        run: make deps test
+      - name: Run Tests With Coverage
+        run: make deps test-coverage && bash <(curl -s https://codecov.io/bash)
