@@ -736,7 +736,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract, HasDefaul
                             $ref->setImported($refResult);
                             return $refResult;
                         } catch (InvalidValue $exception) {
-                            if ($this->objectItemClass === 'Swaggest\JsonSchema\Schema') {
+                            if ($this->objectItemClass === 'Swaggest\JsonSchema\Schema' || $exception instanceof InvalidRef) {
                                 throw $exception;
                             }
 

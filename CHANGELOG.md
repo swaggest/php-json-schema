@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.34] - 2021-06-17
+
+### Fixed
+- Suppressed failure during reference resolution.
+
+## [0.12.33] - 2021-05-27
+
+### Fixed
+- Disable validation for default and const values.
+
+## [0.12.32] - 2021-05-12
+
+### Fixed
+- Suppressed failure during validation in referenced schema.
+
 ## [0.12.31] - 2020-09-21
 
 ### Fixed
@@ -68,6 +83,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Export `null` value instead of skipping it for properties having `null` type.
 
+[0.12.34]: https://github.com/swaggest/php-json-schema/compare/v0.12.33...v0.12.34
+[0.12.33]: https://github.com/swaggest/php-json-schema/compare/v0.12.32...v0.12.33
+[0.12.32]: https://github.com/swaggest/php-json-schema/compare/v0.12.31...v0.12.32
 [0.12.31]: https://github.com/swaggest/php-json-schema/compare/v0.12.30...v0.12.31
 [0.12.30]: https://github.com/swaggest/php-json-schema/compare/v0.12.29...v0.12.30
 [0.12.29]: https://github.com/swaggest/php-json-schema/compare/v0.12.28...v0.12.29
