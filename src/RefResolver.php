@@ -161,7 +161,7 @@ class RefResolver
                     try {
                         $path = JsonPointer::splitPath($referencePath);
                     } catch (\Swaggest\JsonDiff\Exception $e) {
-                        throw new InvalidValue('Invalid reference: ' . $referencePath . ', ' . $e->getMessage());
+                        throw new InvalidRef('Invalid reference: ' . $referencePath . ', ' . $e->getMessage());
                     }
 
                     /** @var JsonSchema|\stdClass $branch */
@@ -181,7 +181,7 @@ class RefResolver
                         } elseif (is_array($branch) && isset($branch[$folder])) {
                             $branch = &$branch[$folder];
                         } else {
-                            throw new InvalidValue('Could not resolve ' . $referencePath . '@' . $this->getResolutionScope() . ': ' . $folder);
+                            throw new InvalidRef('Could not resolve ' . $referencePath . '@' . $this->getResolutionScope() . ': ' . $folder);
                         }
                     }
                     $ref->setData($branch);
