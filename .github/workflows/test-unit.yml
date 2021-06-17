@@ -26,4 +26,4 @@ jobs:
           tools: composer
 
       - name: Run Tests
-        run: composer install && make test
+        run: composer install && make deps test
