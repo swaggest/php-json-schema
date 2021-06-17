@@ -1,4 +1,3 @@
-# This script is provided by github.com/bool64/dev.
 name: cloc
 on:
   pull_request:
