@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.36] - 2021-07-14
+
+### Added
+- Optional properties mapping in names reflector.
+
 ## [0.12.35] - 2021-06-18
 
 ### Fixed
@@ -88,6 +93,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Export `null` value instead of skipping it for properties having `null` type.
 
+[0.12.36]: https://github.com/swaggest/php-json-schema/compare/v0.12.35...v0.12.36
 [0.12.35]: https://github.com/swaggest/php-json-schema/compare/v0.12.34...v0.12.35
 [0.12.34]: https://github.com/swaggest/php-json-schema/compare/v0.12.33...v0.12.34
 [0.12.33]: https://github.com/swaggest/php-json-schema/compare/v0.12.32...v0.12.33
