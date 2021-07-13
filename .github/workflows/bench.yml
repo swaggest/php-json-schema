@@ -1,0 +1,99 @@
+# This script is provided by github.com/bool64/dev.
+name: bench
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      old:
+        description: 'Old Ref'
+        required: false
+        default: 'master'
+      new:
+        description: 'New Ref'
+        required: true
+
+env:
+  GO111MODULE: "on"
+  CACHE_BENCHMARK: "off"    # Enables benchmark result reuse between runs, may skew latency results.
+  RUN_BASE_BENCHMARK: "on"  # Runs benchmark for PR base in case benchmark result is missing.
+jobs:
+  bench:
+    strategy:
+      matrix:
+        operating-system: [ 'ubuntu-latest' ]
+        php-versions: [ '8.0' ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get phpbench
+        run: 'make phpbench'
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          ini-values: post_max_size=256M, max_execution_time=180
+          tools: composer
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ (github.event.inputs.new != '') && github.event.inputs.new || github.event.ref }}
+
+      - name: Cache vendor
+        uses: actions/cache@v2
+        with:
+          path: |
+            vendor
+          key: vendor-${{ hashFiles('composer.lock') }}
+
+      - name: Populate vendor
+        run: '[ -e vendor ] || composer install'
+
+      - name: Restore base benchmark result
+        if: env.CACHE_BENCHMARK == 'on'
+        id: benchmark-base
+        uses: actions/cache@v2
+        with:
+          path: |
+            bench-master.xml
+          # Use base sha for PR or new commit hash for master/main push in benchmark result key.
+          key: ${{ runner.os }}-bench-${{ (github.event.pull_request.base.sha != github.event.after) && github.event.pull_request.base.sha || github.event.after }}
+
+      - name: Checkout base code
+        if: env.RUN_BASE_BENCHMARK == 'on' && steps.benchmark-base.outputs.cache-hit != 'true' && (github.event.pull_request.base.sha != '' || github.event.inputs.old != '')
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ (github.event.pull_request.base.sha != '' ) && github.event.pull_request.base.sha || github.event.inputs.old }}
+          path: __base
+
+      - name: Run base benchmark
+        if: env.RUN_BASE_BENCHMARK == 'on' && steps.benchmark-base.outputs.cache-hit != 'true' && (github.event.pull_request.base.sha != '' || github.event.inputs.old != '')
+        run: |
+          export REF_NAME=master
+          cd __base
+          composer install
+          php $$HOME/.cache/composer/phpbench-${PHPBENCH_VERSION}.phar run benchmarks/AjvSchemasBench.php --tag=candidate --bootstrap=vendor/autoload.php --revs=500 --iterations=5 --dump-file=phpbench-candidate.xml
+
+      - name: Benchmark
+        id: bench
+        run: |
+          export REF_NAME=new
+          BENCH_COUNT=5 make bench-run bench-stat
+          OUTPUT=$(make bench-stat)
+          OUTPUT="${OUTPUT//'%'/'%25'}"
+          OUTPUT="${OUTPUT//$'\n'/'%0A'}"
+          OUTPUT="${OUTPUT//$'\r'/'%0D'}"
+          echo "::set-output name=result::$OUTPUT"
+      - name: Comment Benchmark Result
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          header: bench
+          message: |
+            ### Benchmark Result
+            <details><summary>Benchmark diff with base branch</summary>
+
+            ```
+            ${{ steps.bench.outputs.result }}
+            ```
+            </details>

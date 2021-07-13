@@ -1,5 +1,5 @@
 PHPSTAN_VERSION ?= 0.12.43
-PHPBENCH_VERSION ?= 0.16.10
+PHPBENCH_VERSION ?= 1.0.2
 
 deps:
 	@git submodule init && git submodule update
@@ -21,12 +21,12 @@ phpbench:
 	@test -f ${HOME}/.cache/composer/phpbench-${PHPBENCH_VERSION}.phar || (mkdir -p ${HOME}/.cache/composer/ && wget https://github.com/phpbench/phpbench/releases/download/${PHPBENCH_VERSION}/phpbench.phar -O ${HOME}/.cache/composer/phpbench-${PHPBENCH_VERSION}.phar)
 
 bench: phpbench
-	@php $$HOME/.cache/composer/phpbench-${PHPBENCH_VERSION}.phar run benchmarks --tag=candidate --progress=none --bootstrap=vendor/autoload.php --revs=50 --iterations=5 --retry-threshold=3 --dump-file=phpbench-candidate.xml
+	@php $$HOME/.cache/composer/phpbench-${PHPBENCH_VERSION}.phar run benchmarks/AjvSchemasBench.php --tag=candidate --bootstrap=vendor/autoload.php --revs=500 --iterations=5 --dump-file=phpbench-candidate.xml
 
 bench-master: phpbench
 	@git checkout --detach && git fetch origin '+refs/heads/master:refs/heads/master' && git checkout master -- ./src
 	@composer install --dev --no-interaction --prefer-dist
-	@php $$HOME/.cache/composer/phpbench-${PHPBENCH_VERSION}.phar run benchmarks --tag=master --progress=none --bootstrap=vendor/autoload.php --revs=50 --iterations=5 --retry-threshold=3 --dump-file=phpbench-master.xml
+	@php $$HOME/.cache/composer/phpbench-${PHPBENCH_VERSION}.phar run benchmarks --tag=master --progress=none --bootstrap=vendor/autoload.php --revs=500 --iterations=5 --retry-threshold=3 --dump-file=phpbench-master.xml
 
 bench-compare: phpbench
 	@php $$HOME/.cache/composer/phpbench-${PHPBENCH_VERSION}.phar report --file phpbench-master.xml --file phpbench-candidate.xml --report='generator: "table", cols: [ "set" ], compare: "tag", compare_fields: ["mean"], break: ["benchmark"]'
