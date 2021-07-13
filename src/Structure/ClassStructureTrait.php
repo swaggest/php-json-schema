@@ -146,8 +146,12 @@ trait ClassStructureTrait
     /**
      * @return static|NameMirror
      */
-    public static function names()
+    public static function names(Properties $properties = null, $mapping = Schema::DEFAULT_MAPPING)
     {
+        if ($properties !== null) {
+            return new NameMirror($properties->getDataKeyMap($mapping));
+        }
+
         static $nameflector = null;
         if (null === $nameflector) {
             $nameflector = new NameMirror();
