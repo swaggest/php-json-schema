@@ -39,11 +39,11 @@ class Order implements ClassStructureContract
 
         $ownerSchema->setFromRef('#/definitions/order');
 
-        // Define default mapping if any
-        $ownerSchema->addPropertyMapping('date_time', Order::names()->dateTime);
+        // Define default mapping if any.
+        $properties->addPropertyMapping('date_time', Order::names()->dateTime);
 
         // Use mapped name references after the default mapping was configured.
-        $names = self::names($ownerSchema->properties);
+        $names = self::names($properties);
         $ownerSchema->required = array(
             $names->id,
             $names->dateTime,
@@ -51,8 +51,8 @@ class Order implements ClassStructureContract
         );
 
         // Define additional mapping
-        $ownerSchema->addPropertyMapping('DaTe_TiMe', Order::names()->dateTime, self::FANCY_MAPPING);
-        $ownerSchema->addPropertyMapping('Id', Order::names()->id, self::FANCY_MAPPING);
-        $ownerSchema->addPropertyMapping('PrIcE', Order::names()->price, self::FANCY_MAPPING);
+        $properties->addPropertyMapping('DaTe_TiMe', Order::names()->dateTime, self::FANCY_MAPPING);
+        $properties->addPropertyMapping('Id', Order::names()->id, self::FANCY_MAPPING);
+        $properties->addPropertyMapping('PrIcE', Order::names()->price, self::FANCY_MAPPING);
     }
 }

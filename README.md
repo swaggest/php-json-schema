@@ -9,6 +9,7 @@
 High definition PHP structures with JSON-schema based validation.
 
 Supported schemas:
+
 * [JSON Schema Draft 7](http://json-schema.org/specification-links.html#draft-7)
 * [JSON Schema Draft 6](http://json-schema.org/specification-links.html#draft-6)
 * [JSON Schema Draft 4](http://json-schema.org/specification-links.html#draft-4)
@@ -26,7 +27,8 @@ Structure definition can be done either with `json-schema` or with
 
 ### Validating JSON data against given schema
 
-Define your json-schema      
+Define your json-schema
+
 ```php
 $schemaJson = <<<'JSON'
 {
@@ -69,12 +71,14 @@ JSON;
 ```
 
 Load it
+
 ```php
 use Swaggest\JsonSchema\Schema;
 $schema = Schema::import(json_decode($schemaJson));
 ```
 
 Validate data
+
 ```php
 $schema->in(json_decode(<<<'JSON'
 {
@@ -94,11 +98,13 @@ JSON
 ```
 
 You can also call `Schema::import` on string `uri` to schema json data.
+
 ```php
 $schema = Schema::import('http://localhost:1234/my_schema.json');
 ```
 
 Or with boolean argument.
+
 ```php
 $schema = Schema::import(true); // permissive schema, always validates
 $schema = Schema::import(false); // restrictive schema, always invalidates
@@ -125,7 +131,7 @@ For ambiguous schemas defined with `oneOf`/`anyOf` message is indented multi-lin
 Processing path is a combination of schema and data pointers. You can use `InvalidValue->getSchemaPointer()`
 and `InvalidValue->getDataPointer()` to extract schema/data pointer.
 
-You can receive `Schema` instance that failed validation with `InvalidValue->getFailedSubSchema`. 
+You can receive `Schema` instance that failed validation with `InvalidValue->getFailedSubSchema`.
 
 You can build error tree using `InvalidValue->inspect()`.
 
@@ -251,15 +257,15 @@ class Order implements ClassStructureContract
 
         $ownerSchema->setFromRef('#/definitions/order');
 
-        // Define default mapping if any
+        // Define default mapping if any.
         $ownerSchema->addPropertyMapping('date_time', Order::names()->dateTime);
 
         // Use mapped name references after the default mapping was configured.
         $names = self::names($ownerSchema->properties);
         $ownerSchema->required = array(
-            $names->id,
-            $names->dateTime,
-            $names->price
+            $names->id,         
+            $names->dateTime, // "date_time"
+            $names->price       
         );
 
         // Define additional mapping
@@ -270,15 +276,16 @@ class Order implements ClassStructureContract
 }
 ```
 
-Validation of dynamic properties is performed on set, 
-this can help to find source of invalid data at cost of 
-some performance drop
+Validation of dynamic properties is performed on set, this can help to find source of invalid data at cost of some
+performance drop
+
 ```php
 $user = new User();
 $user->quantity = -1; // Exception: Value more than 0 expected, -1 received
 ```
 
 Validation of native properties is performed only on import/export
+
 ```php
 $user = new User();
 $user->quantity = 10;
@@ -286,6 +293,7 @@ User::export($user); // Exception: Required property missing: id
 ```
 
 Error messages provide a path to invalid data
+
 ```php
 $user = new User();
 $user->id = 1;
@@ -328,8 +336,8 @@ $this->assertSame('John', $imported->info->firstName);
 $this->assertSame('Doe', $imported->info->lastName);
 ```
 
-You can also use `\Swaggest\JsonSchema\Structure\Composition` to dynamically create schema compositions.
-This can be helpful to deal with results of database query on joined data.
+You can also use `\Swaggest\JsonSchema\Structure\Composition` to dynamically create schema compositions. This can be
+helpful to deal with results of database query on joined data.
 
 ```php
 $schema = new Composition(UserInfo::schema(), Order::schema());
@@ -359,8 +367,7 @@ $this->assertSame(2.66, $order->price);
 
 #### Keys mapping
 
-If property names of PHP objects should be different from raw data you 
-can call `->addPropertyMapping` on owner schema.
+If property names of PHP objects should be different from raw data you can call `->addPropertyMapping` on owner schema.
 
 ```php
 // Define default mapping if any
@@ -373,6 +380,7 @@ $ownerSchema->addPropertyMapping('PrIcE', Order::names()->price, self::FANCY_MAP
 ```
 
 It will affect data mapping:
+
 ```php
 $order = new Order();
 $order->id = 1;
@@ -393,6 +401,7 @@ $this->assertSame('2015-10-28T07:28:00Z', $imported->dateTime);
 ```
 
 You can have multiple mapping namespaces, controlling with `mapping` property of `Context`
+
 ```php
 $options = new Context();
 $options->mapping = Order::FANCY_MAPPING;
@@ -418,6 +427,7 @@ You can create your own pre-processor implementing `Swaggest\JsonSchema\DataPreP
 `Meta` is a way to complement `Schema` with your own data. You can keep and retrieve it.
 
 You can store it.
+
 ```php
 $dbMeta = new DbTable();
 $dbMeta->tableName = 'orders';
@@ -425,16 +435,17 @@ $ownerSchema->addMeta($dbMeta);
 ```
 
 And get back.
+
 ```php
 // Retrieving meta
 $dbTable = DbTable::get(Order::schema());
 $this->assertSame('orders', $dbTable->tableName);
 ```
 
-
 #### Mapping without validation
 
-If you want to tolerate invalid data or improve mapping performance you can specify `skipValidation` flag in processing `Context`
+If you want to tolerate invalid data or improve mapping performance you can specify `skipValidation` flag in
+processing `Context`
 
 ```php
 $schema = Schema::object();
@@ -447,7 +458,6 @@ $options->skipValidation = true;
 $res = $schema->in(json_decode('{"one":4}'), $options);
 $this->assertSame(4, $res->one);
 ```
-
 
 #### Overriding mapping classes
 
@@ -481,12 +491,15 @@ $this->assertInstanceOf(CustomSchema::className(), $schema->definitions['User'])
 ## Code quality and test coverage
 
 Some code quality best practices are deliberately violated here
-(see [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/swaggest/php-json-schema/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/swaggest/php-json-schema/?branch=master)
+(
+see [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/swaggest/php-json-schema/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/swaggest/php-json-schema/?branch=master)
 ) to allow best performance at maintenance cost.
 
 Those violations are secured by comprehensive test coverage:
- * draft-04, draft-06, draft-07 of [JSON-Schema-Test-Suite](https://github.com/json-schema-org/JSON-Schema-Test-Suite)
- * test cases (excluding `$data` and few tests) of [epoberezkin/ajv](https://github.com/epoberezkin/ajv/tree/master/spec) (a mature js implementation)
+
+* draft-04, draft-06, draft-07 of [JSON-Schema-Test-Suite](https://github.com/json-schema-org/JSON-Schema-Test-Suite)
+* test cases (excluding `$data` and few tests)
+  of [epoberezkin/ajv](https://github.com/epoberezkin/ajv/tree/master/spec) (a mature js implementation)
 
 ## Contributing
 
