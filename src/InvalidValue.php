@@ -13,6 +13,29 @@ class InvalidValue extends Exception
     public $error;
     public $path;
 
+    public $constraint;
+    public $data;
+
+    /**
+     * @param mixed $constraint
+     * @return $this
+     */
+    public function withConstraint($constraint)
+    {
+        $this->constraint = $constraint;
+        return $this;
+    }
+
+    /**
+     * @param mixed $data
+     * @return $this
+     */
+    public function withData($data)
+    {
+        $this->data = $data;
+        return $this;
+    }
+
     public function addPath($path)
     {
         if ($this->error === null) {

@@ -175,6 +175,7 @@ TEXT;
             $error = $exception->inspect();
             $this->assertSame($errorInspected, print_r($error, 1));
             $this->assertSame('/properties/root/patternProperties/^[a-zA-Z0-9_]+$', $exception->getSchemaPointer());
+            $this->assertSame('f', $exception->data);
 
             // Resolving schema pointer to schema data.
             $failedSchemaData = JsonPointer::getByPointer($schemaData, $exception->getSchemaPointer());

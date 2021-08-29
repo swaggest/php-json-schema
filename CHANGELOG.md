@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.37] - 2021-08-29
+
+### Added
+- `InvalidValue` now exposes `data` and `constraint` values for structured context of validation failure.
+
+### Fixed 
+- Handling of `multipleOf: 0.01` float precision.
+
 ## [0.12.36] - 2021-07-14
 
 ### Added
@@ -93,6 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Export `null` value instead of skipping it for properties having `null` type.
 
+[0.12.37]: https://github.com/swaggest/php-json-schema/compare/v0.12.36...v0.12.37
 [0.12.36]: https://github.com/swaggest/php-json-schema/compare/v0.12.35...v0.12.36
 [0.12.35]: https://github.com/swaggest/php-json-schema/compare/v0.12.34...v0.12.35
 [0.12.34]: https://github.com/swaggest/php-json-schema/compare/v0.12.33...v0.12.34
