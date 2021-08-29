@@ -13,6 +13,29 @@ class InvalidValue extends Exception
     public $error;
     public $path;
 
+    public $expected;
+    public $received;
+
+    /**
+     * @param mixed $expected
+     * @return $this
+     */
+    public function withExpectedValue($expected)
+    {
+        $this->expected = $expected;
+        return $this;
+    }
+
+    /**
+     * @param mixed $received
+     * @return $this
+     */
+    public function withReceivedValue($received)
+    {
+        $this->received = $received;
+        return $this;
+    }
+
     public function addPath($path)
     {
         if ($this->error === null) {
