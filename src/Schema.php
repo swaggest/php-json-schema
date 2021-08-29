@@ -154,7 +154,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract, HasDefaul
             if ($this->__booleanSchema) {
                 return $data;
             } elseif (empty($options->skipValidation)) {
-                $this->fail((new InvalidValue('Denied by false schema'))->withReceivedValue($data), '#');
+                $this->fail((new InvalidValue('Denied by false schema'))->withData($data), '#');
             }
         }
 
@@ -251,7 +251,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract, HasDefaul
         }
         if (!$enumOk) {
             $this->fail((new EnumException('Enum failed, enum: ' . json_encode($this->enum)))
-                ->withReceivedValue($data)
+                ->withData($data)
                 ->withExpectedValue($this->enum), $path);
         }
     }
@@ -277,12 +277,12 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract, HasDefaul
                     JsonDiff::STOP_ON_DIFF);
                 if ($diff->getDiffCnt() != 0) {
                     $this->fail((new ConstException('Const failed'))
-                        ->withReceivedValue($data)
+                        ->withData($data)
                         ->withExpectedValue($this->const), $path);
                 }
             } else {
                 $this->fail((new ConstException('Const failed'))
-                    ->withReceivedValue($data)
+                    ->withData($data)
                     ->withExpectedValue($this->const), $path);
             }
         }
@@ -563,7 +563,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract, HasDefaul
                 $this->fail(
                     (new ObjectException(
                         'Required property missing: ' . $item,
-                        ObjectException::REQUIRED))->withReceivedValue((object)$array),
+                        ObjectException::REQUIRED))->withData((object)$array),
                     $path);
             }
         }
@@ -978,11 +978,11 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract, HasDefaul
         $count = count($data);
         if (!$options->skipValidation) {
             if ($this->minItems !== null && $count < $this->minItems) {
-                $this->fail((new ArrayException("Not enough items in array"))->withReceivedValue($data), $path);
+                $this->fail((new ArrayException("Not enough items in array"))->withData($data), $path);
             }
 
             if ($this->maxItems !== null && $count > $this->maxItems) {
-                $this->fail((new ArrayException("Too many items in array"))->withReceivedValue($data), $path);
+                $this->fail((new ArrayException("Too many items in array"))->withData($data), $path);
             }
         }
 
@@ -1017,7 +1017,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract, HasDefaul
                     $result[$key] = $additionalItems->process($value, $options, $path . '->' . $pathItems
                         . '[' . $index . ']:' . $index);
                 } elseif (!$options->skipValidation && $additionalItems === false) {
-                    $this->fail((new ArrayException('Unexpected array item'))->withReceivedValue($data), $path);
+                    $this->fail((new ArrayException('Unexpected array item'))->withData($data), $path);
                 }
             }
             ++$index;
@@ -1025,7 +1025,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract, HasDefaul
 
         if (!$options->skipValidation && $this->uniqueItems) {
             if (!UniqueItems::isValid($data)) {
-                $this->fail((new ArrayException('Array is not unique'))->withReceivedValue($data), $path);
+                $this->fail((new ArrayException('Array is not unique'))->withData($data), $path);
             }
         }
 
@@ -1033,7 +1033,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract, HasDefaul
             /** @var Schema|bool $contains */
             $contains = $this->contains;
             if ($contains === false) {
-                $this->fail((new ArrayException('Contains is false'))->withReceivedValue($data), $path);
+                $this->fail((new ArrayException('Contains is false'))->withData($data), $path);
             }
             if ($count === 0) {
                 $this->fail((new ArrayException('Empty array fails contains constraint')), $path);
@@ -1052,7 +1052,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract, HasDefaul
             }
             if (!$containsOk) {
                 $this->fail((new ArrayException('Array fails contains constraint'))
-                    ->withReceivedValue($data), $path);
+                    ->withData($data), $path);
             }
         }
         return $result;

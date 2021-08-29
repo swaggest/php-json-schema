@@ -14,7 +14,7 @@ class InvalidValue extends Exception
     public $path;
 
     public $expected;
-    public $received;
+    public $data;
 
     /**
      * @param mixed $expected
@@ -27,12 +27,12 @@ class InvalidValue extends Exception
     }
 
     /**
-     * @param mixed $received
+     * @param mixed $data
      * @return $this
      */
-    public function withReceivedValue($received)
+    public function withData($data)
     {
-        $this->received = $received;
+        $this->data = $data;
         return $this;
     }
 

@@ -1,0 +1,22 @@
+[
+  {
+    "description": "multiple of with float precision",
+    "schema": {
+      "multipleOf": 0.01
+    },
+    "tests": [
+      {
+        "data": 4.22,
+        "valid": true
+      },
+      {
+        "data": 4.21,
+        "valid": true
+      },
+      {
+        "data": 4.215,
+        "valid": false
+      }
+    ]
+  }
+]
