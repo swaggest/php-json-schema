@@ -305,7 +305,8 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract, HasDefaul
             // Expected exception
         }
         if ($exception === false) {
-            $this->fail((new LogicException('Not ' . json_encode($this->not) . ' expected'))->withData($data), $path . '->not');
+            $this->fail((new LogicException('Not ' . json_encode($this->not) . ' expected, ' . json_encode($data) . ' received'))
+                ->withData($data), $path . '->not');
         }
     }
 

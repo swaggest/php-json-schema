@@ -235,10 +235,10 @@ JSON
         try {
             $schema->in('abc');
         } catch (InvalidValue $exception) {
-            $this->assertSame('Not {"type":"string"} expected at #->not', $exception->getMessage());
+            $this->assertSame('Not {"type":"string"} expected, "abc" received at #->not', $exception->getMessage());
 
             $error = $exception->inspect();
-            $this->assertSame('Not {"type":"string"} expected', $error->error);
+            $this->assertSame('Not {"type":"string"} expected, "abc" received', $error->error);
         }
     }
 
