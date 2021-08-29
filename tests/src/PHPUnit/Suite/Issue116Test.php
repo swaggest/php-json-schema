@@ -45,7 +45,7 @@ class Issue116Test extends \PHPUnit_Framework_TestCase
             $exceptionCaught = true;
 
             $this->assertEquals('No valid results for anyOf {
-  0: Enum failed, enum: ["array","boolean","integer","null","number","object","string"] at #->properties:properties->additionalProperties:second_prop->properties:type->anyOf[0]
+  0: Enum failed, enum: ["array","boolean","integer","null","number","object","string"], data: "uri" at #->properties:properties->additionalProperties:second_prop->properties:type->anyOf[0]
   1: Array expected, "uri" received at #->properties:properties->additionalProperties:second_prop->properties:type->anyOf[1]
 } at #->properties:properties->additionalProperties:second_prop->properties:type', $e->getMessage());
         }
@@ -66,7 +66,7 @@ class Issue116Test extends \PHPUnit_Framework_TestCase
             $exceptionCaught = true;
 
             $this->assertEquals('No valid results for anyOf {
-  0: Enum failed, enum: ["array","boolean","integer","null","number","object","string"] at #->$ref:tests/src/PHPUnit/Suite/schema.json->properties:properties->additionalProperties:second_prop->properties:type->anyOf[0]
+  0: Enum failed, enum: ["array","boolean","integer","null","number","object","string"], data: "uri" at #->$ref:tests/src/PHPUnit/Suite/schema.json->properties:properties->additionalProperties:second_prop->properties:type->anyOf[0]
   1: Array expected, "uri" received at #->$ref:tests/src/PHPUnit/Suite/schema.json->properties:properties->additionalProperties:second_prop->properties:type->anyOf[1]
 } at #->$ref:tests/src/PHPUnit/Suite/schema.json->properties:properties->additionalProperties:second_prop->properties:type', $e->getMessage());
         }

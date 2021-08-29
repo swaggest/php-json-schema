@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.12.37] - 2021-08-29
 
 ### Added
-- `InvalidValue` now exposes `data` and `expected` fo structured context of validation failure.
+- `InvalidValue` now exposes `data` and `constraint` values for structured context of validation failure.
 
 ### Fixed 
 - Handling of `multipleOf: 0.01` float precision.

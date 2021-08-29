@@ -176,7 +176,7 @@ class TolerateStringsTest extends \PHPUnit_Framework_TestCase
 
         $schema = Schema::import($json_schema);
 
-        $this->setExpectedException(get_class(new InvalidValue()), 'Enum failed, enum: [1,2,3] at #->items:4');
+        $this->setExpectedException(get_class(new InvalidValue()), 'Enum failed, enum: [1,2,3], data: 5 at #->items:4');
         $schema->in($data, $options);
     }
 }

@@ -13,16 +13,16 @@ class InvalidValue extends Exception
     public $error;
     public $path;
 
-    public $expected;
+    public $constraint;
     public $data;
 
     /**
-     * @param mixed $expected
+     * @param mixed $constraint
      * @return $this
      */
-    public function withExpectedValue($expected)
+    public function withConstraint($constraint)
     {
-        $this->expected = $expected;
+        $this->constraint = $constraint;
         return $this;
     }
 
