@@ -95,6 +95,7 @@ trait ClassStructureTrait
     /**
      * @return \stdClass
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $result = new \stdClass();

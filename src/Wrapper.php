@@ -214,6 +214,7 @@ class Wrapper implements SchemaContract, MetaHolder, SchemaExporter, \JsonSerial
         return clone $this->schema;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->schema->jsonSerialize();

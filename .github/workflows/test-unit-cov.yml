@@ -21,7 +21,7 @@ jobs:
         with:
           path: |
             vendor
-          key: vendor-${{ hashFiles('composer.lock') }}
+          key: deps-${{ hashFiles('composer.lock') }}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -32,7 +32,7 @@ jobs:
           tools: composer
 
       - name: Populate vendor
-        run: '[ -e vendor ] || composer install'
+        run: '[ -e vendor ] || (composer install && patch -s -p0 < ./tests/phpunit.patch)'
 
       - name: Run Tests With Coverage
         run: make deps test-coverage && bash <(curl -s https://codecov.io/bash)

@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.38] - 2021-09-17
+
+### Fixed
+- PHP 8.1 Deprecation notices with missing returns.
+
 ## [0.12.37] - 2021-08-29
 
 ### Added
@@ -101,6 +106,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Export `null` value instead of skipping it for properties having `null` type.
 
+[0.12.38]: https://github.com/swaggest/php-json-schema/compare/v0.12.37...v0.12.38
 [0.12.37]: https://github.com/swaggest/php-json-schema/compare/v0.12.36...v0.12.37
 [0.12.36]: https://github.com/swaggest/php-json-schema/compare/v0.12.35...v0.12.36
 [0.12.35]: https://github.com/swaggest/php-json-schema/compare/v0.12.34...v0.12.35
