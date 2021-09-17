@@ -103,6 +103,7 @@ trait ObjectItemTrait
         return null;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         if ($this->__nestedObjects) {

@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         operating-system: [ 'ubuntu-latest' ]
-        php-versions: [ '5.6', '7.0', '7.1', '7.2', '7.3', '8.0', '8.1' ]
+        php-versions: [ '5.4', '5.5', '5.6', '7.0', '7.1', '7.2', '7.3', '8.0', '8.1' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -31,7 +31,7 @@ jobs:
           tools: composer
 
       - name: Populate vendor
-        run: '[ -e vendor ] || (composer install && patch -s -p0 < ./tools/phpunit.patch)'
+        run: '[ -e vendor ] || (composer install && patch -s -p0 < ./tests/phpunit.patch)'
 
       - name: Run Tests
         run: make deps test

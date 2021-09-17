@@ -164,6 +164,7 @@ class Properties extends ObjectItem implements Constraint
         return (count($this->__arrayOfData) + count($this->nestedProperties)) === 0;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $result = $this->toArray();

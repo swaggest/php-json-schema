@@ -27,11 +27,13 @@ trait MagicMapTrait
         }
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return array_key_exists($offset, $this->__arrayOfData);
     }
 
+    #[\ReturnTypeWillChange]
     public function &offsetGet($offset)
     {
         if (isset($this->__arrayOfData[$offset])) {
@@ -42,11 +44,13 @@ trait MagicMapTrait
         }
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->__set($offset, $value);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         unset($this->__arrayOfData[$offset]);
@@ -57,6 +61,7 @@ trait MagicMapTrait
         return $this->__arrayOfData;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return (object)$this->__arrayOfData;
@@ -65,12 +70,14 @@ trait MagicMapTrait
 
     /** @var \ArrayIterator */
     private $iterator;
+
     /**
      * Return the current element
      * @link http://php.net/manual/en/iterator.current.php
      * @return mixed Can return any type.
      * @since 5.0.0
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->iterator->current();
@@ -82,6 +89,7 @@ trait MagicMapTrait
      * @return void Any returned value is ignored.
      * @since 5.0.0
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->iterator->next();
@@ -93,6 +101,7 @@ trait MagicMapTrait
      * @return mixed scalar on success, or null on failure.
      * @since 5.0.0
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->iterator->key();
@@ -105,6 +114,7 @@ trait MagicMapTrait
      * Returns true on success or false on failure.
      * @since 5.0.0
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return $this->iterator->valid();
@@ -116,6 +126,7 @@ trait MagicMapTrait
      * @return void Any returned value is ignored.
      * @since 5.0.0
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->iterator = new \ArrayIterator($this->__arrayOfData);

@@ -33,6 +33,9 @@ class ClassStructureTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('11', $object->recursion->propOne);
         $this->assertSame(22, $object->recursion->propTwo);
 
+        $this->assertSame('11', $object['recursion']['propOne']);
+        $this->assertNull( $object['nonexistent']);
+
         $exported = $schema->out($object);
         $this->assertSame('{"propOne":"1","propTwo":2,"recursion":{"propOne":"11","propTwo":22}}', json_encode($exported));
     }
