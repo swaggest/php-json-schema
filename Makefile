@@ -14,6 +14,9 @@ docker-lint:
 test:
 	@php -derror_reporting="E_ALL & ~E_DEPRECATED" vendor/bin/phpunit --configuration phpunit.xml
 
+docker-test:
+	@docker run -v $$PWD:/app -w /app --rm php:8.1.0RC1-zts-buster php -derror_reporting="E_ALL & ~E_DEPRECATED" vendor/bin/phpunit --configuration phpunit.xml
+
 test-coverage:
 	@php -derror_reporting="E_ALL & ~E_DEPRECATED" -dzend_extension=xdebug.so -dxdebug.mode=coverage vendor/bin/phpunit --configuration phpunit.xml --coverage-text --coverage-clover=coverage.xml
 

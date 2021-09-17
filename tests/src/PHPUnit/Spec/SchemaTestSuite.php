@@ -67,7 +67,7 @@ abstract class SchemaTestSuite extends \PHPUnit_Framework_TestCase
                             }
                             */
 
-                            $name = $entry . ' ' . $test->description . ': ' . $case->description . ' [' . $c . ']';
+                            $name = $entry . ' ' . (isset($test->description) ? $test->description : '') . ': ' . (isset($case->description) ? $case->description : '') . ' [' . $c . ']';
                             if (!isset($test->schema)) {
                                 if (isset($test->schemas)) {
                                     foreach ($test->schemas as $i => $schema) {

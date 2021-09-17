@@ -31,7 +31,7 @@ jobs:
           tools: composer
 
       - name: Populate vendor
-        run: '[ -e vendor ] || composer install'
+        run: '[ -e vendor ] || (composer install && patch -s -p0 < ./tools/phpunit.patc)'
 
       - name: Run Tests
         run: make deps test
