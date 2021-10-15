@@ -40,5 +40,5 @@
   },
   "suggest": {
     "ext-mbstring": "For better performance"
-  },
+  }
 }
