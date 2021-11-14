@@ -40,5 +40,10 @@
   },
   "suggest": {
     "ext-mbstring": "For better performance"
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "patch -N -s -p0 < ./tests/phpunit.patch"
+    ]
   }
 }
