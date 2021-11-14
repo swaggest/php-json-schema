@@ -7,9 +7,51 @@ use Swaggest\JsonSchema\Context;
 use Swaggest\JsonSchema\InvalidValue;
 use Swaggest\JsonSchema\RemoteRef\Preloaded;
 use Swaggest\JsonSchema\Schema;
+use Swaggest\JsonSchema\Tests\Helper\RefPatchedResolver;
 
 class FileResolverTest extends \PHPUnit_Framework_TestCase
 {
+    public function testPatchSchema()
+    {
+        $refProvider = new Preloaded();
+        $refProvider->setSchemaData(
+            'https://example.com/string.json',
+            json_decode(<<<'JSON'
+{"type": "string"}
+JSON
+            )
+        );
+        $refProvider->setSchemaData(
+            'https://example.com/integer.json',
+            json_decode(<<<'JSON'
+{"type": "integer"}
+JSON
+            )
+        );
+
+        $refProvider = new RefPatchedResolver($refProvider);
+        $refProvider->addPatch('https://example.com/string.json', function (\stdClass $schemaData) {
+            $schemaData->title = 'This is a string';
+        });
+
+
+        $schemaData = json_decode(<<<'JSON'
+{
+    "properties": {
+        "s": {"$ref":"https://example.com/string.json"},
+        "i": {"$ref":"https://example.com/integer.json"}
+    }
+}
+JSON
+        );
+
+        $context = new Context($refProvider);
+        $schema = Schema::import($schemaData, $context);
+
+        $this->assertEquals('This is a string', $schema->getProperties()['s']->title);
+        $this->assertEquals('', $schema->getProperties()['i']->title);
+    }
+
     public function testFileResolver()
     {
         $refProvider = new Preloaded();
@@ -22,7 +64,7 @@ class FileResolverTest extends \PHPUnit_Framework_TestCase
   }
 }
 JSON
-)
+            )
         );
 
         $schemaData = json_decode(<<<'JSON'
@@ -36,7 +78,7 @@ JSON
     "additionalProperties": false
 }
 JSON
-);
+        );
         $options = new Context();
         $options->remoteRefProvider = $refProvider;
         $schema = Schema::import($schemaData, $options);
