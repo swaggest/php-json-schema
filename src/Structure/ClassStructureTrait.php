@@ -104,10 +104,8 @@ trait ClassStructureTrait
         $processed = array();
         if (null !== $properties) {
             foreach ($properties->getDataKeyMap() as $propertyName => $dataName) {
-                if (!isset($this->$propertyName)) {
-                    // Skip uninitialized properties
-                    continue;
-                }
+                // Get uninitialized properties as null; direct access will throw error on typed properties
+                $value = isset($this->$propertyName) ? $this->$propertyName : null;
                 
                 $value = $this->$propertyName;
 
