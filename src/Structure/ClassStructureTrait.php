@@ -104,6 +104,11 @@ trait ClassStructureTrait
         $processed = array();
         if (null !== $properties) {
             foreach ($properties->getDataKeyMap() as $propertyName => $dataName) {
+                if (!isset($this->$propertyName)) {
+                    // Skip uninitialized properties
+                    continue;
+                }
+                
                 $value = $this->$propertyName;
 
                 // Value is exported if exists.
