@@ -215,7 +215,7 @@ class Wrapper implements SchemaContract, MetaHolder, SchemaExporter, \JsonSerial
     }
 
     #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->schema->jsonSerialize();
     }

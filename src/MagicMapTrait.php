@@ -28,13 +28,13 @@ trait MagicMapTrait
     }
 
     #[\ReturnTypeWillChange]
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return array_key_exists($offset, $this->__arrayOfData);
     }
 
     #[\ReturnTypeWillChange]
-    public function &offsetGet($offset)
+    public function &offsetGet($offset): mixed
     {
         if (isset($this->__arrayOfData[$offset])) {
             return $this->__arrayOfData[$offset];
@@ -45,13 +45,13 @@ trait MagicMapTrait
     }
 
     #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->__set($offset, $value);
     }
 
     #[\ReturnTypeWillChange]
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->__arrayOfData[$offset]);
     }
