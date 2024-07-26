@@ -53,7 +53,7 @@ class Wrapper implements SchemaContract, MetaHolder, SchemaExporter, \JsonSerial
      * @throws Exception
      * @throws InvalidValue
      */
-    public function in($data, Context $options = null)
+    public function in($data, ?Context $options = null)
     {
         return $this->schema->in($data, $options);
     }
@@ -65,7 +65,7 @@ class Wrapper implements SchemaContract, MetaHolder, SchemaExporter, \JsonSerial
      * @throws InvalidValue
      * @throws \Exception
      */
-    public function out($data, Context $options = null)
+    public function out($data, ?Context $options = null)
     {
         return $this->schema->out($data, $options);
     }
@@ -199,7 +199,7 @@ class Wrapper implements SchemaContract, MetaHolder, SchemaExporter, \JsonSerial
      * @param Context|null $options
      * @return Structure\ObjectItemContract
      */
-    public function makeObjectItem(Context $options = null)
+    public function makeObjectItem(?Context $options = null)
     {
         return $this->schema->makeObjectItem($options);
     }

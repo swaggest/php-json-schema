@@ -109,7 +109,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract, HasDefaul
      * @throws InvalidValue
      * @throws \Exception
      */
-    public static function import($data, Context $options = null)
+    public static function import($data, ?Context $options = null)
     {
         if (null === $options) {
             $options = new Context();
@@ -148,7 +148,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract, HasDefaul
      * @throws InvalidValue
      * @throws \Exception
      */
-    public function in($data, Context $options = null)
+    public function in($data, ?Context $options = null)
     {
         if (null !== $this->__booleanSchema) {
             if ($this->__booleanSchema) {
@@ -187,7 +187,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract, HasDefaul
      * @throws InvalidValue
      * @throws \Exception
      */
-    public function out($data, Context $options = null)
+    public function out($data, ?Context $options = null)
     {
         if ($options === null) {
             $options = new Context();
@@ -1385,7 +1385,7 @@ class Schema extends JsonSchema implements MetaHolder, SchemaContract, HasDefaul
      * @param Context $options
      * @return ObjectItemContract
      */
-    public function makeObjectItem(Context $options = null)
+    public function makeObjectItem(?Context $options = null)
     {
         if (null === $this->objectItemClass) {
             return new ObjectItem();

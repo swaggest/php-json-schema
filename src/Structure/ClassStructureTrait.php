@@ -55,7 +55,7 @@ trait ClassStructureTrait
      * @throws \Swaggest\JsonSchema\Exception
      * @throws \Swaggest\JsonSchema\InvalidValue
      */
-    public static function import($data, Context $options = null)
+    public static function import($data, ?Context $options = null)
     {
         return static::schema()->in($data, $options);
     }
@@ -67,7 +67,7 @@ trait ClassStructureTrait
      * @throws \Swaggest\JsonSchema\InvalidValue
      * @throws \Exception
      */
-    public static function export($data, Context $options = null)
+    public static function export($data, ?Context $options = null)
     {
         return static::schema()->out($data, $options);
     }
@@ -150,7 +150,7 @@ trait ClassStructureTrait
     /**
      * @return static|NameMirror
      */
-    public static function names(Properties $properties = null, $mapping = Schema::DEFAULT_MAPPING)
+    public static function names(?Properties $properties = null, $mapping = Schema::DEFAULT_MAPPING)
     {
         if ($properties !== null) {
             return new NameMirror($properties->getDataKeyMap($mapping));
