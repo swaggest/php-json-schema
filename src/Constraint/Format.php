@@ -52,7 +52,7 @@ class Format
             case self::IRI:
                 return Iri::validationError($data);
             case self::EMAIL:
-                return filter_var($data, FILTER_VALIDATE_EMAIL) ? null : 'Invalid email';
+                return filter_var($data, FILTER_VALIDATE_EMAIL, FILTER_FLAG_EMAIL_UNICODE) ? null : 'Invalid email';
             case self::IDN_EMAIL:
                 return count(explode('@', $data, 3)) === 2 ? null : 'Invalid email';
             case self::IPV4:
