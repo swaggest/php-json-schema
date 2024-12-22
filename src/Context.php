@@ -75,7 +75,7 @@ class Context extends MagicMap
      * ProcessingOptions constructor.
      * @param RemoteRefProvider $remoteRefProvider
      */
-    public function __construct(RemoteRefProvider $remoteRefProvider = null)
+    public function __construct(?RemoteRefProvider $remoteRefProvider = null)
     {
         $this->remoteRefProvider = $remoteRefProvider;
     }

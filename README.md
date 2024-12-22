@@ -466,7 +466,7 @@ If you want to map data to a different class you can register mapping at top lev
 ```php
 class CustomSwaggerSchema extends SwaggerSchema
 {
-    public static function import($data, Context $options = null)
+    public static function import($data, ?Context $options = null)
     {
         if ($options === null) {
             $options = new Context();

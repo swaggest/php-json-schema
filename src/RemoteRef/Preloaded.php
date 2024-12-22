@@ -42,7 +42,7 @@ class Preloaded implements RemoteRefProvider
      * @param Context|null $options
      * @throws \Swaggest\JsonSchema\Exception
      */
-    public function populateSchemas(RefResolver $refResolver, Context $options = null)
+    public function populateSchemas(RefResolver $refResolver, ?Context $options = null)
     {
         if ($options === null) {
             $options = new Context();
